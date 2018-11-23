@@ -1,15 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="wrap_content"
               android:orientation="vertical"
+              android:elevation="30dp"
 >
-    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal">
-        <TextView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/repoName"/>
-    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:background="@color/colorItemBg"
+                  android:orientation="vertical">
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="40dp"
+                  android:id="@+id/repoName"
+                  android:paddingLeft="10dp"
+                  android:textSize="30dp"
+                  android:text="RepoName"
+                  android:background="@color/colorRepoNameBg"/>
 
-    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="horizontal">
-        <TextView android:layout_width="match_parent" android:layout_height="match_parent" android:id="@+id/repoDescription"/>
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/repoDescription"
+                  android:text="RepoDescription"
+                  android:textSize="14dp" android:textAlignment="center"
+                  android:textColor="@android:color/background_dark"/>
+
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="30dp"
+                  android:id="@+id/repoUpdatedAt"
+                  android:text="repo time updated"
+                  android:paddingTop="10dp"
+                  android:textSize="13dp" android:textAlignment="center"
+                  android:textColor="@android:color/background_dark"/>
+
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="30dp"
+                  android:id="@+id/repoPushedAt"
+                  android:text="repo time updated"
+                  android:textSize="13dp" android:textAlignment="center"
+                  android:textColor="@android:color/background_dark"/>
+        <View
+                android:layout_width="fill_parent"
+                android:layout_height="2dp"
+                android:background="#c0c0c0"/>
+
     </LinearLayout>
 
 

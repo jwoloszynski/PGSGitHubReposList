@@ -1,18 +1,35 @@
 package pgssoft.com.githubreposlist.ui
 
 import android.support.v7.widget.RecyclerView
+import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import pgssoft.com.githubreposlist.PGSRepoApp
+import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
 
-class RepoListAdapter (val repoList: List<Repository>): RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>()  {
+class RepoListAdapter(val repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
+    private val sorted: MutableList<Repository> = mutableListOf()
+    class RepoViewHolder(row: View) : RecyclerView.ViewHolder(row) {
+        var repoName: TextView? = null
+        var repoDescription: TextView? = null
+        var repoUpdatedAt: TextView? = null
+        var repoPushedAt: TextView? = null
 
-    class RepoViewHolder(val tv: TextView): RecyclerView.ViewHolder(tv){
-
+        init {
+            repoName = row.findViewById(R.id.repoName)
+            repoDescription = row.findViewById(R.id.repoDescription)
+            repoUpdatedAt = row.findViewById(R.id.repoUpdatedAt)
+            repoPushedAt = row.findViewById(R.id.repoPushedAt)
+        }
     }
 
+
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RepoViewHolder {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val v: View = LayoutInflater.from(PGSRepoApp.app).inflate(R.layout.repo_item_view, p0, false)
+
+        return RepoViewHolder(v)
     }
 
     override fun getItemCount(): Int {
@@ -21,6 +38,10 @@ class RepoListAdapter (val repoList: List<Repository>): RecyclerView.Adapter<Rep
     }
 
     override fun onBindViewHolder(p0: RepoViewHolder, p1: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        p0.repoName?.text = (p1+1).toString()+". "+repoList.get(p1).name
+        p0.repoDescription?.text = repoList.get(p1).description
+        p0.repoUpdatedAt?.text = "Last updated: "  + repoList.get(p1).updated_at
+        p0.repoPushedAt?.text = "Last pushed: " + repoList.get(p1).pushed_at
+
     }
 }

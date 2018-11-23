@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">GitHubReposList</string>
     <string name="pgsghorgname">PGSSoft</string>
+    <string name="ghapiurl">https://api.github.com</string>
 </resources>

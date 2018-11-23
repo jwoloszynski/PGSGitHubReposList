@@ -1,22 +1,31 @@
 package pgssoft.com.githubreposlist.data.db
 
-import android.arch.persistence.room.Dao
-import android.arch.persistence.room.Delete
-import android.arch.persistence.room.Insert
-import android.arch.persistence.room.Query
+import android.arch.lifecycle.LiveData
+import android.arch.persistence.room.*
+import io.reactivex.Flowable
+import io.reactivex.Observable
 
 @Dao
 interface RepoDao {
 
     @Query("SELECT * FROM repository")
-    fun getAll(): List<Repository>
+    fun getAll(): LiveData<List<Repository>>
 
-    @Insert
-    fun insertAll(vararg repo: Repository)
+    @Query("SELECT * FROM repository where id = :id")
+    fun get(id: Int): LiveData<List<Repository>>
+
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    fun insertAll(repo: List<Repository>)
+
+    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    fun insert(repo: Repository)
 
     @Delete
     fun delete(repo:Repository)
 
-    @Delete
+    @Query("SELECT count(*) FROM repository")
+    fun getCount(): LiveData<Int>
+
+    @Query("DELETE FROM repository")
     fun deleteAll()
 }
