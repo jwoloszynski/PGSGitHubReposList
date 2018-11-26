@@ -16,6 +16,7 @@ import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.ReposFetcher
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
 import pgssoft.com.githubreposlist.data.db.Repository
+import pgssoft.com.githubreposlist.utils.PrefsHelper
 import pgssoft.com.githubreposlist.viewmodels.RepoListViewModel
 
 
@@ -27,26 +28,26 @@ class RepoListActivity : AppCompatActivity() {
     lateinit var db: ReposDatabase
     lateinit var deleteButton: Button
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var prefs: PrefsHelper
     private val fetcher = ReposFetcher()
-    var prefs: SharedPreferences? = null
     private var list: MutableList<Repository> = mutableListOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        db = ReposDatabase.instance!!
         setContentView(R.layout.activity_repo_list)
+        tv = findViewById(R.id.text)
+        rv = findViewById(R.id.recyclerview)
+        rv.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeRefreshLayout = findViewById(R.id.swipeToRefresh)
         swipeRefreshLayout.setOnRefreshListener { onRefresh() }
 
-        fetcher.fetchAll({})
-
-        tv = findViewById(R.id.text)
-        rv = findViewById(R.id.recyclerview)
         deleteButton = findViewById(R.id.pullButton)
         deleteButton.setOnClickListener { fetcher.clearRepoList() }
 
-        rv.layoutManager = LinearLayoutManager(PGSRepoApp.app)
+
         listModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)
-        db = ReposDatabase.instance!!
         listModel.getRepoCount().observe(this, Observer {
             if (it == 0) {
                 tv.text = "Pull to refresh"
@@ -54,8 +55,28 @@ class RepoListActivity : AppCompatActivity() {
                 tv.text = it.toString()
             }
         })
+
         refreshAdapter()
 
+    }
+
+
+    private fun onRefresh() {
+        prefs = PrefsHelper(PGSRepoApp.app)
+        val timeRefreshed = prefs.time
+        val timeBetween = System.currentTimeMillis() - timeRefreshed
+        if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or list.isEmpty()) {
+            fetcher.fetchAll { response,error -> getResponse(response,error) }
+            prefs.time = System.currentTimeMillis()
+        } else {
+            swipeRefreshLayout.isRefreshing = false
+        }
+
+    }
+
+    private fun getResponse(response: List<Repository>, error:String? = null) {
+        tv.text = error?: ""
+        swipeRefreshLayout.isRefreshing = false
 
     }
 
@@ -63,29 +84,11 @@ class RepoListActivity : AppCompatActivity() {
         listModel.getRepoList().observe(this, Observer {
             if (it != null) {
                 list = it.toMutableList()
-                list.sortBy { it.pushed_at }
-                list.reverse()
+                list.sortByDescending { it.pushed_at }
                 this.rv.adapter = RepoListAdapter(list)
             }
         })
     }
-
-    private fun onRefresh() {
-        prefs = this.getSharedPreferences("timeRefreshed", Context.MODE_PRIVATE)
-        val timeRefreshed = prefs!!.getLong("time", -1)
-        val timeBetween = System.currentTimeMillis() - timeRefreshed
-        if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (list.size < 1)) {
-            this.fetcher.fetchAll({ s -> }, true, swipeRefreshLayout)
-            val edit = prefs!!.edit()
-            edit.putLong("time", System.currentTimeMillis())
-            edit.apply()
-        } else {
-            swipeRefreshLayout.isRefreshing = false
-        }
-
-    }
-
-
 }
 
 

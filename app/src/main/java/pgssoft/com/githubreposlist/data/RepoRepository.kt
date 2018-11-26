@@ -5,15 +5,6 @@ import pgssoft.com.githubreposlist.data.db.ReposDatabase
 
 class RepoRepository {
 
-    private val db = ReposDatabase.getInstance(PGSRepoApp.app)
-
-    fun getRepoList() = db.repoDao().getAll()
-
-    fun gerRepoById(id: Int) = db.repoDao().get(id)
-
-    fun getCount() = db.repoDao().getCount()
-
-
     companion object {
 
         private var instance: RepoRepository? = null
@@ -26,4 +17,14 @@ class RepoRepository {
 
         }
     }
+
+    private val db = ReposDatabase.getInstance(PGSRepoApp.app)
+
+    fun getRepoList() = db.repoDao().getAll()
+
+    fun gerRepoById(id: Int) = db.repoDao().get(id)
+
+    fun getCount() = db.repoDao().getCount()
+
+
 }

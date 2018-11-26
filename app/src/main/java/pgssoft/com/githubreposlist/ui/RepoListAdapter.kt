@@ -10,7 +10,7 @@ import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
 
 class RepoListAdapter(val repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
-    private val sorted: MutableList<Repository> = mutableListOf()
+
     class RepoViewHolder(row: View) : RecyclerView.ViewHolder(row) {
         var repoName: TextView? = null
         var repoDescription: TextView? = null
