@@ -2,10 +2,9 @@ package pgssoft.com.githubreposlist.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -25,7 +24,6 @@ class RepoListActivity : AppCompatActivity() {
     lateinit var tv: TextView
     lateinit var rv: RecyclerView
     lateinit var listModel: RepoListViewModel
-    lateinit var db: ReposDatabase
     lateinit var deleteButton: Button
     lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var prefs: PrefsHelper
@@ -35,7 +33,6 @@ class RepoListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-        db = ReposDatabase.instance!!
         setContentView(R.layout.activity_repo_list)
         tv = findViewById(R.id.text)
         rv = findViewById(R.id.recyclerview)
@@ -66,7 +63,7 @@ class RepoListActivity : AppCompatActivity() {
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed
         if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or list.isEmpty()) {
-            fetcher.fetchAll { response,error -> getResponse(response,error) }
+            fetcher.fetchAll {error -> getResponse(error) }
             prefs.time = System.currentTimeMillis()
         } else {
             swipeRefreshLayout.isRefreshing = false
@@ -74,8 +71,14 @@ class RepoListActivity : AppCompatActivity() {
 
     }
 
-    private fun getResponse(response: List<Repository>, error:String? = null) {
-        tv.text = error?: ""
+    private fun getResponse(error: String? = null) {
+
+        if (!error.isNullOrEmpty()) {
+            AlertDialog.Builder(this).setTitle(R.string.error).setMessage(error).setPositiveButton("OK"){d,i ->
+                d.dismiss()
+            }.create().show()
+
+        }
         swipeRefreshLayout.isRefreshing = false
 
     }

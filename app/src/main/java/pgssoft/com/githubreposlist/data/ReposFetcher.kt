@@ -22,13 +22,13 @@ class ReposFetcher {
             .create(GHApi::class.java)
     val db = ReposDatabase.getInstance(PGSRepoApp.app)
 
-    fun fetchAll(callback: (List<Repository>, String?) -> Unit) {
+    fun fetchAll(callback: (String?) -> Unit) {
         var orgName = PGSRepoApp.app.getString(R.string.pgsghorgname)
 
         api.getOrganizationRepos(orgName).enqueue(object : Callback<List<Repository>> {
             override fun onFailure(call: Call<List<Repository>>, t: Throwable) {
 
-                callback(listOf(), "Connection Error")
+                callback("Connection Error")
             }
 
             override fun onResponse(call: Call<List<Repository>>, response: Response<List<Repository>>) {
@@ -36,7 +36,7 @@ class ReposFetcher {
                 if (response.body() == null) {
                     Log.d("DEBUG", response.raw().message())
                 } else {
-                    callback(response.body()!!,null)
+                    callback(null)
                     db.repoDao().insertAll(response.body()!!)
 
                 }
