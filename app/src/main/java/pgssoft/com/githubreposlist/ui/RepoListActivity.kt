@@ -3,93 +3,66 @@ package pgssoft.com.githubreposlist.ui
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.widget.Button
-import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_repo_list.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
-import pgssoft.com.githubreposlist.data.ReposFetcher
-import pgssoft.com.githubreposlist.data.db.ReposDatabase
-import pgssoft.com.githubreposlist.data.db.Repository
-import pgssoft.com.githubreposlist.utils.PrefsHelper
 import pgssoft.com.githubreposlist.viewmodels.RepoListViewModel
 
 
 class RepoListActivity : AppCompatActivity() {
 
-    lateinit var tv: TextView
-    lateinit var rv: RecyclerView
     lateinit var listModel: RepoListViewModel
-    lateinit var deleteButton: Button
-    lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var prefs: PrefsHelper
-    private val fetcher = ReposFetcher()
-    private var list: MutableList<Repository> = mutableListOf()
 
+    private val repoListAdapter: RepoListAdapter = RepoListAdapter(listOf())
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repo_list)
-        tv = findViewById(R.id.text)
-        rv = findViewById(R.id.recyclerview)
-        rv.layoutManager = LinearLayoutManager(PGSRepoApp.app)
-        swipeRefreshLayout = findViewById(R.id.swipeToRefresh)
-        swipeRefreshLayout.setOnRefreshListener { onRefresh() }
 
-        deleteButton = findViewById(R.id.pullButton)
-        deleteButton.setOnClickListener { fetcher.clearRepoList() }
+        recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
+        swipeToRefresh.setOnRefreshListener { onRefresh() }
+        deleteButton.setOnClickListener { listModel.clearRepoList() }
 
-
+        recyclerView.adapter = repoListAdapter
         listModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)
-        listModel.getRepoCount().observe(this, Observer {
-            if (it == 0) {
-                tv.text = "Pull to refresh"
-            } else {
-                tv.text = it.toString()
-            }
-        })
+        listModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
+        )
 
         refreshAdapter()
+        listenErrors()
 
     }
-
 
     private fun onRefresh() {
-        prefs = PrefsHelper(PGSRepoApp.app)
-        val timeRefreshed = prefs.time
-        val timeBetween = System.currentTimeMillis() - timeRefreshed
-        if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or list.isEmpty()) {
-            fetcher.fetchAll {error -> getResponse(error) }
-            prefs.time = System.currentTimeMillis()
-        } else {
-            swipeRefreshLayout.isRefreshing = false
-        }
+        listModel.onRefresh(repoListAdapter.itemCount)
 
     }
 
-    private fun getResponse(error: String? = null) {
+    private fun listenErrors() {
 
-        if (!error.isNullOrEmpty()) {
-            AlertDialog.Builder(this).setTitle(R.string.error).setMessage(error).setPositiveButton("OK"){d,i ->
-                d.dismiss()
-            }.create().show()
+        listModel.repoListErrorText.observe(this, Observer {
+            if (!it.isNullOrEmpty()) {
+                AlertDialog.Builder(this).setTitle(R.string.error).setMessage(it).setPositiveButton("OK")
+                { d, i ->
+                    d.dismiss()
+                }
+                    .create().show()
+            }
 
-        }
-        swipeRefreshLayout.isRefreshing = false
+            swipeToRefresh.isRefreshing = false
+        })
 
     }
 
     private fun refreshAdapter() {
         listModel.getRepoList().observe(this, Observer {
-            if (it != null) {
-                list = it.toMutableList()
-                list.sortByDescending { it.pushed_at }
-                this.rv.adapter = RepoListAdapter(list)
-            }
+
+            repoListAdapter.repoList = it!!.sortedByDescending { it.pushed_at }
+            repoListAdapter.notifyDataSetChanged()
+
         })
     }
 }

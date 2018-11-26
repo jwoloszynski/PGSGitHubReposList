@@ -9,7 +9,9 @@ import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
 
-class RepoListAdapter(val repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
+class RepoListAdapter(var repoList:List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
+
+
 
     class RepoViewHolder(row: View) : RecyclerView.ViewHolder(row) {
         var repoName: TextView? = null
@@ -23,11 +25,19 @@ class RepoListAdapter(val repoList: List<Repository>) : RecyclerView.Adapter<Rep
             repoUpdatedAt = row.findViewById(R.id.repoUpdatedAt)
             repoPushedAt = row.findViewById(R.id.repoPushedAt)
         }
+
+        fun bind(listRow: Repository, index: Int) {
+            repoName?.text = (index + 1).toString() + ". " + listRow.name
+            repoDescription?.text = listRow.description
+            repoUpdatedAt?.text = "Last updated: " + listRow.updated_at
+            repoPushedAt?.text = "Last pushed: " + listRow.pushed_at
+        }
+
+
     }
 
-
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RepoViewHolder {
-        val v: View = LayoutInflater.from(PGSRepoApp.app).inflate(R.layout.repo_item_view, p0, false)
+    override fun onCreateViewHolder(viewGroup: ViewGroup, element: Int): RepoViewHolder {
+        val v: View = LayoutInflater.from(PGSRepoApp.app).inflate(R.layout.repo_item_view, viewGroup, false)
 
         return RepoViewHolder(v)
     }
@@ -37,11 +47,10 @@ class RepoListAdapter(val repoList: List<Repository>) : RecyclerView.Adapter<Rep
 
     }
 
-    override fun onBindViewHolder(p0: RepoViewHolder, p1: Int) {
-        p0.repoName?.text = (p1+1).toString()+". "+repoList.get(p1).name
-        p0.repoDescription?.text = repoList.get(p1).description
-        p0.repoUpdatedAt?.text = "Last updated: "  + repoList.get(p1).updated_at
-        p0.repoPushedAt?.text = "Last pushed: " + repoList.get(p1).pushed_at
+    override fun onBindViewHolder(viewHolder: RepoViewHolder, index: Int) {
+
+        viewHolder.bind(repoList[index], index)
+
 
     }
 }

@@ -2,7 +2,6 @@ package pgssoft.com.githubreposlist.data
 
 
 import android.util.Log
-import io.reactivex.Observable
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
