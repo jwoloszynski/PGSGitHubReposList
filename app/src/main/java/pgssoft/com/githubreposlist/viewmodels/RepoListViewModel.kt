@@ -51,7 +51,7 @@ class RepoListViewModel : ViewModel() {
             fetcher.fetchAll { error -> _repoListErrorText.value = error }
             prefs.time = System.currentTimeMillis()
         } else {
-           _repoListErrorText.value = null
+            _repoListErrorText.value = null
         }
 
     }
@@ -73,7 +73,6 @@ class RepoListViewModel : ViewModel() {
 
 
     }
-
 
 
 }

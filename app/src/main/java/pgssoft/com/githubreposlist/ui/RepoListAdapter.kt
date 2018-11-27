@@ -4,35 +4,27 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.repo_item_view.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
 
-class RepoListAdapter(var repoList:List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
 
 
+class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
 
-    class RepoViewHolder(row: View) : RecyclerView.ViewHolder(row) {
-        var repoName: TextView? = null
-        var repoDescription: TextView? = null
-        var repoUpdatedAt: TextView? = null
-        var repoPushedAt: TextView? = null
 
-        init {
-            repoName = row.findViewById(R.id.repoName)
-            repoDescription = row.findViewById(R.id.repoDescription)
-            repoUpdatedAt = row.findViewById(R.id.repoUpdatedAt)
-            repoPushedAt = row.findViewById(R.id.repoPushedAt)
-        }
+    class RepoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer{
 
         fun bind(listRow: Repository, index: Int) {
             repoName?.text = (index + 1).toString() + ". " + listRow.name
             repoDescription?.text = listRow.description
             repoUpdatedAt?.text = "Last updated: " + listRow.updated_at
             repoPushedAt?.text = "Last pushed: " + listRow.pushed_at
-        }
+            repoLanguage?.text = listRow.language
 
+        }
 
     }
 
@@ -51,6 +43,7 @@ class RepoListAdapter(var repoList:List<Repository>) : RecyclerView.Adapter<Repo
 
         viewHolder.bind(repoList[index], index)
 
-
     }
+
+
 }
