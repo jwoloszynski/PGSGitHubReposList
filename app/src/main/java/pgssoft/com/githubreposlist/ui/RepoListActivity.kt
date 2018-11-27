@@ -60,9 +60,7 @@ class RepoListActivity : AppCompatActivity() {
     private fun refreshAdapter() {
         listModel.getRepoList().observe(this, Observer {
 
-            repoListAdapter.repoList = it!!.sortedByDescending { it.pushed_at }
-            repoListAdapter.notifyDataSetChanged()
-
+            repoListAdapter.setData(it!!)
         })
     }
 }

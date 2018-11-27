@@ -46,4 +46,10 @@ class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<Rep
     }
 
 
+    fun setData(list:List<Repository>){
+        repoList = list.sortedByDescending { it.pushed_at }
+        notifyDataSetChanged()
+    }
+
+
 }
