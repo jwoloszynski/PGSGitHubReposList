@@ -45,6 +45,7 @@ dependencies {
     def okhttp_version = "3.12.0"
     def gson_version = "2.8.5"
     def rxjava_version = "2.1.0"
+    def coroutines_version = "1.0.1"
 
 
 
@@ -66,6 +67,8 @@ dependencies {
     implementation "com.google.code.gson:gson:$gson_version"
     //RxJava
     implementation "io.reactivex.rxjava2:rxandroid:$rxjava_version"
+    //coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
 
 
 

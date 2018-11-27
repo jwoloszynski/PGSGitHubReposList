@@ -2,8 +2,8 @@ package pgssoft.com.githubreposlist.data
 
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import io.reactivex.Observable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
@@ -21,13 +21,13 @@ class RepoRepository {
     companion object {
 
         var instance: RepoRepository? = null
-            get() {
-                if (instance == null) {
-                    instance = RepoRepository()
+        fun getRepoInstance(): RepoRepository {
+            if (instance == null) {
+                instance = RepoRepository()
 
-                }
-                return instance!!
             }
+            return instance!!
+        }
 
     }
 
@@ -54,8 +54,12 @@ class RepoRepository {
                     error.value = response.raw().message()
                 } else {
                     error.value = ""
-                    Observable.just(1).doOnNext { db.repoDao().insertAll(response.body()!!) }
-                        .subscribeOn(Schedulers.io()).subscribe()
+
+                    GlobalScope.launch {
+                        db.repoDao().insertAll(response.body()!!)
+                    }
+//                    Observable.just(1).doOnNext { db.repoDao().insertAll(response.body()!!) }
+//                        .subscribeOn(Schedulers.io()).subscribe()
 
 
                 }
@@ -71,8 +75,12 @@ class RepoRepository {
 
     fun clearRepoList() {
 
-        Observable.just(1).doOnNext { db.repoDao().deleteAll() }
-            .subscribeOn(Schedulers.io()).subscribe()
+        GlobalScope.launch {
+            db.repoDao().deleteAll()
+        }
+
+//        Observable.just(1).doOnNext { db.repoDao().deleteAll() }
+//            .subscribeOn(Schedulers.io()).subscribe()
 
     }
 

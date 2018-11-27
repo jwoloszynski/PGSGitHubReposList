@@ -12,7 +12,7 @@ import pgssoft.com.githubreposlist.utils.PrefsHelper
 class RepoListViewModel : ViewModel() {
 
 
-    private val repoRepository = RepoRepository.instance!!
+    private val repoRepository = RepoRepository.getRepoInstance()
 
     private var repoListLiveData: LiveData<List<Repository>>
     private var repoListCount: LiveData<Int>
