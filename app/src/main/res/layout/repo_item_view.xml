@@ -11,11 +11,13 @@
 
     >
         <TextView android:layout_width="match_parent"
-                  android:layout_height="40dp"
+                  android:layout_height="wrap_content"
                   android:id="@+id/repoName"
                   android:paddingLeft="10dp"
-                  android:textSize="30dp"
+                  android:paddingRight="10dp"
+                  android:textSize="28dp"
                   android:text="RepoName"
+                  android:singleLine="true"
                   android:background="@color/colorRepoNameBg"/>
 
         <TextView android:layout_width="match_parent"
@@ -24,7 +26,7 @@
                   android:text="RepoDescription"
                   android:textSize="14dp" android:textAlignment="center"
                   android:textColor="@android:color/background_dark"/>
-        
+
         <TextView android:layout_width="match_parent"
                   android:layout_height="30dp"
                   android:paddingLeft="5dp"

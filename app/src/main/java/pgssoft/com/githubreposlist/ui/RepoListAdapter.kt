@@ -17,10 +17,11 @@ class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<Rep
     class RepoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(listRow: Repository, index: Int) {
-            repoName?.text = (index + 1).toString() + ". " + listRow.name
+
+            repoName?.text = listRow.name
             repoDescription?.text = listRow.description
-            repoUpdatedAt?.text = "Last updated: " + listRow.updated_at
-            repoPushedAt?.text = "Last pushed: " + listRow.pushed_at
+            repoUpdatedAt?.text = "Last updated: ${listRow.updated_at}"
+            repoPushedAt?.text = "Last pushed: ${listRow.pushed_at}"
             repoLanguage?.text = listRow.language
 
         }
