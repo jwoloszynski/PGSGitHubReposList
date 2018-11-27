@@ -34,6 +34,7 @@ class ReposFetcher {
 
                 if (response.body() == null) {
                     Log.d("DEBUG", response.raw().message())
+                    callback(response.raw().message())
                 } else {
                     callback(null)
                     db.repoDao().insertAll(response.body()!!)
