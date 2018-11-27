@@ -18,6 +18,20 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RepoRepository {
 
 
+    companion object {
+
+        var instance: RepoRepository? = null
+            get() {
+                if (instance == null) {
+                    instance = RepoRepository()
+
+                }
+                return instance!!
+            }
+
+    }
+
+
     val api: GHApi =
         Retrofit.Builder().baseUrl("https://api.github.com/").addConverterFactory(GsonConverterFactory.create()).build()
             .create(GHApi::class.java)
@@ -37,7 +51,7 @@ class RepoRepository {
 
                 if (response.body() == null) {
                     Log.d("DEBUG", response.raw().message())
-                    error.value=response.raw().message()
+                    error.value = response.raw().message()
                 } else {
                     error.value = ""
                     Observable.just(1).doOnNext { db.repoDao().insertAll(response.body()!!) }
