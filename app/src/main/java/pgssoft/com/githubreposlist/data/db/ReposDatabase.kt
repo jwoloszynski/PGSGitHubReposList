@@ -15,7 +15,7 @@ abstract class ReposDatabase : RoomDatabase() {
         var instance: ReposDatabase? = null
         fun getInstance(context: Context): ReposDatabase {
             if (instance == null) {
-                instance = Room.databaseBuilder(context, ReposDatabase::class.java, "pgs-gh-repos").allowMainThreadQueries()
+                instance = Room.databaseBuilder(context, ReposDatabase::class.java, "pgs-gh-repos")
                     .build()
             }
             return instance!!

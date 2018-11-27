@@ -1,6 +1,8 @@
 package pgssoft.com.githubreposlist.data
 
 import android.util.Log
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
@@ -37,7 +39,9 @@ class RepoRepository {
                     callback(response.raw().message())
                 } else {
                     callback(null)
-                    db.repoDao().insertAll(response.body()!!)
+                    Observable.just(1).doOnNext{ db.repoDao().insertAll(response.body()!!) }
+                        .subscribeOn(Schedulers.io()).subscribe()
+
 
                 }
             }
@@ -45,16 +49,17 @@ class RepoRepository {
 
     }
 
-
     fun getRepoList() = db.repoDao().getAll()
+
     fun gerRepoById(id: Int) = db.repoDao().get(id)
     fun getCount() = db.repoDao().getCount()
 
     fun clearRepoList() {
-        db.repoDao().deleteAll()
+
+        Observable.just(1).doOnNext { db.repoDao().deleteAll() }
+            .subscribeOn(Schedulers.io()).subscribe()
 
     }
-
 
 
 }
