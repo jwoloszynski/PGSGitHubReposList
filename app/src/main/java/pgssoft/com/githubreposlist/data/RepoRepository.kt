@@ -1,5 +1,6 @@
 package pgssoft.com.githubreposlist.data
 
+import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
@@ -23,23 +24,23 @@ class RepoRepository {
     val db = ReposDatabase.getInstance(PGSRepoApp.app)
 
 
-    fun fetchAll(callback: (String?) -> Unit) {
+    fun fetchAll(error: MutableLiveData<String>) {
         var orgName = PGSRepoApp.app.getString(R.string.pgsghorgname)
 
         api.getOrganizationRepos(orgName).enqueue(object : Callback<List<Repository>> {
             override fun onFailure(call: Call<List<Repository>>, t: Throwable) {
 
-                callback("Connection Error")
+                error.value = "Connection Error"
             }
 
             override fun onResponse(call: Call<List<Repository>>, response: Response<List<Repository>>) {
 
                 if (response.body() == null) {
                     Log.d("DEBUG", response.raw().message())
-                    callback(response.raw().message())
+                    error.value=response.raw().message()
                 } else {
-                    callback(null)
-                    Observable.just(1).doOnNext{ db.repoDao().insertAll(response.body()!!) }
+                    error.value = ""
+                    Observable.just(1).doOnNext { db.repoDao().insertAll(response.body()!!) }
                         .subscribeOn(Schedulers.io()).subscribe()
 
 

@@ -46,10 +46,10 @@ class RepoListViewModel : ViewModel() {
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed
         if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (itemCount < 1)) {
-            repoRepository.fetchAll { error -> _repoListErrorText.value = error }
+            repoRepository.fetchAll(_repoListErrorText)
             prefs.time = System.currentTimeMillis()
         } else {
-            _repoListErrorText.value = null
+            _repoListErrorText.value = ""
         }
 
     }
