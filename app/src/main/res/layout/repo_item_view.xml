@@ -24,6 +24,16 @@
                   android:text="RepoDescription"
                   android:textSize="14dp" android:textAlignment="center"
                   android:textColor="@android:color/background_dark"/>
+        
+        <TextView android:layout_width="match_parent"
+                  android:layout_height="30dp"
+                  android:paddingLeft="5dp"
+                  android:paddingTop="10dp"
+                  android:id="@+id/repoPushedAt"
+                  android:text="repo time updated"
+                  android:textSize="13dp" android:textAlignment="viewStart"
+                  android:textColor="@android:color/background_dark"/>
+
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                       android:paddingLeft="5dp">
 
@@ -31,7 +41,6 @@
                       android:layout_height="30dp"
                       android:id="@+id/repoUpdatedAt"
                       android:text="repo time updated"
-                      android:paddingTop="10dp"
                       android:textSize="13dp" android:textAlignment="center"
                       android:textColor="@android:color/background_dark"/>
 
@@ -39,18 +48,10 @@
                       android:layout_height="30dp"
                       android:id="@+id/repoLanguage"
                       android:text="repoLanguage"
-                      android:paddingTop="10dp"
                       android:textSize="13dp" android:textAlignment="center"
                       android:textColor="@android:color/background_dark"/>
         </LinearLayout>
 
-        <TextView android:layout_width="match_parent"
-                  android:layout_height="30dp"
-                  android:paddingLeft="5dp"
-                  android:id="@+id/repoPushedAt"
-                  android:text="repo time updated"
-                  android:textSize="13dp" android:textAlignment="viewStart"
-                  android:textColor="@android:color/background_dark"/>
         <View
                 android:layout_width="fill_parent"
                 android:layout_height="2dp"

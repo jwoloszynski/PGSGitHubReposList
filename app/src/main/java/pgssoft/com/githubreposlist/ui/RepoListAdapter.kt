@@ -11,11 +11,10 @@ import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
 
 
-
 class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
 
 
-    class RepoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer{
+    class RepoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
         fun bind(listRow: Repository, index: Int) {
             repoName?.text = (index + 1).toString() + ". " + listRow.name
@@ -46,7 +45,7 @@ class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<Rep
     }
 
 
-    fun setData(list:List<Repository>){
+    fun setData(list: List<Repository>) {
         repoList = list.sortedByDescending { it.pushed_at }
         notifyDataSetChanged()
     }
