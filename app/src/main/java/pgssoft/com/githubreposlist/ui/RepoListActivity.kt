@@ -38,6 +38,7 @@ class RepoListActivity : AppCompatActivity() {
 
     private fun onRefresh() {
         listModel.onRefresh(repoListAdapter.itemCount)
+        recyclerView.layoutManager?.smoothScrollToPosition(recyclerView,null,0)
 
     }
 

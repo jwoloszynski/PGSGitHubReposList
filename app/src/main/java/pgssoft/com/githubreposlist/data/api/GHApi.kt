@@ -16,5 +16,8 @@ interface GHApi {
     @GET(value = "orgs/{org}/repos?per_page=100")
     fun getOrganizationRepos (@Path("org") organizationName: String) : Call<List<Repository>>
 
+    @GET(value = "users/{user}/repos")
+    fun getUserRepos (@Path("user") userName: String) : Call<List<Repository>>
+
 
 }
