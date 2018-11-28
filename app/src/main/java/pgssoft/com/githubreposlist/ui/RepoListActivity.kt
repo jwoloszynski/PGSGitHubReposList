@@ -45,11 +45,7 @@ class RepoListActivity : AppCompatActivity() {
 
         listModel.repoListErrorText.observe(this, Observer {
             if (!it.isNullOrEmpty()) {
-                AlertDialog.Builder(this).setTitle(R.string.error).setMessage(it).setPositiveButton("OK")
-                { d, i ->
-                    d.dismiss()
-                }
-                    .create().show()
+                showErrorMessage(it)
             }
 
             swipeToRefresh.isRefreshing = false
@@ -61,9 +57,19 @@ class RepoListActivity : AppCompatActivity() {
         listModel.getRepoList().observe(this, Observer {
 
             repoListAdapter.setData(it!!)
-            recyclerView.layoutManager?.smoothScrollToPosition(recyclerView,null,0)
+            recyclerView.layoutManager?.smoothScrollToPosition(recyclerView, null, 0)
 
         })
+
+    }
+
+    private fun showErrorMessage(errorMessage:String) {
+
+        AlertDialog.Builder(this).setTitle(R.string.error).setMessage(errorMessage).setPositiveButton("OK")
+        { d, i ->
+            d.dismiss()
+        }
+            .create().show()
 
     }
 }
