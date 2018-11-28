@@ -38,7 +38,6 @@ class RepoListActivity : AppCompatActivity() {
 
     private fun onRefresh() {
         listModel.onRefresh(repoListAdapter.itemCount)
-        recyclerView.layoutManager?.smoothScrollToPosition(recyclerView,null,0)
 
     }
 
@@ -62,7 +61,10 @@ class RepoListActivity : AppCompatActivity() {
         listModel.getRepoList().observe(this, Observer {
 
             repoListAdapter.setData(it!!)
+            recyclerView.layoutManager?.smoothScrollToPosition(recyclerView,null,0)
+
         })
+
     }
 }
 
