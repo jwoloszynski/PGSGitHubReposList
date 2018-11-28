@@ -9,6 +9,7 @@ import kotlinx.android.synthetic.main.repo_item_view.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
+import pgssoft.com.githubreposlist.utils.getFormattedDate
 
 
 class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
@@ -16,12 +17,14 @@ class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<Rep
 
     class RepoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(listRow: Repository, index: Int) {
+        fun bind(listRow: Repository) {
 
             repoName?.text = listRow.name
             repoDescription?.text = listRow.description
-            repoUpdatedAt?.text = "Last updated: ${listRow.updated_at}"
-            repoPushedAt?.text = "Last pushed: ${listRow.pushed_at}"
+
+            repoUpdatedAt?.text = "Last updated: ${listRow.updated_at.getFormattedDate()}"
+
+            repoPushedAt?.text = "Last pushed: ${listRow.pushed_at.getFormattedDate()}"
             repoLanguage?.text = listRow.language
 
         }
@@ -41,7 +44,7 @@ class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<Rep
 
     override fun onBindViewHolder(viewHolder: RepoViewHolder, index: Int) {
 
-        viewHolder.bind(repoList[index], index)
+        viewHolder.bind(repoList[index])
 
     }
 
