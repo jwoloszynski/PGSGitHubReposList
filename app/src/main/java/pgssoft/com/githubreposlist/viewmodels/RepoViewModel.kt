@@ -5,17 +5,20 @@ import android.arch.lifecycle.ViewModel
 import pgssoft.com.githubreposlist.data.RepoRepository
 import pgssoft.com.githubreposlist.data.db.Repository
 
-class RepoViewModel: ViewModel(){
+class RepoViewModel : ViewModel() {
 
     private val repoRepository = RepoRepository.getRepoInstance()
     private var repository: LiveData<Repository>
 
     init {
-        repository = repoRepository.getRepoById(1)
+        repository = repoRepository.getRepoById(68371586)
     }
 
-    fun getRepo(id:Int){
+    fun getRepo() = repository
+
+    fun getRepoById(id: Int){
         repository = repoRepository.getRepoById(id)
     }
+
 
 }

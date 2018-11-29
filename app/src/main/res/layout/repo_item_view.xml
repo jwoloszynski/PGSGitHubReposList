@@ -19,6 +19,7 @@
                   android:text="RepoName"
                   android:singleLine="true"
                   android:background="@color/colorRepoNameBg"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/id"/>
 
         <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"

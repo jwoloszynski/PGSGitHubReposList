@@ -22,6 +22,7 @@ class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<Rep
         fun bind(listRow: Repository) {
 
             repoName?.text = listRow.name
+            id?.text = listRow.id.toString()
             repoDescription?.text = listRow.description
             repoUpdatedAt?.text = "Last updated: ${listRow.updated_at.getFormattedDate()}"
             repoPushedAt?.text = "Last pushed: ${listRow.pushed_at.getFormattedDate()}"
