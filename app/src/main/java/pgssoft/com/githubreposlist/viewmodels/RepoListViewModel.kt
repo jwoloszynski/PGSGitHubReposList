@@ -13,9 +13,8 @@ class RepoListViewModel : ViewModel() {
 
 
     private val repoRepositoryObservable = RepoRepository.getRepoInstance()
-    private lateinit var repoRepository: RepoRepository
-    private var repoListLiveData: LiveData<List<Repository>>
-    private var repoListCount: LiveData<Int>
+    private var repoListLiveData: LiveData<List<Repository>> = MutableLiveData()
+    private var repoListCount: LiveData<Int> = MutableLiveData()
     private var repoListCountText: LiveData<String>
     private var _repoListErrorText: MutableLiveData<String> = MutableLiveData()
     val repoListErrorText: LiveData<String>
@@ -25,9 +24,11 @@ class RepoListViewModel : ViewModel() {
 
 
     init {
-        repoRepositoryObservable.doOnNext{repo -> repoRepository=repo}.subscribe()
-        repoListLiveData = repoRepository.getRepoList()
-        repoListCount = repoRepository.getCount()
+        repoRepositoryObservable
+            .doOnNext{repo -> repoListLiveData = repo.getRepoList()}
+            .doOnNext{repo -> repoListCount = repo.getCount()}
+            .subscribe()
+
         repoListCountText = getRepoCountText()
 
     }
@@ -44,7 +45,8 @@ class RepoListViewModel : ViewModel() {
 
     fun onRefresh(itemCount: Int) {
         if (canRefreshList(itemCount)) {
-            repoRepository.fetchAll(_repoListErrorText)
+            repoRepositoryObservable.doOnNext{repo->
+            repo.fetchAll(_repoListErrorText)}.subscribe()
         } else {
             _repoListErrorText.value = ""
         }
@@ -53,7 +55,8 @@ class RepoListViewModel : ViewModel() {
 
     fun clearRepoList() {
 
-        repoRepository.clearRepoList()
+        repoRepositoryObservable
+            .doOnNext{repo -> repo.clearRepoList()}.subscribe()
 
     }
 
