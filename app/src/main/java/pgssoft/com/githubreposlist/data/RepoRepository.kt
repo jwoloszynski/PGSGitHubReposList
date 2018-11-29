@@ -98,7 +98,7 @@ class RepoRepository {
 
     fun getRepoList() = db.repoDao().getAll()
 
-    fun gerRepoById(id: Int) = db.repoDao().get(id)
+    fun getRepoById(id: Int) = db.repoDao().get(id)
     fun getCount() = db.repoDao().getCount()
 
     fun clearRepoList() {

@@ -30,9 +30,8 @@
                                                 android:layout_height="match_parent"
                                                 android:id="@+id/recyclerView"
                                                 android:padding="20dp"
-                                                tools:layout_editor_absoluteY="0dp" tools:layout_editor_absoluteX="0dp">
-
-        </android.support.v7.widget.RecyclerView>
+                                                tools:layout_editor_absoluteY="0dp"
+                                                tools:layout_editor_absoluteX="0dp"/>
 
     </android.support.v4.widget.SwipeRefreshLayout>
 
