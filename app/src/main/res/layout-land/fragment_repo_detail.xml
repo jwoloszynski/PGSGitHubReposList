@@ -7,7 +7,7 @@
         tools:context=".ui.RepoListActivity"
         android:elevation="40dp"
         android:orientation="vertical"
-        android:padding="30dp">
+        android:paddingTop="30dp">
 
     <TextView android:layout_width="match_parent"
               android:layout_height="wrap_content"

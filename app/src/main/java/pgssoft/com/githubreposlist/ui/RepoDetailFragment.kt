@@ -17,6 +17,19 @@ class RepoDetailFragment : Fragment() {
 
     lateinit var repoViewModel: RepoViewModel
 
+    private var repoId: Int = 1
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            // Get back arguments
+            repoId = if (arguments != null) {
+                arguments!!.getInt("id", 1)
+            } else {
+                1
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         //return super.onCreateView(inflater, container, savedInstanceState)
@@ -26,6 +39,7 @@ class RepoDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         repoViewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
+        repoViewModel.getRepoById(repoId)
         repoViewModel.getRepo().observe(this, Observer {
             updateView(it)
         })
