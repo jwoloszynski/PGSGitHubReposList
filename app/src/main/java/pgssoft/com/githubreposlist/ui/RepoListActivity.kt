@@ -51,14 +51,13 @@ class RepoListActivity : AppCompatActivity(), RepoListAdapter.OnSelectRepoDetail
                 commit()
 
             }
-
         }
 
     }
 
     override fun showError(message: String) {
         
-        AlertDialog.Builder(applicationContext).setTitle(R.string.error).setMessage(message)
+        AlertDialog.Builder(this).setTitle(R.string.error).setMessage(message)
             .setPositiveButton("OK")
             { d, _ ->
                 d.dismiss()

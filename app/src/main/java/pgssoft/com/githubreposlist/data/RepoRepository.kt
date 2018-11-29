@@ -66,33 +66,7 @@ class RepoRepository {
             }
         })
 
-        var userName = "antoniolg"
 
-        api.getUserRepos(userName).enqueue(object : Callback<List<Repository>> {
-            override fun onFailure(call: Call<List<Repository>>, t: Throwable) {
-
-                error.value = "Connection Error"
-            }
-
-            override fun onResponse(call: Call<List<Repository>>, response: Response<List<Repository>>) {
-
-                if (response.body() == null) {
-                    Log.d("DEBUG", response.raw().message())
-                    error.value = response.raw().message()
-                } else {
-                    error.value = ""
-
-                    GlobalScope.launch {
-                        db.repoDao().insertAll(response.body()!!)
-
-                    }
-//                    Observable.just(1).doOnNext { db.repoDao().insertAll(response.body()!!) }
-//                        .subscribeOn(Schedulers.io()).subscribe()
-
-
-                }
-            }
-        })
 
     }
 
