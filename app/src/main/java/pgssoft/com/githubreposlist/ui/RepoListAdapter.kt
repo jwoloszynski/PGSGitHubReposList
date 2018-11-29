@@ -14,7 +14,6 @@ import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.RepoListDiffCallback
 import pgssoft.com.githubreposlist.utils.getFormattedDate
 
-
 class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
 
 
@@ -23,12 +22,11 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
 
     }
 
-    private var repoListActivity: OnSelectRepoDetailsButton? = null
+    private var repoListActivity: RepoFragmentInterface? = null
 
     class RepoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(listRow: Repository, repoListActivity: OnSelectRepoDetailsButton?) {
-
+        fun bind(listRow: Repository, repoListActivity: RepoFragmentInterface?) {
             repoName?.text = listRow.name
             id?.text = listRow.id.toString()
             repoDescription?.text = listRow.description
@@ -72,9 +70,6 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
 
     }
 
-    interface OnSelectRepoDetailsButton {
-        fun onItemSelect(id: Int)
-    }
 
 
 }

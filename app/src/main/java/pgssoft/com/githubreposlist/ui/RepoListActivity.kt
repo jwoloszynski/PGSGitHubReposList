@@ -6,7 +6,7 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import pgssoft.com.githubreposlist.R
 
-class RepoListActivity : AppCompatActivity(), RepoListAdapter.OnSelectRepoDetailsButton, RepoListFragment.OnRequestError {
+class RepoListActivity : AppCompatActivity(), RepoFragmentInterface {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

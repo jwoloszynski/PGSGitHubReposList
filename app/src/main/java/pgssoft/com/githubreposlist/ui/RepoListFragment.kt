@@ -82,10 +82,7 @@ class RepoListFragment : Fragment() {
 
     }
 
-    interface OnRequestError {
 
-        fun showError(message: String)
-    }
 
 
 }
