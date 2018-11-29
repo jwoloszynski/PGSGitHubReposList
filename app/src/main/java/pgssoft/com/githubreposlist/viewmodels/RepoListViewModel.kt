@@ -12,8 +12,8 @@ import pgssoft.com.githubreposlist.utils.PrefsHelper
 class RepoListViewModel : ViewModel() {
 
 
-    private val repoRepository = RepoRepository.getRepoInstance()
-
+    private val repoRepositoryObservable = RepoRepository.getRepoInstance()
+    private lateinit var repoRepository: RepoRepository
     private var repoListLiveData: LiveData<List<Repository>>
     private var repoListCount: LiveData<Int>
     private var repoListCountText: LiveData<String>
@@ -25,6 +25,7 @@ class RepoListViewModel : ViewModel() {
 
 
     init {
+        repoRepositoryObservable.doOnNext{repo -> repoRepository=repo}.subscribe()
         repoListLiveData = repoRepository.getRepoList()
         repoListCount = repoRepository.getCount()
         repoListCountText = getRepoCountText()

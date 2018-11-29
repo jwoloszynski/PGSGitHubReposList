@@ -7,10 +7,13 @@ import pgssoft.com.githubreposlist.data.db.Repository
 
 class RepoViewModel : ViewModel() {
 
-    private val repoRepository = RepoRepository.getRepoInstance()
+    private val repoRepositoryObservable = RepoRepository.getRepoInstance()
+    private lateinit var repoRepository: RepoRepository
+
     private var repository: LiveData<Repository>
 
     init {
+        repoRepositoryObservable.doOnNext{repo -> repoRepository=repo}.subscribe()
         repository = repoRepository.getRepoById(68371586)
     }
 
