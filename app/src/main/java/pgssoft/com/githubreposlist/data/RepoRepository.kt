@@ -3,7 +3,8 @@ package pgssoft.com.githubreposlist.data
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import io.reactivex.Observable
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
@@ -56,7 +57,7 @@ class RepoRepository {
                 } else {
                     error.value = ""
 
-                    GlobalScope.launch {
+                    CoroutineScope(Dispatchers.IO).launch {
                         db.repoDao().insertAll(response.body()!!)
                     }
 //                    Observable.just(1).doOnNext { db.repoDao().insertAll(response.body()!!) }
@@ -76,7 +77,7 @@ class RepoRepository {
 
     fun clearRepoList() {
 
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             db.repoDao().deleteAll()
         }
 
