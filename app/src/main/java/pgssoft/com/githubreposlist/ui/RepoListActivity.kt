@@ -24,7 +24,7 @@ class RepoListActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
-        deleteButton.setOnClickListener { listModel.clearRepoList() }
+        deleteButton.setOnClickListener { swipeToRefresh.isRefreshing = false; listModel.clearRepoList() }
 
         recyclerView.adapter = repoListAdapter
         listModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)

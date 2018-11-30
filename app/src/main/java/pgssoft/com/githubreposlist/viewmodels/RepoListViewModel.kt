@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
+import io.reactivex.disposables.CompositeDisposable
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.data.RepoRepository
 import pgssoft.com.githubreposlist.data.db.Repository
@@ -12,7 +13,7 @@ import pgssoft.com.githubreposlist.utils.PrefsHelper
 class RepoListViewModel : ViewModel() {
 
 
-    private val repoRepositoryObservable = RepoRepository.getRepoInstance()
+    private val repo = RepoRepository()
     private var repoListLiveData: LiveData<List<Repository>> = MutableLiveData()
     private var repoListCount: LiveData<Int> = MutableLiveData()
     private var repoListCountText: LiveData<String>
@@ -22,12 +23,14 @@ class RepoListViewModel : ViewModel() {
 
     private lateinit var prefs: PrefsHelper
 
+    private val compositeDisposable: CompositeDisposable
+
 
     init {
-        repoRepositoryObservable
-            .subscribe { repo -> repoListLiveData = repo.getRepoList() }
-        repoRepositoryObservable.subscribe { repo -> repoListCount = repo.getCount() }
+        repoListLiveData = repo.getRepoList()
+        repoListCount = repo.getCount()
         repoListCountText = getRepoCountText()
+        compositeDisposable = CompositeDisposable()
 
     }
 
@@ -42,10 +45,15 @@ class RepoListViewModel : ViewModel() {
     }
 
     fun onRefresh(itemCount: Int) {
+
         if (canRefreshList(itemCount)) {
-            repoRepositoryObservable.subscribe { repo ->
-                repo.fetchAll(_repoListErrorText)
-            }
+
+            var observable = repo.fetchAll()
+            compositeDisposable.add(observable.subscribe { s ->
+                _repoListErrorText.value = s
+            })
+
+
         } else {
             _repoListErrorText.value = ""
         }
@@ -54,8 +62,7 @@ class RepoListViewModel : ViewModel() {
 
     fun clearRepoList() {
 
-        repoRepositoryObservable
-            .subscribe { repo -> repo.clearRepoList() }
+        compositeDisposable.add(repo.clearRepoList().subscribe())
 
     }
 
@@ -84,5 +91,7 @@ class RepoListViewModel : ViewModel() {
 
 
     }
+
+    override fun onCleared() = compositeDisposable.dispose()
 
 }
