@@ -2,7 +2,7 @@ package pgssoft.com.githubreposlist.data
 
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import io.reactivex.Observable
+import io.reactivex.Single
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,12 +23,12 @@ class RepoRepository {
     companion object {
 
         var instance: RepoRepository? = null
-        fun getRepoInstance(): Observable<RepoRepository> {
+        fun getRepoInstance(): Single<RepoRepository> {
 
             if (instance == null) {
                 instance = RepoRepository()
             }
-        return Observable.just(instance)
+        return Single.just(instance)
         }
 
     }
