@@ -1,6 +1,5 @@
 package pgssoft.com.githubreposlist.ui
 
-import android.content.Context
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -17,8 +16,8 @@ import pgssoft.com.githubreposlist.utils.getFormattedDate
 class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
 
 
-    constructor(repoList: List<Repository>, ctx: Context) : this(repoList) {
-        repoListActivity = ctx as RepoListActivity
+    constructor(repoList: List<Repository>, activity: RepoListActivity) : this(repoList) {
+        repoListActivity = activity
 
     }
 

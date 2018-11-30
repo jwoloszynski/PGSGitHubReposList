@@ -24,7 +24,7 @@ class RepoListFragment : Fragment() {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        repoListAdapter = RepoListAdapter(listOf(), context!!)
+        repoListAdapter = RepoListAdapter(listOf(), activity as RepoListActivity)
 
 
     }
