@@ -12,14 +12,14 @@ class RepoViewModel : ViewModel() {
     private lateinit var repository: LiveData<Repository>
 
     init {
-        repoRepositoryObservable.doOnNext{repo -> repository=repo.getRepoById(1)}.subscribe()
+        repoRepositoryObservable.subscribe{repo -> repository=repo.getRepoById(1)}
 
     }
 
     fun getRepo() = repository
 
     fun getRepoById(id: Int){
-        repoRepositoryObservable.doOnNext{repo -> repository = repo.getRepoById(id)}.subscribe()
+        repoRepositoryObservable.subscribe{repo -> repository = repo.getRepoById(id)}
     }
 
 
