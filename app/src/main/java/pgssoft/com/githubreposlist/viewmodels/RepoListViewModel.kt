@@ -25,10 +25,8 @@ class RepoListViewModel : ViewModel() {
 
     init {
         repoRepositoryObservable
-            .doOnNext{repo -> repoListLiveData = repo.getRepoList()}
-            .doOnNext{repo -> repoListCount = repo.getCount()}
-            .subscribe()
-
+            .subscribe { repo -> repoListLiveData = repo.getRepoList() }
+        repoRepositoryObservable.subscribe { repo -> repoListCount = repo.getCount() }
         repoListCountText = getRepoCountText()
 
     }
@@ -45,8 +43,9 @@ class RepoListViewModel : ViewModel() {
 
     fun onRefresh(itemCount: Int) {
         if (canRefreshList(itemCount)) {
-            repoRepositoryObservable.doOnNext{repo->
-            repo.fetchAll(_repoListErrorText)}.subscribe()
+            repoRepositoryObservable.subscribe { repo ->
+                repo.fetchAll(_repoListErrorText)
+            }
         } else {
             _repoListErrorText.value = ""
         }
@@ -56,7 +55,7 @@ class RepoListViewModel : ViewModel() {
     fun clearRepoList() {
 
         repoRepositoryObservable
-            .doOnNext{repo -> repo.clearRepoList()}.subscribe()
+            .subscribe { repo -> repo.clearRepoList() }
 
     }
 
@@ -85,6 +84,5 @@ class RepoListViewModel : ViewModel() {
 
 
     }
-
 
 }
