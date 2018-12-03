@@ -83,8 +83,6 @@ class RepoListFragment : Fragment() {
     }
 
 
-
-
 }
 
 

@@ -21,11 +21,11 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
 
     }
 
-    private var repoListActivity: RepoFragmentInterface? = null
+    private var repoListActivity: RepoActivityInterface? = null
 
     class RepoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(listRow: Repository, repoListActivity: RepoFragmentInterface?) {
+        fun bind(listRow: Repository, repoListActivity: RepoActivityInterface?) {
             repoName?.text = listRow.name
             id?.text = listRow.id.toString()
             repoDescription?.text = listRow.description
@@ -33,8 +33,20 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
             repoPushedAt?.text = "Last pushed: ${listRow.pushed_at.getFormattedDate()}"
             repoLanguage?.text = listRow.language
 
+            noteButton.text = if (listRow.comment.isNullOrEmpty()) {
+                "Add note"
+
+            } else {
+
+                "Edit note"
+            }
+
             detailsButton.setOnClickListener {
                 repoListActivity?.onItemSelect(listRow.id)
+            }
+
+            noteButton.setOnClickListener {
+                repoListActivity?.showNoteDialog(listRow.id, listRow.comment?: " ")
             }
 
 
@@ -68,7 +80,6 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
         diffResult.dispatchUpdatesTo(this)
 
     }
-
 
 
 }

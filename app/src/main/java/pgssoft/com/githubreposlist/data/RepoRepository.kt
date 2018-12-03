@@ -45,9 +45,12 @@ class RepoRepository {
                 } else {
                     error.value = ""
 
+                   // TODO get all comments here...
                     CoroutineScope(Dispatchers.IO).launch {
                         db.repoDao().insertAll(response.body()!!)
                     }
+
+                    //TODO .. and update corresponding rows here
 
                 }
             }
@@ -69,6 +72,14 @@ class RepoRepository {
         }
 
 
+    }
+
+
+
+    fun updateRepo(repository: Repository?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            db.repoDao().update(repository)
+        }
     }
 
 

@@ -12,18 +12,21 @@ interface RepoDao {
     @Query("SELECT * FROM repository where id = :id")
     fun get(id: Int): LiveData<Repository>
 
-    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertAll(repo: List<Repository>)
 
-    @Insert (onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(repo: Repository)
 
     @Delete
-    fun delete(repo:Repository)
+    fun delete(repo: Repository)
 
     @Query("SELECT count(*) FROM repository")
     fun getCount(): LiveData<Int>
 
     @Query("DELETE FROM repository")
     fun deleteAll()
+
+    @Update
+    fun update(repo: Repository?)
 }

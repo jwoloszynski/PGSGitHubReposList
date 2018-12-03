@@ -50,7 +50,9 @@ class RepoDetailFragment : Fragment() {
     private fun updateView(repo: Repository?) {
         repoName.text = repo?.name
         repoDescription.text = repo?.description
+        repoComment.text = repo?.comment
     }
+
 
 
 }
