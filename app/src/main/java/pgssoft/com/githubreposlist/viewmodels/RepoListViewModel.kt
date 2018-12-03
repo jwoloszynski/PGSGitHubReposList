@@ -12,21 +12,24 @@ import pgssoft.com.githubreposlist.utils.PrefsHelper
 class RepoListViewModel : ViewModel() {
 
 
-    private val repoRepositoryObservable = RepoRepository.getRepoInstance()
-    private var repoListLiveData: LiveData<List<Repository>> = MutableLiveData()
-    private var repoListCount: LiveData<Int> = MutableLiveData()
+
+    private val repoRepository = RepoRepository()
+    private var repoListLiveData: LiveData<List<Repository>>
+    private var repoListCount: LiveData<Int>
+
     private var repoListCountText: LiveData<String>
     private var _repoListErrorText: MutableLiveData<String> = MutableLiveData()
     val repoListErrorText: LiveData<String>
         get() = _repoListErrorText
 
-    private lateinit var prefs: PrefsHelper
+    lateinit var prefs: PrefsHelper
 
 
     init {
-        repoRepositoryObservable
-            .subscribe { repo -> repoListLiveData = repo.getRepoList() }
-        repoRepositoryObservable.subscribe { repo -> repoListCount = repo.getCount() }
+
+
+        repoListLiveData = repoRepository.getRepoList()
+        repoListCount = repoRepository.getCount()
         repoListCountText = getRepoCountText()
 
     }
@@ -43,9 +46,8 @@ class RepoListViewModel : ViewModel() {
 
     fun onRefresh(itemCount: Int) {
         if (canRefreshList(itemCount)) {
-            repoRepositoryObservable.subscribe { repo ->
-                repo.fetchAll(_repoListErrorText)
-            }
+            repoRepository.fetchAll(_repoListErrorText)
+
         } else {
             _repoListErrorText.value = ""
         }
@@ -54,8 +56,7 @@ class RepoListViewModel : ViewModel() {
 
     fun clearRepoList() {
 
-        repoRepositoryObservable
-            .subscribe { repo -> repo.clearRepoList() }
+        repoRepository.clearRepoList() }
 
     }
 
@@ -70,19 +71,20 @@ class RepoListViewModel : ViewModel() {
 
     }
 
-    private fun canRefreshList(itemCount: Int): Boolean {
 
-        prefs = PrefsHelper(PGSRepoApp.app)
-        val timeRefreshed = prefs.time
-        val timeBetween = System.currentTimeMillis() - timeRefreshed
+ fun canRefreshList(itemCount: Int): Boolean {
 
-        if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (itemCount < 1)) {
-            prefs.time = System.currentTimeMillis()
-            return true
-        }
-        return false
+     var prefs = PrefsHelper(PGSRepoApp.app)
+     val timeRefreshed = prefs.time
+     val timeBetween = System.currentTimeMillis() - timeRefreshed
 
-
+    if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (itemCount < 1)) {
+        prefs.time = System.currentTimeMillis()
+        return true
     }
+    return false
+
 
 }
+
+

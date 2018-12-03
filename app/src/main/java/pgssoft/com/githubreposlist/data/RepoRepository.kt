@@ -2,7 +2,6 @@ package pgssoft.com.githubreposlist.data
 
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import io.reactivex.Single
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,21 +16,10 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class RepoRepository {
 
 
-    companion object {
-
-        var instance: RepoRepository? = null
-        fun getRepoInstance(): Single<RepoRepository> {
-
-            if (instance == null) {
-                instance = RepoRepository()
-            }
-        return Single.just(instance)
-        }
-
-    }
 
 
     val api: GHApi =
@@ -60,9 +48,6 @@ class RepoRepository {
                     CoroutineScope(Dispatchers.IO).launch {
                         db.repoDao().insertAll(response.body()!!)
                     }
-//                    Observable.just(1).doOnNext { db.repoDao().insertAll(response.body()!!) }
-//                        .subscribeOn(Schedulers.io()).subscribe()
-
 
                 }
             }
@@ -83,8 +68,6 @@ class RepoRepository {
             db.repoDao().deleteAll()
         }
 
-//        Observable.just(1).doOnNext { db.repoDao().deleteAll() }
-//            .subscribeOn(Schedulers.io()).subscribe()
 
     }
 
