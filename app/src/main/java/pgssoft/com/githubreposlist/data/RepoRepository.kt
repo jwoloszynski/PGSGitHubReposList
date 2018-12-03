@@ -29,7 +29,7 @@ class RepoRepository {
     fun fetchAll(): Observable<String> {
 
         var orgName = PGSRepoApp.app.getString(R.string.pgsghorgname)
-        var errorString = ""
+        var statusString = ""
 
 
         api.getOrganizationRepos(orgName).subscribeOn(Schedulers.io()).subscribe(
@@ -43,19 +43,20 @@ class RepoRepository {
                 }
 
                 override fun onNext(response: Response<List<Repository>>) {
+                    Log.d("DEBUG", response.code().toString())
 
                     if (response.isSuccessful) {
                         if(response.body() == null){
 
                             Log.d("DEBUG", response.raw().message())
-                            errorString = response.raw().message()
+                            statusString = response.raw().message()
                         }
                         else{
                         db.repoDao().insertAll(response.body()!!)
                         }
 
                     } else {
-                        errorString = "Connection Error"
+                        statusString = "Connection Error"
                     }
 
                 }
@@ -63,9 +64,9 @@ class RepoRepository {
                 override fun onError(e: Throwable) {
 
                 }
-            })
+            } )
 
-        return Observable.just(errorString)
+        return Observable.just(statusString)
     }
 
 

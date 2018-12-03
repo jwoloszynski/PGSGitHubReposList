@@ -32,7 +32,7 @@ class RepoListActivity : AppCompatActivity() {
         )
 
         refreshAdapter()
-        listenErrors()
+        listenStatusChange()
 
     }
 
@@ -41,9 +41,9 @@ class RepoListActivity : AppCompatActivity() {
 
     }
 
-    private fun listenErrors() {
+    private fun listenStatusChange() {
 
-        listModel.repoListErrorText.observe(this, Observer {
+        listModel.repoListStatusText.observe(this, Observer {
             if (!it.isNullOrEmpty()) {
                 AlertDialog.Builder(this).setTitle(R.string.error).setMessage(it).setPositiveButton("OK")
                 { d, i ->

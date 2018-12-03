@@ -17,9 +17,9 @@ class RepoListViewModel : ViewModel() {
     private var repoListLiveData: LiveData<List<Repository>> = MutableLiveData()
     private var repoListCount: LiveData<Int> = MutableLiveData()
     private var repoListCountText: LiveData<String>
-    private var _repoListErrorText: MutableLiveData<String> = MutableLiveData()
-    val repoListErrorText: LiveData<String>
-        get() = _repoListErrorText
+    private var _repoListStatusText: MutableLiveData<String> = MutableLiveData()
+    val repoListStatusText: LiveData<String>
+        get() = _repoListStatusText
 
     private lateinit var prefs: PrefsHelper
 
@@ -49,13 +49,13 @@ class RepoListViewModel : ViewModel() {
         if (canRefreshList(itemCount)) {
 
             var observable = repo.fetchAll()
-            compositeDisposable.add(observable.subscribe { s ->
-                _repoListErrorText.value = s
+            compositeDisposable.add(observable.subscribe {
+                _repoListStatusText.value = it
             })
 
 
         } else {
-            _repoListErrorText.value = ""
+            _repoListStatusText.value = ""
         }
 
     }
