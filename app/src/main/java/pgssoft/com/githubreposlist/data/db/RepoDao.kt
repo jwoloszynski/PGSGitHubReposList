@@ -2,6 +2,7 @@ package pgssoft.com.githubreposlist.data.db
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import io.reactivex.Flowable
 
 @Dao
 interface RepoDao {
@@ -29,4 +30,8 @@ interface RepoDao {
 
     @Query("UPDATE repository SET comment = :comment WHERE id = :id")
     fun updateRepoComment(id: Int, comment: String)
+
+
+    @Query("SELECT id,comment FROM repository WHERE id = :repoId")
+    fun getCommentByRepoId(repoId: Int): Flowable<RepositoryComment?>
 }

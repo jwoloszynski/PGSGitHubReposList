@@ -84,9 +84,7 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         AlertDialog.Builder(this).setTitle(title).setView(v)
             .setPositiveButton("OK")
             { _, _ ->
-
                 viewModel.update(id, v.comment.text.toString())
-
             }
 
 

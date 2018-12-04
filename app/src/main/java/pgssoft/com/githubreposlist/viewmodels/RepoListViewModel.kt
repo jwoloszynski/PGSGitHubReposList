@@ -15,13 +15,14 @@ class RepoListViewModel : ViewModel() {
     private val repoRepository = RepoRepository()
     private var repoListLiveData: LiveData<List<Repository>>
     private var repoListCount: LiveData<Int>
-
     private var repoListCountText: LiveData<String>
     private var _repoListErrorText: MutableLiveData<String> = MutableLiveData()
     val repoListErrorText: LiveData<String>
         get() = _repoListErrorText
 
+
     val prefs = PrefsHelper(PGSRepoApp.app)
+
 
 
     init {
@@ -47,6 +48,7 @@ class RepoListViewModel : ViewModel() {
         if (canRefreshList(itemCount)) {
             repoRepository.fetchAll(_repoListErrorText)
 
+
         } else {
             _repoListErrorText.value = ""
         }
@@ -55,8 +57,10 @@ class RepoListViewModel : ViewModel() {
 
     fun clearRepoList() {
 
+
         repoRepository.clearRepoList()
         prefs.clearAll()
+
     }
 
 
@@ -75,6 +79,7 @@ class RepoListViewModel : ViewModel() {
     private fun canRefreshList(itemCount: Int): Boolean {
 
 
+
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed
 
@@ -85,8 +90,8 @@ class RepoListViewModel : ViewModel() {
         return false
 
 
+
+
     }
 }
-
-
 

@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RepoRepository {
 
 
-    val api: GHApi =
+    private val api: GHApi =
         Retrofit.Builder().baseUrl("https://api.github.com/").addConverterFactory(GsonConverterFactory.create()).build()
             .create(GHApi::class.java)
     val db = ReposDatabase.getInstance(PGSRepoApp.app)
@@ -43,12 +43,22 @@ class RepoRepository {
                 } else {
                     error.value = ""
 
-                   // TODO get all comments here...
+                    var repoList = response.body()!!
+
                     CoroutineScope(Dispatchers.IO).launch {
-                        db.repoDao().insertAll(response.body()!!)
+
+                        repoList = repoList.sortedByDescending { it.pushed_at }
+                        for (repo in repoList) {
+
+                            getCommentByRepoId(repo.id)?.subscribe {
+                                repo.comment = it?.comment?:""
+                            }
+
+                        }
+
+                        db.repoDao().insertAll(repoList)
                     }
 
-                    //TODO .. and update corresponding rows here
 
                 }
             }
@@ -61,6 +71,7 @@ class RepoRepository {
 
     fun getRepoById(id: Int) = db.repoDao().get(id)
     fun getCount() = db.repoDao().getCount()
+    fun getCommentByRepoId(repoId: Int) = db.repoDao().getCommentByRepoId(repoId)
 
     fun clearRepoList() {
 
@@ -72,10 +83,10 @@ class RepoRepository {
     }
 
 
-
     fun updateRepo(id: Int, comment: String) {
+
         CoroutineScope(Dispatchers.IO).launch {
-            db.repoDao().updateRepoComment(id,comment)
+            db.repoDao().updateRepoComment(id, comment)
         }
     }
 
