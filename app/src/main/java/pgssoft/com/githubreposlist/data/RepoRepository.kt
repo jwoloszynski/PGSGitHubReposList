@@ -1,17 +1,12 @@
 package pgssoft.com.githubreposlist.data
 
-import android.util.Log
 import io.reactivex.Completable
 import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
-import pgssoft.com.githubreposlist.data.db.Repository
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -29,44 +24,26 @@ class RepoRepository {
     fun fetchAll(): Observable<String> {
 
         var orgName = PGSRepoApp.app.getString(R.string.pgsghorgname)
-        var statusString = ""
 
 
-        api.getOrganizationRepos(orgName).subscribeOn(Schedulers.io()).subscribe(
-
-            object : Observer<Response<List<Repository>>> {
-                override fun onComplete() {
-
+        var d = api.getOrganizationRepos(orgName)
+            .doOnNext {
+                
+                if (!it.list.isNullOrEmpty()) {
+                    db.repoDao().insertAll(it.list)
                 }
-
-                override fun onSubscribe(d: Disposable) {
+            }.map {
+                when (it.status) {
+                    0 -> "DONE"
+                    1 -> "LOADING"
+                    2 -> "ERROR"
+                    else -> "ANOTHER ERROR"
                 }
+            }.doOnError { it.message.toString() }.subscribeOn(Schedulers.io())
 
-                override fun onNext(response: Response<List<Repository>>) {
-                    Log.d("DEBUG", response.code().toString())
 
-                    if (response.isSuccessful) {
-                        if(response.body() == null){
 
-                            Log.d("DEBUG", response.raw().message())
-                            statusString = response.raw().message()
-                        }
-                        else{
-                        db.repoDao().insertAll(response.body()!!)
-                        }
-
-                    } else {
-                        statusString = "Connection Error"
-                    }
-
-                }
-
-                override fun onError(e: Throwable) {
-
-                }
-            } )
-
-        return Observable.just(statusString)
+        return d
     }
 
 

@@ -15,7 +15,7 @@ interface GHApi {
 )
 
     @GET(value = "orgs/{org}/repos?per_page=100")
-    fun getOrganizationRepos (@Path("org") organizationName: String) : Observable<Response<List<Repository>>>
+    fun getOrganizationRepos (@Path("org") organizationName: String) : Observable<RepoListResponse>
 
 
 

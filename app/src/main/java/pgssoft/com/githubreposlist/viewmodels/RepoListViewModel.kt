@@ -48,8 +48,8 @@ class RepoListViewModel : ViewModel() {
 
         if (canRefreshList(itemCount)) {
 
-            var observable = repo.fetchAll()
-            compositeDisposable.add(observable.subscribe {
+            var d = repo.fetchAll()
+            compositeDisposable.add(d.subscribe {
                 _repoListStatusText.value = it
             })
 
