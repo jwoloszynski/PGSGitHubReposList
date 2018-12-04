@@ -46,7 +46,7 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
             }
 
             noteButton.setOnClickListener {
-                repoListActivity?.showNoteDialog(listRow.id, listRow.comment?: " ")
+                repoListActivity?.showNoteDialog(listRow.id, listRow.comment ?: " ")
             }
 
 
