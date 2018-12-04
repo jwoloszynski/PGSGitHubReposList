@@ -20,8 +20,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RepoRepository {
 
 
-
-
     val api: GHApi =
         Retrofit.Builder().baseUrl("https://api.github.com/").addConverterFactory(GsonConverterFactory.create()).build()
             .create(GHApi::class.java)
@@ -52,7 +50,6 @@ class RepoRepository {
                 }
             }
         })
-
 
 
     }

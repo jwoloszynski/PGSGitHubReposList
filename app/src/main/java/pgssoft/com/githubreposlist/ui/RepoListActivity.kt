@@ -9,10 +9,12 @@ import pgssoft.com.githubreposlist.R
 class RepoListActivity : AppCompatActivity(), RepoFragmentInterface {
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repolist)
         val fragmentList = RepoListFragment()
+
         supportFragmentManager.beginTransaction().apply {
 
             add(R.id.list, fragmentList)
@@ -31,9 +33,9 @@ class RepoListActivity : AppCompatActivity(), RepoFragmentInterface {
     }
 
     override fun onItemSelect(id: Int) {
-        val fragmentDetail = RepoDetailFragment()
         val args = Bundle()
         args.putInt("id", id)
+        val fragmentDetail = RepoDetailFragment()
         fragmentDetail.arguments = args
 
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {

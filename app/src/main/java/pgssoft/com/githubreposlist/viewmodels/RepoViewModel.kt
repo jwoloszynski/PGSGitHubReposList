@@ -11,15 +11,10 @@ class RepoViewModel : ViewModel() {
 
     private lateinit var repository: LiveData<Repository>
 
-    init {
-        repo.getRepoById(1)
 
-    }
-
-    fun getRepo() = repository
-
-    fun getRepoById(id: Int) {
-        repo.getRepoById(id)
+    fun getRepoById(id: Int): LiveData<Repository> {
+      repository = repo.getRepoById(id)
+        return repository
     }
 
 

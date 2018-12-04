@@ -13,5 +13,10 @@ class PrefsHelper(ctx: Context) {
             preferences.edit().putLong("time", time).apply()
         }
 
+    var repoId: Int = preferences.getInt("repoId", 0)
+        set(repoId) {
+            preferences.edit().putInt("repoId", repoId).apply()
+        }
+
 
 }
