@@ -9,28 +9,19 @@ class RepoViewModel : ViewModel() {
 
     private val repo = RepoRepository()
 
-    private var repository: LiveData<Repository>
+    private lateinit var repository: LiveData<Repository>
 
-    init {
-       repository = repo.getRepoById(1)
 
-    }
+    fun getRepoById(id: Int): LiveData<Repository> {
+      repository = repo.getRepoById(id)
+        return repository
 
-    fun getRepo() = repository
-
-    fun getRepoById(id: Int):RepoViewModel {
-        repository = repo.getRepoById(id)
-        return this
     }
 
 
 
-//    fun update (id: Int, comment: String) {
-//        repo.updateRepo(id,comment)
-//    }
-//
-    fun update (repository: Repository?) {
-        repo.updateRepo(repository)
+    fun update (id: Int, comment: String) {
+        repo.updateRepo(id, comment)
     }
 
 }

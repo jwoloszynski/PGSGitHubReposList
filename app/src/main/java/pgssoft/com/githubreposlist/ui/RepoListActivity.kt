@@ -1,6 +1,5 @@
 package pgssoft.com.githubreposlist.ui
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.Configuration
 import android.os.Bundle
@@ -14,11 +13,10 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
 
-    private val fragmentList = RepoListFragment()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repolist)
+        val fragmentList = RepoListFragment()
 
         supportFragmentManager.beginTransaction().apply {
 
@@ -42,6 +40,7 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         args.putInt("id", id)
         val detailFragment = RepoDetailFragment()
         detailFragment.arguments = args
+
 
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 
@@ -79,13 +78,18 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
         v.comment.setText(comment)
 
-        val title = if (comment.isEmpty()) {"Add note"} else {"Edit note"}
+        val title = if (comment.isEmpty()) "Add note" else "Edit note"
+
 
         AlertDialog.Builder(this).setTitle(title).setView(v)
             .setPositiveButton("OK")
             { _, _ ->
-                viewModel.getRepoById(id).getRepo().observe(this, Observer { viewModel.update(it) })
+
+                viewModel.update(id, v.comment.text.toString())
+
             }
+
+
             .create().show()
     }
 

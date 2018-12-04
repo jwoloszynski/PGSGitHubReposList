@@ -8,27 +8,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_repo_detail.*
+import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
+import pgssoft.com.githubreposlist.utils.PrefsHelper
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 
 class RepoDetailFragment : Fragment() {
 
     lateinit var repoViewModel: RepoViewModel
-
-    private var repoId: Int = 1
+    lateinit var prefs: PrefsHelper
+    private var repoId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        prefs = PrefsHelper(PGSRepoApp.app)
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
             // Get back arguments
             repoId = if (arguments != null) {
-                arguments!!.getInt("id", 1)
+                arguments!!.getInt("id", prefs.repoId)
+
             } else {
-                1
+                prefs.repoId
             }
+            prefs.repoId = repoId
         }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -39,8 +45,11 @@ class RepoDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         repoViewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
-        repoViewModel.getRepoById(repoId)
-        repoViewModel.getRepo().observe(this, Observer {
+        if (repoId == 0) {
+            repoId = prefs.repoId
+        }
+        repoViewModel.getRepoById(repoId).observe(this, Observer {
+
             updateView(it)
         })
 
@@ -52,7 +61,6 @@ class RepoDetailFragment : Fragment() {
         repoDescription.text = repo?.description
         repoComment.text = repo?.comment
     }
-
 
 
 }

@@ -20,8 +20,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RepoRepository {
 
 
-
-
     val api: GHApi =
         Retrofit.Builder().baseUrl("https://api.github.com/").addConverterFactory(GsonConverterFactory.create()).build()
             .create(GHApi::class.java)
@@ -57,7 +55,6 @@ class RepoRepository {
         })
 
 
-
     }
 
     fun getRepoList() = db.repoDao().getAll()
@@ -76,9 +73,9 @@ class RepoRepository {
 
 
 
-    fun updateRepo(repository: Repository?) {
+    fun updateRepo(id: Int, comment: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            db.repoDao().update(repository)
+            db.repoDao().updateRepoComment(id,comment)
         }
     }
 

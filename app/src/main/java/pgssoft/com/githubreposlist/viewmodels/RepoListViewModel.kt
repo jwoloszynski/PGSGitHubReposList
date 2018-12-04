@@ -12,7 +12,6 @@ import pgssoft.com.githubreposlist.utils.PrefsHelper
 class RepoListViewModel : ViewModel() {
 
 
-
     private val repoRepository = RepoRepository()
     private var repoListLiveData: LiveData<List<Repository>>
     private var repoListCount: LiveData<Int>
@@ -22,7 +21,7 @@ class RepoListViewModel : ViewModel() {
     val repoListErrorText: LiveData<String>
         get() = _repoListErrorText
 
-    lateinit var prefs: PrefsHelper
+    val prefs = PrefsHelper(PGSRepoApp.app)
 
 
     init {
@@ -56,9 +55,10 @@ class RepoListViewModel : ViewModel() {
 
     fun clearRepoList() {
 
-        repoRepository.clearRepoList() }
-
+        repoRepository.clearRepoList()
+        prefs.clearAll()
     }
+
 
     private fun getCountText(count: Int): String {
 
@@ -72,19 +72,21 @@ class RepoListViewModel : ViewModel() {
     }
 
 
- fun canRefreshList(itemCount: Int): Boolean {
+    private fun canRefreshList(itemCount: Int): Boolean {
 
-     var prefs = PrefsHelper(PGSRepoApp.app)
-     val timeRefreshed = prefs.time
-     val timeBetween = System.currentTimeMillis() - timeRefreshed
 
-    if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (itemCount < 1)) {
-        prefs.time = System.currentTimeMillis()
-        return true
+        val timeRefreshed = prefs.time
+        val timeBetween = System.currentTimeMillis() - timeRefreshed
+
+        if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (itemCount < 1)) {
+            prefs.time = System.currentTimeMillis()
+            return true
+        }
+        return false
+
+
     }
-    return false
-
-
 }
+
 
 

@@ -27,6 +27,6 @@ interface RepoDao {
     @Query("DELETE FROM repository")
     fun deleteAll()
 
-    @Update
-    fun update(repo: Repository?)
+    @Query("UPDATE repository SET comment = :comment WHERE id = :id")
+    fun updateRepoComment(id: Int, comment: String)
 }
