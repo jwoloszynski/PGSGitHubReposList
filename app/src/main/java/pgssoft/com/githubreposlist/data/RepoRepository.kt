@@ -41,11 +41,10 @@ class RepoRepository {
                     Log.d("DEBUG", response.raw().message())
                     error.value = response.raw().message()
                 } else {
-                    error.value = ""
 
                     var repoList = response.body()!!
 
-                    CoroutineScope(Dispatchers.IO).launch {
+                    (PGSRepoApp.app as CoroutineScope).launch {
 
                         repoList = repoList.sortedByDescending { it.pushed_at }
                         for (repo in repoList) {
@@ -57,6 +56,8 @@ class RepoRepository {
                         }
 
                         db.repoDao().insertAll(repoList)
+                        error.postValue("")
+
                     }
 
 
@@ -75,7 +76,7 @@ class RepoRepository {
 
     fun clearRepoList() {
 
-        CoroutineScope(Dispatchers.IO).launch {
+        (PGSRepoApp.app as CoroutineScope).launch {
             db.repoDao().deleteAll()
         }
 
@@ -85,7 +86,7 @@ class RepoRepository {
 
     fun updateRepo(id: Int, comment: String) {
 
-        CoroutineScope(Dispatchers.IO).launch {
+        (PGSRepoApp.app as CoroutineScope).launch {
             db.repoDao().updateRepoComment(id, comment)
         }
     }

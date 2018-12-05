@@ -60,6 +60,11 @@ class RepoDetailFragment : Fragment() {
         repoName.text = repo?.name
         repoDescription.text = repo?.description
         repoComment.text = repo?.comment
+        commentString.visibility = if (repo?.comment.isNullOrBlank()) {
+            View.INVISIBLE
+        } else {
+            View.VISIBLE
+        }
     }
 
 
