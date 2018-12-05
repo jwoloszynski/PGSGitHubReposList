@@ -1,23 +1,21 @@
 package pgssoft.com.githubreposlist.data
 
+import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
-import pgssoft.com.githubreposlist.data.db.Repository
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
 class RepoRepository {
+
+    var _refreshState = MutableLiveData<Event<RepoStatus>>()
+    val refreshState: LiveData<Event<RepoStatus>>
+        get() = _refreshState
 
 
     private val api: GHApi =
@@ -26,47 +24,34 @@ class RepoRepository {
     val db = ReposDatabase.getInstance(PGSRepoApp.app)
 
 
-    fun fetchAll(error: MutableLiveData<String>) {
+    fun fetchAll() {
         var orgName = PGSRepoApp.app.getString(R.string.pgsghorgname)
 
-        api.getOrganizationRepos(orgName).enqueue(object : Callback<List<Repository>> {
-            override fun onFailure(call: Call<List<Repository>>, t: Throwable) {
+        try {
+            val response = api.getOrganizationRepos(orgName).execute()
+            if (response.body() == null) {
+                Log.d("DEBUG", response.raw().message())
+                _refreshState.postValue(Event(RepoStatus.Error("Rate limit exceeded")))
+            } else {
 
-                error.value = "Connection Error"
-            }
+                var repoList = response.body()!!
 
-            override fun onResponse(call: Call<List<Repository>>, response: Response<List<Repository>>) {
+                repoList = repoList.sortedByDescending { it.pushed_at }
+                for (repo in repoList) {
+                    var comment = getCommentByRepoId(repo.id)
+                        repo.comment = comment?.comment ?: ""
 
-                if (response.body() == null) {
-                    Log.d("DEBUG", response.raw().message())
-                    error.value = response.raw().message()
-                } else {
-
-                    var repoList = response.body()!!
-
-                    (PGSRepoApp.app as CoroutineScope).launch {
-
-                        repoList = repoList.sortedByDescending { it.pushed_at }
-                        for (repo in repoList) {
-
-                            getCommentByRepoId(repo.id)?.subscribe {
-                                repo.comment = it?.comment?:""
-                            }
-
-                        }
-
-                        db.repoDao().insertAll(repoList)
-                        error.postValue("")
-
-                    }
 
 
                 }
+                db.repoDao().insertAll(repoList)
+                _refreshState.postValue(Event(RepoStatus.DataOk()))
             }
-        })
-
-
+        } catch (e: Exception) {
+            _refreshState.postValue(Event(RepoStatus.Error(e.message.toString())))
+        }
     }
+
 
     fun getRepoList() = db.repoDao().getAll()
 
@@ -75,20 +60,12 @@ class RepoRepository {
     fun getCommentByRepoId(repoId: Int) = db.repoDao().getCommentByRepoId(repoId)
 
     fun clearRepoList() {
-
-        (PGSRepoApp.app as CoroutineScope).launch {
-            db.repoDao().deleteAll()
-        }
-
-
+        db.repoDao().deleteAll()
     }
 
-
     fun updateRepo(id: Int, comment: String) {
+        db.repoDao().updateRepoComment(id, comment)
 
-        (PGSRepoApp.app as CoroutineScope).launch {
-            db.repoDao().updateRepoComment(id, comment)
-        }
     }
 
 

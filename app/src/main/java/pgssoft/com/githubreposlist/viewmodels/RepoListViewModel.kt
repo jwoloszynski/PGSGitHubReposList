@@ -3,13 +3,17 @@ package pgssoft.com.githubreposlist.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import pgssoft.com.githubreposlist.PGSRepoApp
+import pgssoft.com.githubreposlist.data.Event
+import pgssoft.com.githubreposlist.data.EventObserver
 import pgssoft.com.githubreposlist.data.RepoRepository
+import pgssoft.com.githubreposlist.data.RepoStatus
 import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 
-class RepoListViewModel : ViewModel() {
+class RepoListViewModel : ScopedViewModel() {
 
 
     private val repoRepository = RepoRepository()
@@ -19,10 +23,10 @@ class RepoListViewModel : ViewModel() {
     private var _repoListErrorText: MutableLiveData<String> = MutableLiveData()
     val repoListErrorText: LiveData<String>
         get() = _repoListErrorText
+   var statusLiveData: LiveData<Event<RepoStatus>>
 
 
     val prefs = PrefsHelper(PGSRepoApp.app)
-
 
 
     init {
@@ -31,6 +35,7 @@ class RepoListViewModel : ViewModel() {
         repoListLiveData = repoRepository.getRepoList()
         repoListCount = repoRepository.getCount()
         repoListCountText = getRepoCountText()
+        statusLiveData = repoRepository._refreshState
 
     }
 
@@ -46,11 +51,9 @@ class RepoListViewModel : ViewModel() {
 
     fun onRefresh(itemCount: Int) {
         if (canRefreshList(itemCount)) {
-            repoRepository.fetchAll(_repoListErrorText)
 
+            scope.launch{repoRepository.fetchAll() }
 
-        } else {
-            _repoListErrorText.value = ""
         }
 
     }
@@ -58,7 +61,7 @@ class RepoListViewModel : ViewModel() {
     fun clearRepoList() {
 
 
-        repoRepository.clearRepoList()
+        scope.launch{  repoRepository.clearRepoList() }
         prefs.clearAll()
 
     }
@@ -79,7 +82,6 @@ class RepoListViewModel : ViewModel() {
     private fun canRefreshList(itemCount: Int): Boolean {
 
 
-
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed
 
@@ -88,8 +90,6 @@ class RepoListViewModel : ViewModel() {
             return true
         }
         return false
-
-
 
 
     }

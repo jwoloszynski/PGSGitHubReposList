@@ -42,12 +42,11 @@ class RepoListFragment : Fragment() {
         deleteButton.setOnClickListener { listModel.clearRepoList() }
 
         recyclerView.adapter = repoListAdapter
-        listModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)
+        listModel = ViewModelProviders.of(activity!!).get(RepoListViewModel::class.java)
         listModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
         )
 
         refreshAdapter()
-        listenErrors()
     }
 
     private fun onRefresh() {
@@ -55,17 +54,6 @@ class RepoListFragment : Fragment() {
 
     }
 
-    private fun listenErrors() {
-
-        listModel.repoListErrorText.observe(this, Observer {
-            if (!it.isNullOrEmpty()) {
-                showErrorMessage(it)
-            }
-
-            swipeToRefresh.isRefreshing = false
-        })
-
-    }
 
     private fun refreshAdapter() {
         listModel.getRepoList().observe(this, Observer {
@@ -77,10 +65,7 @@ class RepoListFragment : Fragment() {
 
     }
 
-    private fun showErrorMessage(errorMessage: String) {
-        (activity as RepoListActivity).showError(errorMessage)
 
-    }
 
 
 }

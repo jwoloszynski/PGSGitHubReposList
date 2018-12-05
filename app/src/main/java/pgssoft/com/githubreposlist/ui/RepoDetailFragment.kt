@@ -38,13 +38,12 @@ class RepoDetailFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        //return super.onCreateView(inflater, container, savedInstanceState)
         return inflater.inflate(R.layout.fragment_repo_detail, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        repoViewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
+        repoViewModel = ViewModelProviders.of(activity!!).get(RepoViewModel::class.java)
         if (repoId == 0) {
             repoId = prefs.repoId
         }

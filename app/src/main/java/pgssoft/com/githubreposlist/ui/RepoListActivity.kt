@@ -7,11 +7,17 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.dialog_note.view.*
+import kotlinx.android.synthetic.main.fragment_repo_list.*
 import pgssoft.com.githubreposlist.R
+import pgssoft.com.githubreposlist.data.EventObserver
+import pgssoft.com.githubreposlist.data.RepoStatus
+import pgssoft.com.githubreposlist.viewmodels.RepoListViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
+    lateinit var repoViewModel: RepoViewModel
+    lateinit var listModel: RepoListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,6 +39,11 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
             }
         }
 
+
+        repoViewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
+        listModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)
+
+        listenStatus()
     }
 
     override fun onItemSelect(id: Int) {
@@ -61,19 +72,7 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
     }
 
-    override fun showError(message: String) {
-
-        AlertDialog.Builder(this).setTitle(R.string.error).setMessage(message)
-            .setPositiveButton("OK")
-            { d, _ ->
-                d.dismiss()
-            }
-            .create().show()
-    }
-
-
     override fun showNoteDialog(id: Int, comment: String) {
-        val viewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
         val v: View = layoutInflater.inflate(R.layout.dialog_note, null)
 
         v.comment.setText(comment)
@@ -84,10 +83,39 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         AlertDialog.Builder(this).setTitle(title).setView(v)
             .setPositiveButton("OK")
             { _, _ ->
-                viewModel.update(id, v.comment.text.toString())
+                repoViewModel.update(id, v.comment.text.toString())
             }
 
 
+            .create().show()
+    }
+
+
+    private fun listenStatus() {
+
+        listModel.statusLiveData.observe(this, EventObserver<RepoStatus> {
+
+            when (it) {
+                is RepoStatus.DataOk -> swipeToRefresh.isRefreshing = false
+                is RepoStatus.Error -> {
+                    showError(it.message)
+                    swipeToRefresh.isRefreshing = false
+                }
+
+            }
+
+
+        })
+
+    }
+
+    private fun showError(message: String) {
+
+        AlertDialog.Builder(this).setTitle(R.string.error).setMessage(message)
+            .setPositiveButton("OK")
+            { d, _ ->
+                d.dismiss()
+            }
             .create().show()
     }
 

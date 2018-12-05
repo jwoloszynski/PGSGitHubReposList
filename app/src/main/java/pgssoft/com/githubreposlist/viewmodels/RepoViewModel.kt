@@ -2,10 +2,11 @@ package pgssoft.com.githubreposlist.viewmodels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
+import kotlinx.coroutines.launch
 import pgssoft.com.githubreposlist.data.RepoRepository
 import pgssoft.com.githubreposlist.data.db.Repository
 
-class RepoViewModel : ViewModel() {
+class RepoViewModel : ScopedViewModel() {
 
     private val repo = RepoRepository()
 
@@ -18,10 +19,8 @@ class RepoViewModel : ViewModel() {
 
     }
 
-
-
     fun update (id: Int, comment: String) {
-        repo.updateRepo(id, comment)
+       scope.launch { repo.updateRepo(id, comment)}
     }
 
 }

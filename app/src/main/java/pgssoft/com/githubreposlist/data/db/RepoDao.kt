@@ -33,5 +33,5 @@ interface RepoDao {
 
 
     @Query("SELECT id,comment FROM repository WHERE id = :repoId")
-    fun getCommentByRepoId(repoId: Int): Flowable<RepositoryComment?>
+    fun getCommentByRepoId(repoId: Int): RepositoryComment
 }
