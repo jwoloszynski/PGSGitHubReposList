@@ -1,88 +1,72 @@
 package pgssoft.com.githubreposlist.data
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.util.Log
-import io.reactivex.Completable
-import io.reactivex.Observable
-import io.reactivex.Observer
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
-import pgssoft.com.githubreposlist.data.db.Repository
-import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+
 
 class RepoRepository {
 
+    var _refreshState = MutableLiveData<Event<RepoStatus>>()
+    val refreshState: LiveData<Event<RepoStatus>>
+        get() = _refreshState
 
-    val api: GHApi =
-        Retrofit.Builder().baseUrl("https://api.github.com/").addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create()).build()
+
+    private val api: GHApi =
+        Retrofit.Builder().baseUrl("https://api.github.com/").addConverterFactory(GsonConverterFactory.create()).build()
             .create(GHApi::class.java)
     val db = ReposDatabase.getInstance(PGSRepoApp.app)
 
 
-    fun fetchAll(): Observable<String> {
-
+    fun fetchAll() {
         var orgName = PGSRepoApp.app.getString(R.string.pgsghorgname)
-        var statusString = ""
 
+        try {
+            val response = api.getOrganizationRepos(orgName).execute()
+            if (response.body() == null) {
+                Log.d("DEBUG", response.raw().message())
+                _refreshState.postValue(Event(RepoStatus.Error("Rate limit exceeded")))
+            } else {
 
-        api.getOrganizationRepos(orgName).subscribeOn(Schedulers.io()).subscribe(
+                var repoList = response.body()!!
 
-            object : Observer<Response<List<Repository>>> {
-                override fun onComplete() {
+                repoList = repoList.sortedByDescending { it.pushed_at }
+                for (repo in repoList) {
+                    var comment = getCommentByRepoId(repo.id)
+                    repo.comment = comment?.comment ?: ""
+
 
                 }
 
-                override fun onSubscribe(d: Disposable) {
-                }
+                db.repoDao().insertAll(repoList)
+                _refreshState.postValue(Event(RepoStatus.DataOk()))
 
-                override fun onNext(response: Response<List<Repository>>) {
-                    Log.d("DEBUG", response.code().toString())
-
-                    if (response.isSuccessful) {
-                        if(response.body() == null){
-
-                            Log.d("DEBUG", response.raw().message())
-                            statusString = response.raw().message()
-                        }
-                        else{
-                        db.repoDao().insertAll(response.body()!!)
-                        }
-
-                    } else {
-                        statusString = "Connection Error"
-                    }
-
-                }
-
-                override fun onError(e: Throwable) {
-
-                }
-            } )
-
-        return Observable.just(statusString)
+            }
+        } catch (e: Exception) {
+            _refreshState.postValue(Event(RepoStatus.Error(e.message.toString())))
+        }
     }
 
 
     fun getRepoList() = db.repoDao().getAll()
 
-    fun gerRepoById(id: Int) = db.repoDao().get(id)
+    fun getRepoById(id: Int) = db.repoDao().get(id)
     fun getCount() = db.repoDao().getCount()
-
-    fun clearRepoList(): Completable {
-
-        return Completable.create { s ->
-
-            db.repoDao().deleteAll()
+    fun getCommentByRepoId(repoId: Int) = db.repoDao().getCommentByRepoId(repoId)
 
 
-        }.subscribeOn(Schedulers.io())
+    fun clearRepoList() {
+        db.repoDao().deleteAll()
+    }
+
+    fun updateRepo(id: Int, comment: String) {
+        db.repoDao().updateRepoComment(id, comment)
 
     }
 

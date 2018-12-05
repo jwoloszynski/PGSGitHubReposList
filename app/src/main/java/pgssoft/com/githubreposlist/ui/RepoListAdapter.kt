@@ -13,19 +13,42 @@ import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.RepoListDiffCallback
 import pgssoft.com.githubreposlist.utils.getFormattedDate
 
+class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
 
-class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
 
+    constructor(repoList: List<Repository>, activity: RepoListActivity) : this(repoList) {
+        repoListActivity = activity
+
+    }
+
+    private var repoListActivity: RepoActivityInterface? = null
 
     class RepoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(listRow: Repository) {
-
+        fun bind(listRow: Repository, repoListActivity: RepoActivityInterface?) {
             repoName?.text = listRow.name
+            id?.text = listRow.id.toString()
             repoDescription?.text = listRow.description
             repoUpdatedAt?.text = "Last updated: ${listRow.updated_at.getFormattedDate()}"
             repoPushedAt?.text = "Last pushed: ${listRow.pushed_at.getFormattedDate()}"
             repoLanguage?.text = listRow.language
+
+            noteButton.text = if (listRow.comment.isNullOrEmpty()) {
+                "Add note"
+
+            } else {
+
+                "Edit note"
+            }
+
+            detailsButton.setOnClickListener {
+                repoListActivity?.onItemSelect(listRow.id)
+            }
+
+            noteButton.setOnClickListener {
+                repoListActivity?.showNoteDialog(listRow.id, listRow.comment ?: " ")
+            }
+
 
         }
 
@@ -44,7 +67,7 @@ class RepoListAdapter(var repoList: List<Repository>) : RecyclerView.Adapter<Rep
 
     override fun onBindViewHolder(viewHolder: RepoViewHolder, index: Int) {
 
-        viewHolder.bind(repoList[index])
+        viewHolder.bind(repoList[index], repoListActivity)
 
     }
 

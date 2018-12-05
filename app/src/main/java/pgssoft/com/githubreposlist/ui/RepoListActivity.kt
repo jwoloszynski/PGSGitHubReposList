@@ -1,71 +1,125 @@
 package pgssoft.com.githubreposlist.ui
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_repo_list.*
-import pgssoft.com.githubreposlist.PGSRepoApp
+import android.view.View
+import kotlinx.android.synthetic.main.dialog_note.view.*
+import kotlinx.android.synthetic.main.fragment_repo_list.*
 import pgssoft.com.githubreposlist.R
+import pgssoft.com.githubreposlist.data.EventObserver
+import pgssoft.com.githubreposlist.data.RepoStatus
 import pgssoft.com.githubreposlist.viewmodels.RepoListViewModel
+import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
+class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
-class RepoListActivity : AppCompatActivity() {
-
+    lateinit var repoViewModel: RepoViewModel
     lateinit var listModel: RepoListViewModel
 
-    private val repoListAdapter: RepoListAdapter = RepoListAdapter(listOf())
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_repo_list)
+        setContentView(R.layout.activity_repolist)
+        val fragmentList = RepoListFragment()
 
-        recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
-        swipeToRefresh.setOnRefreshListener { onRefresh() }
-        deleteButton.setOnClickListener { swipeToRefresh.isRefreshing = false; listModel.clearRepoList() }
+        supportFragmentManager.beginTransaction().apply {
 
-        recyclerView.adapter = repoListAdapter
+            add(R.id.list, fragmentList)
+            commit()
+        }
+
+        val fragmentDetail = RepoDetailFragment()
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+
+            supportFragmentManager.beginTransaction().apply {
+                add(R.id.detail, fragmentDetail)
+                commit()
+            }
+        }
+
+
+        repoViewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
         listModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)
-        listModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
-        )
 
-        refreshAdapter()
-        listenStatusChange()
+        listenStatus()
+    }
+
+    override fun onItemSelect(id: Int) {
+        val args = Bundle()
+        args.putInt("id", id)
+        val detailFragment = RepoDetailFragment()
+        detailFragment.arguments = args
+
+
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+            supportFragmentManager.beginTransaction().apply {
+                replace(R.id.detail, detailFragment)
+                commit()
+
+            }
+        } else {
+
+            supportFragmentManager.beginTransaction().apply {
+                replace(R.id.list, detailFragment)
+                addToBackStack(null)
+                commit()
+
+            }
+        }
 
     }
 
-    private fun onRefresh() {
-        listModel.onRefresh(repoListAdapter.itemCount)
 
-    }
+    override fun showNoteDialog(id: Int, comment: String) {
+        val v: View = layoutInflater.inflate(R.layout.dialog_note, null)
 
-    private fun listenStatusChange() {
+        v.comment.setText(comment)
 
-        listModel.repoListStatusText.observe(this, Observer {
-            if (!it.isNullOrEmpty()) {
-                AlertDialog.Builder(this).setTitle(R.string.error).setMessage(it).setPositiveButton("OK")
-                { d, i ->
-                    d.dismiss()
-                }
-                    .create().show()
+        val title = if (comment.isEmpty()) "Add note" else "Edit note"
+
+
+        AlertDialog.Builder(this).setTitle(title).setView(v)
+            .setPositiveButton("OK")
+            { _, _ ->
+                repoViewModel.update(id, v.comment.text.toString())
             }
 
-            swipeToRefresh.isRefreshing = false
+
+            .create().show()
+    }
+
+
+    private fun listenStatus() {
+
+        listModel.statusLiveData.observe(this, EventObserver<RepoStatus> {
+
+            when (it) {
+                is RepoStatus.DataOk -> swipeToRefresh.isRefreshing = false
+                is RepoStatus.Error -> {
+                    showError(it.message)
+                    swipeToRefresh.isRefreshing = false
+                }
+
+            }
+
+
         })
 
     }
 
-    private fun refreshAdapter() {
-        listModel.getRepoList().observe(this, Observer {
+    private fun showError(message: String) {
 
-            repoListAdapter.setData(it!!)
-            recyclerView.layoutManager?.smoothScrollToPosition(recyclerView,null,0)
-
-        })
-
+        AlertDialog.Builder(this).setTitle(R.string.error).setMessage(message)
+            .setPositiveButton("OK")
+            { d, _ ->
+                d.dismiss()
+            }
+            .create().show()
     }
+
+
 }
-
-

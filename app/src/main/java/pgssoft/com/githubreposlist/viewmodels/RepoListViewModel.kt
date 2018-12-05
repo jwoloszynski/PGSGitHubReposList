@@ -3,34 +3,33 @@ package pgssoft.com.githubreposlist.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import android.arch.lifecycle.ViewModel
-import io.reactivex.disposables.CompositeDisposable
+
+import kotlinx.coroutines.launch
 import pgssoft.com.githubreposlist.PGSRepoApp
+import pgssoft.com.githubreposlist.data.Event
 import pgssoft.com.githubreposlist.data.RepoRepository
+import pgssoft.com.githubreposlist.data.RepoStatus
 import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 
-class RepoListViewModel : ViewModel() {
+class RepoListViewModel : ScopedViewModel() {
 
-
-    private val repo = RepoRepository()
-    private var repoListLiveData: LiveData<List<Repository>> = MutableLiveData()
-    private var repoListCount: LiveData<Int> = MutableLiveData()
+    private val repoRepository = RepoRepository()
+    private var repoListLiveData: LiveData<List<Repository>>
+    private var repoListCount: LiveData<Int>
     private var repoListCountText: LiveData<String>
-    private var _repoListStatusText: MutableLiveData<String> = MutableLiveData()
-    val repoListStatusText: LiveData<String>
-        get() = _repoListStatusText
+    var statusLiveData: LiveData<Event<RepoStatus>>
 
-    private lateinit var prefs: PrefsHelper
 
-    private val compositeDisposable: CompositeDisposable
+    val prefs = PrefsHelper(PGSRepoApp.app)
 
 
     init {
-        repoListLiveData = repo.getRepoList()
-        repoListCount = repo.getCount()
+
+        repoListLiveData = repoRepository.getRepoList()
+        repoListCount = repoRepository.getCount()
         repoListCountText = getRepoCountText()
-        compositeDisposable = CompositeDisposable()
+        statusLiveData = repoRepository._refreshState
 
     }
 
@@ -48,23 +47,19 @@ class RepoListViewModel : ViewModel() {
 
         if (canRefreshList(itemCount)) {
 
-            var observable = repo.fetchAll()
-            compositeDisposable.add(observable.subscribe {
-                _repoListStatusText.value = it
-            })
+            scope.launch { repoRepository.fetchAll() }
 
-
-        } else {
-            _repoListStatusText.value = ""
         }
 
     }
 
     fun clearRepoList() {
 
-        compositeDisposable.add(repo.clearRepoList().subscribe())
+        scope.launch { repoRepository.clearRepoList() }
+        prefs.clearAll()
 
     }
+
 
     private fun getCountText(count: Int): String {
 
@@ -77,9 +72,9 @@ class RepoListViewModel : ViewModel() {
 
     }
 
+
     private fun canRefreshList(itemCount: Int): Boolean {
 
-        prefs = PrefsHelper(PGSRepoApp.app)
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed
 
@@ -91,7 +86,6 @@ class RepoListViewModel : ViewModel() {
 
 
     }
-
-    override fun onCleared() = compositeDisposable.dispose()
-
 }
+
+
