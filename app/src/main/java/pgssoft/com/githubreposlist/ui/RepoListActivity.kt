@@ -7,28 +7,26 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.dialog_note.view.*
-import kotlinx.android.synthetic.main.fragment_repo_list.*
 import pgssoft.com.githubreposlist.R
-import pgssoft.com.githubreposlist.data.EventObserver
-import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.viewmodels.RepoListViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
     lateinit var repoViewModel: RepoViewModel
-    lateinit var listModel: RepoListViewModel
+    lateinit var listViewModel: RepoListViewModel
 
     private val detailFragment = RepoDetailFragment()
-    private val fragmentList = RepoListFragment()
+    private val listFragment = RepoListFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repolist)
 
+
         supportFragmentManager.beginTransaction().apply {
 
-            add(R.id.list, fragmentList)
+            add(R.id.list, listFragment)
             commit()
         }
 
@@ -43,9 +41,8 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
 
         repoViewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
-        listModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)
+        listViewModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)
 
-        listenStatus()
     }
 
     override fun onItemSelect(id: Int) {
@@ -65,10 +62,9 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
             }
         } else {
             supportFragmentManager.beginTransaction().apply {
-                replace(R.id.detail, detailFragment)
-                addToBackStack(null)
+                detach(detailFragment)
+                attach(detailFragment)
                 commit()
-
             }
         }
 
@@ -91,34 +87,6 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
             .create().show()
     }
 
-
-    private fun listenStatus() {
-
-        listModel.statusLiveData.observe(this, EventObserver {
-
-            when (it) {
-                is RepoDownloadStatus.DataOk -> {
-                }
-                is RepoDownloadStatus.Error -> {
-                    showError(it.message)
-
-                }
-            }
-            swipeToRefresh.isRefreshing = false
-
-        })
-
-    }
-
-    private fun showError(message: String) {
-
-        AlertDialog.Builder(this).setTitle(R.string.error).setMessage(message)
-            .setPositiveButton("OK")
-            { d, _ ->
-                d.dismiss()
-            }
-            .create().show()
-    }
 
 
 }
