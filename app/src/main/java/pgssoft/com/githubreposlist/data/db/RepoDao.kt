@@ -7,7 +7,7 @@ import io.reactivex.Flowable
 @Dao
 interface RepoDao {
 
-    @Query("SELECT * FROM repository")
+    @Query("SELECT * FROM repository ORDER BY pushed_at DESC")
     fun getAll(): LiveData<List<Repository>>
 
     @Query("SELECT * FROM repository where id = :id")

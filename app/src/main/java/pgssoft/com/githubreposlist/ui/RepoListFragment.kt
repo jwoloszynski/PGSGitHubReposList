@@ -50,7 +50,7 @@ class RepoListFragment : Fragment() {
     }
 
     private fun onRefresh() {
-        listModel.onRefresh(repoListAdapter.itemCount)
+        listModel.onRefresh()
 
     }
 
@@ -64,9 +64,11 @@ class RepoListFragment : Fragment() {
 
     }
 
+    override fun onDestroyView() {
 
-
-
+        swipeToRefresh.clearAnimation()
+        super.onDestroyView()
+    }
 }
 
 

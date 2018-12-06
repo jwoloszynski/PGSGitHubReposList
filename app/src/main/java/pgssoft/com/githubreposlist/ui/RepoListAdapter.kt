@@ -76,7 +76,6 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
 
         val diffResult = DiffUtil.calculateDiff(RepoListDiffCallback(list, repoList))
         repoList = list
-        repoList = repoList.sortedByDescending { it.pushed_at }
         diffResult.dispatchUpdatesTo(this)
 
     }

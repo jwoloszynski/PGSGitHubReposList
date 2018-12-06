@@ -47,7 +47,7 @@ class RepoDetailFragment : Fragment() {
         if (repoId == 0) {
             repoId = prefs.repoId
         }
-        repoViewModel.getRepoById(repoId).observe(this, Observer {
+        repoViewModel.repository.observe(this, Observer {
 
             updateView(it)
         })

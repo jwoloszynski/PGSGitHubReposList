@@ -1,14 +1,12 @@
 package pgssoft.com.githubreposlist.viewmodels
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-
 import kotlinx.coroutines.launch
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.data.Event
+import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.data.RepoRepository
-import pgssoft.com.githubreposlist.data.RepoStatus
 import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 
@@ -18,10 +16,7 @@ class RepoListViewModel : ScopedViewModel() {
     private var repoListLiveData: LiveData<List<Repository>>
     private var repoListCount: LiveData<Int>
     private var repoListCountText: LiveData<String>
-    var statusLiveData: LiveData<Event<RepoStatus>>
-
-
-    val prefs = PrefsHelper(PGSRepoApp.app)
+    var statusLiveData: LiveData<Event<RepoDownloadStatus>>
 
 
     init {
@@ -29,7 +24,7 @@ class RepoListViewModel : ScopedViewModel() {
         repoListLiveData = repoRepository.getRepoList()
         repoListCount = repoRepository.getCount()
         repoListCountText = getRepoCountText()
-        statusLiveData = repoRepository._refreshState
+        statusLiveData = repoRepository.refreshState
 
     }
 
@@ -43,20 +38,15 @@ class RepoListViewModel : ScopedViewModel() {
 
     }
 
-    fun onRefresh(itemCount: Int) {
+    fun onRefresh() {
 
-        if (canRefreshList(itemCount)) {
-
-            scope.launch { repoRepository.fetchAll() }
-
-        }
+        scope.launch { repoRepository.fetchAll() }
 
     }
 
     fun clearRepoList() {
 
         scope.launch { repoRepository.clearRepoList() }
-        prefs.clearAll()
 
     }
 
@@ -72,20 +62,6 @@ class RepoListViewModel : ScopedViewModel() {
 
     }
 
-
-    private fun canRefreshList(itemCount: Int): Boolean {
-
-        val timeRefreshed = prefs.time
-        val timeBetween = System.currentTimeMillis() - timeRefreshed
-
-        if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (itemCount < 1)) {
-            prefs.time = System.currentTimeMillis()
-            return true
-        }
-        return false
-
-
-    }
 }
 
 

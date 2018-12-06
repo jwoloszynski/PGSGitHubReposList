@@ -1,10 +1,6 @@
 package pgssoft.com.githubreposlist
 
 import android.app.Application
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlin.coroutines.CoroutineContext
 
 
 class PGSRepoApp : Application() {

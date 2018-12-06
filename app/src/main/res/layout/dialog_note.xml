@@ -4,10 +4,10 @@
               android:layout_width="match_parent"
               android:orientation="vertical"
 
-android:paddingLeft="20dp"
-android:paddingRight="20dp"
+              android:paddingLeft="20dp"
+              android:paddingRight="20dp"
 >
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/title"/>
-    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/comment" />
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/comment"/>
 </LinearLayout>
