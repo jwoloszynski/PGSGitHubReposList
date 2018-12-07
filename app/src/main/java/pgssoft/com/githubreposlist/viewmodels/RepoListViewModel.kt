@@ -50,7 +50,6 @@ class RepoListViewModel : ScopedViewModel() {
 
     }
 
-
     private fun getCountText(count: Int): String {
 
         return if (count > 0) {
@@ -58,7 +57,6 @@ class RepoListViewModel : ScopedViewModel() {
         } else {
             "Pull to refresh"
         }
-
 
     }
 

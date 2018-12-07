@@ -49,7 +49,6 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
                 repoListActivity?.showNoteDialog(listRow.id, listRow.comment ?: " ")
             }
 
-
         }
 
     }
@@ -76,6 +75,7 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
 
         val diffResult = DiffUtil.calculateDiff(RepoListDiffCallback(list, repoList))
         repoList = list
+        repoList = repoList.sortedBy { it.comment.isNullOrEmpty()  }
         diffResult.dispatchUpdatesTo(this)
 
     }

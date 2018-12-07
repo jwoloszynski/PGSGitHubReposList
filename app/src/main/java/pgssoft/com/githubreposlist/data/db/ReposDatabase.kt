@@ -17,7 +17,7 @@ abstract class ReposDatabase : RoomDatabase() {
 
         var instance: ReposDatabase? = null
 
-        val MIGRATION_1_2 = object: Migration(1,2) {
+        private val MIGRATION_1_2 = object: Migration(1,2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE `repository` ADD COLUMN `comment` TEXT")
             }

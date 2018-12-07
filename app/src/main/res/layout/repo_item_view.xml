@@ -66,6 +66,7 @@
                     android:text="show details"
                     android:textAlignment="center"
                     android:id="@+id/detailsButton"
+
             />
 
             <Button android:layout_height="wrap_content"

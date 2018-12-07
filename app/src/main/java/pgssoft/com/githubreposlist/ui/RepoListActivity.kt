@@ -5,7 +5,6 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.view.View
 import kotlinx.android.synthetic.main.dialog_note.view.*
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.viewmodels.RepoListViewModel
@@ -49,16 +48,14 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         val args = Bundle()
         args.putInt("id", id)
         detailFragment.arguments = args
-        repoViewModel.repository = repoViewModel.getRepoById(id)
+        repoViewModel.getRepoById(id)
 
 
         if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
-
             supportFragmentManager.beginTransaction().apply {
                 replace(R.id.list, detailFragment)
                 addToBackStack(null)
                 commit()
-
             }
         } else {
             supportFragmentManager.beginTransaction().apply {
@@ -72,9 +69,7 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
 
     override fun showNoteDialog(id: Int, comment: String) {
-        val v: View = layoutInflater.inflate(R.layout.dialog_note, null)
-
-        v.comment.setText(comment)
+        val v = layoutInflater.inflate(R.layout.dialog_note, null).also { it.comment.setText(comment) }
 
         val title = if (comment.isEmpty()) "Add note" else "Edit note"
 
@@ -86,7 +81,6 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
             }
             .create().show()
     }
-
 
 
 }
