@@ -33,7 +33,7 @@ interface RepoDao {
 
 
     @Query("SELECT id,comment FROM repository WHERE id = :repoId")
-    fun getCommentByRepoId(repoId: Int): RepositoryComment
+    fun getCommentByRepoId(repoId: Int): RepositoryComment?
 
     @Query("SELECT count(*) FROM repository")
     fun getListCount(): Int
