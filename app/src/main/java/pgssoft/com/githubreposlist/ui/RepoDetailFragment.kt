@@ -47,23 +47,38 @@ class RepoDetailFragment : Fragment() {
         if (repoId == 0) {
             repoId = prefs.repoId
         }
+        noteButton.visibility = View.INVISIBLE
+        commentString.visibility = View.INVISIBLE
+
         repoViewModel.repository.observe(this, Observer {
 
-            updateView(it)
+            if(it != null) {
+                updateView(it)
+            }
         })
 
 
     }
 
-    private fun updateView(repo: Repository?) {
-        repoName.text = repo?.name
-        repoDescription.text = repo?.description
-        repoComment.text = repo?.comment
-        commentString.visibility = if (repo?.comment.isNullOrBlank()) {
-            View.INVISIBLE
+    private fun updateView(repo: Repository) {
+        repoName.text = repo.name
+        repoDescription.text = repo.description
+        repoComment.text = repo.comment
+        if (repo.comment.isNullOrBlank()) {
+            commentString.visibility = View.INVISIBLE
+            noteButton.text = "Add note"
         } else {
-            View.VISIBLE
+            commentString.visibility = View.VISIBLE
+            noteButton.text = "Edit note"
         }
+
+        noteButton.visibility = View.VISIBLE
+        noteButton.setOnClickListener {
+            (activity as RepoListActivity).showNoteDialog(repo.id, repo.comment?: "")
+        }
+
+
+
     }
 
 

@@ -54,7 +54,7 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, element: Int): RepoViewHolder {
-        val v: View = LayoutInflater.from(PGSRepoApp.app).inflate(R.layout.repo_item_view, viewGroup, false)
+        val v: View = LayoutInflater.from(PGSRepoApp.app).inflate(R.layout.repo_item_view,viewGroup, false)
 
         return RepoViewHolder(v)
     }
