@@ -7,13 +7,11 @@ import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.dialog_note.view.*
 import pgssoft.com.githubreposlist.R
-import pgssoft.com.githubreposlist.viewmodels.RepoListViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
     lateinit var repoViewModel: RepoViewModel
-    lateinit var listViewModel: RepoListViewModel
 
     private val detailFragment = RepoDetailFragment()
     private val listFragment = RepoListFragment()
@@ -40,7 +38,6 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
 
         repoViewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
-        listViewModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)
 
     }
 
@@ -72,7 +69,6 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         val v = layoutInflater.inflate(R.layout.dialog_note, null).also { it.comment.setText(comment) }
 
         val title = if (comment.isEmpty()) "Add note" else "Edit note"
-
 
         AlertDialog.Builder(this).setTitle(title).setView(v)
             .setPositiveButton("OK")

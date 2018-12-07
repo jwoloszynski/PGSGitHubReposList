@@ -15,12 +15,12 @@ import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.EventObserver
 import pgssoft.com.githubreposlist.data.RepoDownloadStatus
-import pgssoft.com.githubreposlist.viewmodels.RepoListViewModel
+import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 
 class RepoListFragment : Fragment() {
 
-    private lateinit var listModel: RepoListViewModel
+    private lateinit var listModel: RepoViewModel
 
     private var repoListAdapter: RepoListAdapter = RepoListAdapter(listOf())
 
@@ -45,7 +45,7 @@ class RepoListFragment : Fragment() {
         deleteButton.setOnClickListener { listModel.clearRepoList() }
 
         recyclerView.adapter = repoListAdapter
-        listModel = ViewModelProviders.of(activity!!).get(RepoListViewModel::class.java)
+        listModel = ViewModelProviders.of(activity!!).get(RepoViewModel::class.java)
         listModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
         )
 

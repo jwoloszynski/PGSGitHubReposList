@@ -56,7 +56,7 @@ class RepoRepository {
                     if (!repoList.isNullOrEmpty()) {
                         for (repo in repoList) {
                             var comment = getCommentByRepoId(repo.id)
-                            repo.comment = comment?.comment ?: ""
+                            repo.comment = comment.comment ?: ""
                         }
                     }
                     db.repoDao().insertAll(repoList)
