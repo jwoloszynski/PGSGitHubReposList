@@ -84,7 +84,7 @@ class RepoListFragment : Fragment() {
     private fun showError(message: String) {
 
         AlertDialog.Builder(activity!!).setTitle(R.string.error).setMessage(message)
-            .setPositiveButton("OK")
+            .setPositiveButton(R.string.ok)
             { d, _ ->
                 d.dismiss()
             }

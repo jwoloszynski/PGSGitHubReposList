@@ -29,20 +29,23 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
             repoName?.text = listRow.name
             id?.text = listRow.id.toString()
             repoDescription?.text = listRow.description
-            repoUpdatedAt?.text = "Last updated: ${listRow.updated_at.getFormattedDate()}"
-            repoPushedAt?.text = "Last pushed: ${listRow.pushed_at.getFormattedDate()}"
+            repoUpdatedAt?.text = PGSRepoApp.app.getString(R.string.last_updated, listRow.updated_at.getFormattedDate() )
+
+            repoPushedAt?.text = PGSRepoApp.app.getString(R.string.last_pushed, listRow.pushed_at.getFormattedDate() )
             repoLanguage?.text = listRow.language
 
             noteButton.text = if (listRow.comment.isNullOrEmpty()) {
-                "Add note"
+
+                PGSRepoApp.app.getString(R.string.add_note)
 
             } else {
 
-                "Edit note"
+                PGSRepoApp.app.getString(R.string.edit_note)
             }
 
             detailsButton.setOnClickListener {
                 repoListActivity?.onItemSelect(listRow.id)
+
             }
 
             noteButton.setOnClickListener {
@@ -75,7 +78,7 @@ class RepoListAdapter(private var repoList: List<Repository>) : RecyclerView.Ada
 
         val diffResult = DiffUtil.calculateDiff(RepoListDiffCallback(list, repoList))
         repoList = list
-        repoList = repoList.sortedBy { it.comment.isNullOrEmpty()  }
+        repoList = repoList.sortedWith(compareByDescending{it.pushed_at })
         diffResult.dispatchUpdatesTo(this)
 
     }

@@ -1,7 +1,15 @@
 <resources>
     <string name="app_name">GitHubReposList</string>
-    <string name="pgsghorgname">PGSSoft</string>
-    <string name="ghapiurl">https://api.github.com</string>
+    <string name="pgs_gh_org_name">PGSSoft</string>
+    <string name="gh_api_url">https://api.github.com</string>
     <string name="error">Error</string>
     <string name="note">Comment:</string>
+    <string name="last_updated">Last updated: %s</string>
+    <string name="last_pushed">Last pushed: %s</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="rate_limit_exceeded">Rate limit exceeded</string>
+    <string name="edit_note">Edit note</string>
+    <string name="add_note">Add note</string>
+    <string name="ok">OK</string>
+    <string name="clear">Clear</string>
 </resources>

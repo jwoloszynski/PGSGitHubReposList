@@ -27,13 +27,13 @@ class RepoRepository {
             .readTimeout(30, TimeUnit.SECONDS).build()
 
     private val api: GHApi =
-        Retrofit.Builder().baseUrl("https://api.github.com/").client(client)
+        Retrofit.Builder().baseUrl(PGSRepoApp.app.getString(R.string.gh_api_url)).client(client)
             .addConverterFactory(GsonConverterFactory.create()).build()
             .create(GHApi::class.java)
 
     private val db = ReposDatabase.getInstance(PGSRepoApp.app)
     private val prefs = PrefsHelper(PGSRepoApp.app)
-    private val orgName = PGSRepoApp.app.getString(R.string.pgsghorgname)
+    private val orgName = PGSRepoApp.app.getString(R.string.pgs_gh_org_name)
     private val cm = PGSRepoApp.app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
@@ -42,13 +42,13 @@ class RepoRepository {
         if (canRefreshList()) {
 
             if (cm.activeNetworkInfo == null) {
-                _refreshState.postValue(Event(RepoDownloadStatus.Error("No internet connection")))
+                _refreshState.postValue(Event(RepoDownloadStatus.Error(PGSRepoApp.app.getString(R.string.no_internet_connection))))
                 return
             }
             try {
                 val response = api.getOrganizationRepos(orgName).execute()
                 if (response.body() == null) {
-                    _refreshState.postValue(Event(RepoDownloadStatus.Error("Rate limit exceeded")))
+                    _refreshState.postValue(Event(RepoDownloadStatus.Error(PGSRepoApp.app.getString(R.string.rate_limit_exceeded))))
                 } else {
 
                     val repoList = response.body()!!

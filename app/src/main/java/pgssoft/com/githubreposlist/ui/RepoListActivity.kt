@@ -76,6 +76,8 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
                 repoViewModel.update(id, v.comment.text.toString())
             }
             .create().show()
+
+        onItemSelect(id)
     }
 
 
