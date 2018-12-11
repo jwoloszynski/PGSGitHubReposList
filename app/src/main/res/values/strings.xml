@@ -12,4 +12,6 @@
     <string name="add_note">Add note</string>
     <string name="ok">OK</string>
     <string name="clear">Clear</string>
+    <string name="show_details">show details</string>
+    <string name="pull_to_refresh">Pull to refresh</string>
 </resources>

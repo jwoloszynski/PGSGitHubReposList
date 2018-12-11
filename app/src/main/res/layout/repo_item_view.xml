@@ -15,7 +15,7 @@
                   android:id="@+id/repoName"
                   android:paddingLeft="10dp"
                   android:paddingRight="10dp"
-                  android:textSize="28dp"
+                  android:textSize="28sp"
                   android:text="RepoName"
                   android:textAlignment="center"
                   android:singleLine="true"
@@ -26,7 +26,7 @@
                   android:layout_height="wrap_content"
                   android:id="@+id/repoDescription"
                   android:text="RepoDescription"
-                  android:textSize="14dp" android:textAlignment="center"
+                  android:textSize="14sp" android:textAlignment="center"
                   android:paddingLeft="5dp"
                   android:paddingRight="5dp"
                   android:textColor="@android:color/background_dark"/>
@@ -37,7 +37,7 @@
                   android:paddingTop="10dp"
                   android:id="@+id/repoPushedAt"
                   android:text="repo time pushed"
-                  android:textSize="13dp" android:textAlignment="viewStart"
+                  android:textSize="13sp" android:textAlignment="viewStart"
                   android:textColor="@android:color/background_dark"/>
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                       android:layout_height="30dp"
                       android:id="@+id/repoUpdatedAt"
                       android:text="repo time updated"
-                      android:textSize="13dp" android:textAlignment="center"
+                      android:textSize="13sp" android:textAlignment="center"
                       android:textColor="@android:color/background_dark"/>
 
             <TextView android:layout_width="match_parent"
@@ -55,7 +55,7 @@
                       android:id="@+id/repoLanguage"
                       android:paddingRight="10dp"
                       android:text="repoLanguage"
-                      android:textSize="13dp" android:textAlignment="viewEnd"
+                      android:textSize="13sp" android:textAlignment="viewEnd"
                       android:textColor="@android:color/background_dark"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent"
@@ -63,7 +63,7 @@
             <Button android:layout_height="wrap_content"
 
                     android:layout_width="wrap_content"
-                    android:text="show details"
+                    android:text="@string/show_details"
                     android:textAlignment="center"
                     android:id="@+id/detailsButton"
 

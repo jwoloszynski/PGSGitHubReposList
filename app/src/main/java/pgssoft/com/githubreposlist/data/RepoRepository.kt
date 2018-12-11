@@ -95,6 +95,7 @@ class RepoRepository {
 
         if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (getItemListCount() == 0)) {
             prefs.time = System.currentTimeMillis()
+            var ooo = prefs.time
             return true
         }
         return false

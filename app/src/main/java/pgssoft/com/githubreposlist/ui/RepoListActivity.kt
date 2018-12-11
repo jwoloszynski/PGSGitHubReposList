@@ -5,7 +5,9 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import kotlinx.android.synthetic.main.dialog_note.view.*
+import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
@@ -28,7 +30,6 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         }
 
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
 
             supportFragmentManager.beginTransaction().apply {
                 add(R.id.detail, detailFragment)
@@ -66,12 +67,12 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
 
     override fun showNoteDialog(id: Int, comment: String) {
-        val v = layoutInflater.inflate(R.layout.dialog_note, null).also { it.comment.setText(comment) }
+        val v = View.inflate(this, R.layout.dialog_note, null).also { it.comment.setText(comment) }
 
-        val title = if (comment.isEmpty()) "Add note" else "Edit note"
+        val title = if (comment.isEmpty()) PGSRepoApp.app.getString(R.string.add_note) else this.getString(R.string.edit_note)
 
         AlertDialog.Builder(this).setTitle(title).setView(v)
-            .setPositiveButton("OK")
+            .setPositiveButton(PGSRepoApp.app.getText(R.string.ok))
             { _, _ ->
                 repoViewModel.update(id, v.comment.text.toString())
             }

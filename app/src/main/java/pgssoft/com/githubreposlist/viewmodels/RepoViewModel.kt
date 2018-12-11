@@ -3,6 +3,8 @@ package pgssoft.com.githubreposlist.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Transformations
 import kotlinx.coroutines.launch
+import pgssoft.com.githubreposlist.PGSRepoApp
+import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.Event
 import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.data.RepoRepository
@@ -59,7 +61,8 @@ class RepoViewModel : ScopedViewModel() {
         return if (count > 0) {
             count.toString()
         } else {
-            "Pull to refresh"
+
+            PGSRepoApp.app.getString(R.string.pull_to_refresh)
         }
 
     }

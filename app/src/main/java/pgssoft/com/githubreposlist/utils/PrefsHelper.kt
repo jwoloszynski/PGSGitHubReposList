@@ -7,15 +7,19 @@ class PrefsHelper(ctx: Context) {
 
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(ctx)
-
+    private val editor = preferences.edit()
     var time = preferences.getLong("time", -1L)
         set(time) {
-            preferences.edit().putLong("time", time).apply()
+            editor.remove("time")
+            editor.commit()
+            editor.putLong("time", time)
+            editor.commit()
         }
 
     var repoId: Int = preferences.getInt("repoId", 0)
         set(repoId) {
-            preferences.edit().putInt("repoId", repoId).apply()
+            editor.putInt("repoId", repoId)
+            editor.commit()
         }
 
 
