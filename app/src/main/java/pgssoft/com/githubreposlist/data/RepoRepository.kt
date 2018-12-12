@@ -77,7 +77,7 @@ class RepoRepository(private val api: GHApi, private val db: ReposDatabase, priv
     private fun getItemListCount() = db.repoDao().getListCount()
     private fun getCommentByRepoId(repoId: Int) = db.repoDao().getCommentByRepoId(repoId)
 
-    private fun canRefreshList(): Boolean {
+    fun canRefreshList(): Boolean {
 
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed
