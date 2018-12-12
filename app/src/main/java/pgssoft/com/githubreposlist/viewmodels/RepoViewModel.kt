@@ -2,22 +2,32 @@ package pgssoft.com.githubreposlist.viewmodels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.Transformations
+import android.content.Context
+import android.net.ConnectivityManager
 import kotlinx.coroutines.launch
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.Event
 import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.data.RepoRepository
+import pgssoft.com.githubreposlist.data.api.GHApiProvider
+import pgssoft.com.githubreposlist.data.db.ReposDatabase
 import pgssoft.com.githubreposlist.data.db.Repository
+import pgssoft.com.githubreposlist.utils.PrefsHelper
 
 class RepoViewModel : ScopedViewModel() {
 
-    private val repoRepository = RepoRepository()
+    val db = ReposDatabase.getInstance(PGSRepoApp.app)
+    private val prefs = PrefsHelper(PGSRepoApp.app)
+    private val api = GHApiProvider.getApi()
+
+    private val repoRepository = RepoRepository(api, db, prefs)
 
     private var repoListLiveData: LiveData<List<Repository>>
     private var repoListCount: LiveData<Int>
     private var repoListCountText: LiveData<String>
     var statusLiveData: LiveData<Event<RepoDownloadStatus>>
+    var cm = PGSRepoApp.app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
     var repository: LiveData<Repository>
@@ -45,7 +55,7 @@ class RepoViewModel : ScopedViewModel() {
     }
 
     fun onRefresh() {
-
+        repoRepository.isInternetConnection = cm.activeNetworkInfo != null
         scope.launch { repoRepository.fetchAll() }
 
     }
@@ -77,5 +87,6 @@ class RepoViewModel : ScopedViewModel() {
     fun update(id: Int, comment: String) {
         scope.launch { repoRepository.updateRepo(id, comment) }
     }
+
 
 }

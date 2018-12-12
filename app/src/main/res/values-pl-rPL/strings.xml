@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GitHubReposList</string>
-    <string name="pgs_gh_org_name">PGSSoft</string>
-    <string name="gh_api_url">https://api.github.com</string>
+
     <string name="error">Błąd</string>
     <string name="note">Komentarz:</string>
     <string name="last_updated">Ostatnia aktualizacja: %s</string>

@@ -1,7 +1,4 @@
 <resources>
-    <string name="app_name">GitHubReposList</string>
-    <string name="pgs_gh_org_name">PGSSoft</string>
-    <string name="gh_api_url">https://api.github.com</string>
     <string name="error">Error</string>
     <string name="note">Comment:</string>
     <string name="last_updated">Last updated: %s</string>

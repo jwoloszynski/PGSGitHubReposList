@@ -40,6 +40,10 @@ dependencies {
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
 
+
+    testImplementation "io.mockk:mockk:1.6.3"
+    testImplementation "com.nhaarman:mockito-kotlin-kt1.1:1.5.0"
+
     //versions definitions
     def room_version = "1.1.1"
     def retrofit_version = "2.5.0"
