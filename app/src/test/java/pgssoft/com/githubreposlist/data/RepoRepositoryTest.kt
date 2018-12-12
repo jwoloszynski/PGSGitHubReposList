@@ -18,29 +18,25 @@ import pgssoft.com.githubreposlist.utils.PrefsHelper
 class RepoRepositoryTest {
 
     @Mock
-    private val api = mock(GHApi::class.java)
+    private val mApi = MockedGHApi()
     @Mock
-    private val db = mock(ReposDatabase::class.java)
+    private val mDb = MockedDB()
     @Mock
-    private val prefs = mock(PrefsHelper::class.java)
+    private val mPrefs = MockedPrefs()
 
 
     @Test
     fun fetchAllTest() {
-
-
-        val repoList = getTestReposList()
-        val mutableLiveData = MutableLiveData<List<Repository>>()
-
-        mutableLiveData.postValue(repoList)
-        val repoRepository = RepoRepository(api, db, prefs)
+        mApi.setWhenever()
+        mDb.setWhenever()
+        mPrefs.setWhenever()
+        val repoRepository = RepoRepository(mApi.api, mDb.db, mPrefs.prefs)
         repoRepository.isInternetConnection = true
+
+
         whenever(repoRepository.canRefreshList()).thenReturn(true)
 
-        whenever(api.getOrganizationRepos(ArgumentMatchers.anyString()).execute()).thenReturn(
-            retrofit2.Response.success(mutableLiveData.value)
-        )
-        whenever(db.repoDao().getAll()).thenReturn(mutableLiveData as LiveData<List<Repository>>)
+
 
 
         repoRepository.fetchAll()
@@ -50,3 +46,47 @@ class RepoRepositoryTest {
 
 
 }
+
+open class MockedGHApi {
+    var api: GHApi = mock(GHApi::class.java)
+
+
+
+
+    fun setWhenever() {
+        val repoList = getTestReposList()
+        val mutableLiveData = MutableLiveData<List<Repository>>()
+        mutableLiveData.value= repoList
+
+        whenever(api.getOrganizationRepos(ArgumentMatchers.anyString()).execute()).thenReturn(
+            retrofit2.Response.success(mutableLiveData.value))
+    }
+
+}
+
+
+open class MockedDB {
+    var db = mock(ReposDatabase::class.java)
+
+    fun setWhenever() {
+        val repoList = getTestReposList()
+        val mutableLiveData = MutableLiveData<List<Repository>>()
+        mutableLiveData.postValue(repoList)
+        whenever(db.repoDao().getAll()).thenReturn(mutableLiveData as LiveData<List<Repository>>)
+    }
+
+}
+
+open class MockedPrefs {
+    var prefs = mock(PrefsHelper::class.java)
+    fun setWhenever() {
+
+
+        whenever(prefs.time).thenReturn(-1L)
+        whenever(prefs.repoId).thenReturn(0)
+
+    }
+}
+
+
+
