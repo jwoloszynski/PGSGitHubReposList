@@ -7,6 +7,7 @@ import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
 import pgssoft.com.githubreposlist.utils.PrefsHelper
+import java.net.HttpURLConnection
 
 
 class RepoRepository(private val api: GHApi, private val db: ReposDatabase, private val prefs: PrefsHelper) {
@@ -34,6 +35,11 @@ class RepoRepository(private val api: GHApi, private val db: ReposDatabase, priv
 
             try {
                 val response = api.getOrganizationRepos(orgName).execute()
+                if (response.isSuccessful && response.raw().networkResponse()?.code() == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                    _refreshState.postValue(Event(RepoDownloadStatus.DataOk))
+
+
+                }
                 if (response.body() == null) {
                     _refreshState.postValue(Event(RepoDownloadStatus.Error(PGSRepoApp.app.getString(R.string.rate_limit_exceeded))))
                 } else {
@@ -42,7 +48,7 @@ class RepoRepository(private val api: GHApi, private val db: ReposDatabase, priv
 
                     if (!repoList.isNullOrEmpty()) {
                         for (repo in repoList) {
-                            var comment = getCommentByRepoId(repo.id)
+                            val comment = getCommentByRepoId(repo.id)
                             repo.comment = comment?.comment ?: ""
                         }
                     }
@@ -77,7 +83,7 @@ class RepoRepository(private val api: GHApi, private val db: ReposDatabase, priv
     private fun getItemListCount() = db.repoDao().getListCount()
     private fun getCommentByRepoId(repoId: Int) = db.repoDao().getCommentByRepoId(repoId)
 
-    fun canRefreshList(): Boolean {
+    private fun canRefreshList(): Boolean {
 
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed

@@ -27,9 +27,9 @@ class RepoViewModel : ScopedViewModel() {
     private var repoListCount: LiveData<Int>
     private var repoListCountText: LiveData<String>
     var statusLiveData: LiveData<Event<RepoDownloadStatus>>
-    var cm = PGSRepoApp.app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    private val cm = PGSRepoApp.app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-
+    
     var repository: LiveData<Repository>
 
     init {
@@ -39,8 +39,6 @@ class RepoViewModel : ScopedViewModel() {
         repoListCountText = getRepoCountText()
         statusLiveData = repoRepository.refreshState
         repository = repoRepository.getRepoById(0)
-
-
 
     }
 
