@@ -2,6 +2,9 @@ package pgssoft.com.githubreposlist.data
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import org.koin.standalone.KoinComponent
+import org.koin.standalone.get
+import org.koin.standalone.inject
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
@@ -9,7 +12,11 @@ import pgssoft.com.githubreposlist.data.db.ReposDatabase
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 
 
-class RepoRepository(private val api: GHApi, private val db: ReposDatabase, private val prefs: PrefsHelper) {
+class RepoRepository : KoinComponent {
+
+    private val api: GHApi by inject()
+    private val db: ReposDatabase by inject()
+    private val prefs: PrefsHelper by inject()
 
     companion object {
         private const val orgName = "PGSSoft"
