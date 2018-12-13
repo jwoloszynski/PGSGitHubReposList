@@ -8,18 +8,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_repo_detail.*
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.inject
-import pgssoft.com.githubreposlist.PGSRepoApp
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 
-class RepoDetailFragment : Fragment(), KoinComponent {
+class RepoDetailFragment : Fragment() {
 
-    lateinit var repoViewModel: RepoViewModel
+    var repoViewModel: RepoViewModel= get()
     private val prefs: PrefsHelper by inject()
     private var repoId = 0
 
@@ -45,7 +44,6 @@ class RepoDetailFragment : Fragment(), KoinComponent {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        repoViewModel = ViewModelProviders.of(activity!!).get(RepoViewModel::class.java)
         if (repoId == 0) {
             repoId = prefs.repoId
         }

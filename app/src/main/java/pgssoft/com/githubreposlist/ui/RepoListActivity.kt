@@ -1,19 +1,19 @@
 package pgssoft.com.githubreposlist.ui
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import kotlinx.android.synthetic.main.dialog_note.view.*
+import org.koin.android.ext.android.get
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
-    lateinit var repoViewModel: RepoViewModel
+    var repoViewModel: RepoViewModel= get()
 
     private val detailFragment = RepoDetailFragment()
     private val listFragment = RepoListFragment()
@@ -38,7 +38,6 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         }
 
 
-        repoViewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
 
     }
 

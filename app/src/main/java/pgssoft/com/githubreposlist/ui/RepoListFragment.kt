@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_repo_list.*
+import org.koin.android.ext.android.get
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.EventObserver
@@ -20,7 +21,7 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 class RepoListFragment : Fragment() {
 
-    private lateinit var listModel: RepoViewModel
+    private var listModel: RepoViewModel = get()
 
     private var repoListAdapter: RepoListAdapter = RepoListAdapter(listOf())
 
@@ -45,7 +46,6 @@ class RepoListFragment : Fragment() {
         deleteButton.setOnClickListener { listModel.clearRepoList() }
 
         recyclerView.adapter = repoListAdapter
-        listModel = ViewModelProviders.of(activity!!).get(RepoViewModel::class.java)
         listModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
         )
 
