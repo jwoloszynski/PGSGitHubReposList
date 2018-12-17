@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_repo_list.*
-import org.koin.android.ext.android.get
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.EventObserver
@@ -21,7 +20,10 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 class RepoListFragment : Fragment() {
 
-    private var listModel: RepoViewModel = get()
+    private val repoViewModel: RepoViewModel by lazy {
+        ViewModelProviders.of(activity!!).get(RepoViewModel::class.java)
+    }
+
 
     private var repoListAdapter: RepoListAdapter = RepoListAdapter(listOf())
 
@@ -43,19 +45,18 @@ class RepoListFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
-        deleteButton.setOnClickListener { listModel.clearRepoList() }
+        deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
 
         recyclerView.adapter = repoListAdapter
-        listModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
+        repoViewModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
         )
 
         refreshAdapter()
     }
 
     private fun onRefresh() {
-        swipeToRefresh.isRefreshing = true
-        listModel.onRefresh()
-        listModel.statusLiveData.observe(this, EventObserver {
+        repoViewModel.onRefresh()
+        repoViewModel.statusLiveData.observe(this, EventObserver {
 
             when (it) {
                 is RepoDownloadStatus.DataOk -> {
@@ -73,7 +74,7 @@ class RepoListFragment : Fragment() {
 
 
     private fun refreshAdapter() {
-        listModel.getRepoList().observe(this, Observer {
+        repoViewModel.getRepoList().observe(this, Observer {
 
             repoListAdapter.setData(it!!)
 

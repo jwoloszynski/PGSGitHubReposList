@@ -12,7 +12,6 @@ val app_module = module {
     single { ReposDatabase.getInstance(androidContext()) }
     single { PrefsHelper(androidContext()) }
     single { GHApiProvider.getApi() }
-    single { RepoViewModel() }
 }
 
 
