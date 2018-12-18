@@ -77,8 +77,6 @@ class RepoDetailFragment : Fragment() {
             (activity as RepoListActivity).showNoteDialog(repo.id, repo.comment?: "")
         }
 
-
-
     }
 
 

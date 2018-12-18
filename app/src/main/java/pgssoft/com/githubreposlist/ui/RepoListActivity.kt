@@ -17,26 +17,18 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
     private val detailFragment = RepoDetailFragment()
     private val listFragment = RepoListFragment()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repolist)
 
 
         supportFragmentManager.beginTransaction().apply {
-
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                add(R.id.detail, detailFragment)
+            }
             add(R.id.list, listFragment)
             commit()
         }
-
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-            supportFragmentManager.beginTransaction().apply {
-                add(R.id.detail, detailFragment)
-                commit()
-            }
-        }
-
 
         repoViewModel = ViewModelProviders.of(this).get(RepoViewModel::class.java)
 
@@ -48,28 +40,25 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         detailFragment.arguments = args
         repoViewModel.getRepoById(id)
 
-
-        if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
-            supportFragmentManager.beginTransaction().apply {
+        supportFragmentManager.beginTransaction().apply {
+            if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
                 replace(R.id.list, detailFragment)
                 addToBackStack(null)
-                commit()
-            }
-        } else {
-            supportFragmentManager.beginTransaction().apply {
+
+            } else {
                 detach(detailFragment)
                 attach(detailFragment)
-                commit()
             }
+            commit()
         }
-
     }
 
 
     override fun showNoteDialog(id: Int, comment: String) {
         val v = View.inflate(this, R.layout.dialog_note, null).also { it.comment.setText(comment) }
 
-        val title = if (comment.isEmpty()) PGSRepoApp.app.getString(R.string.add_note) else this.getString(R.string.edit_note)
+        val title =
+            if (comment.isEmpty()) PGSRepoApp.app.getString(R.string.add_note) else this.getString(R.string.edit_note)
 
         AlertDialog.Builder(this).setTitle(title).setView(v)
             .setPositiveButton(PGSRepoApp.app.getText(R.string.ok))
@@ -77,8 +66,9 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
                 repoViewModel.update(id, v.comment.text.toString())
             }
             .create().show()
-
-        onItemSelect(id)
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            onItemSelect(id)
+        }
     }
 
 
