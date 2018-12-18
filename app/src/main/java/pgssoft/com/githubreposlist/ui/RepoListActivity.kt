@@ -46,20 +46,22 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         detailFragment.arguments = args
         repoViewModel.getRepoById(id)
 
+        supportFragmentManager.beginTransaction().apply {
 
-        if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
-            supportFragmentManager.beginTransaction().apply {
-                replace(R.id.list, detailFragment)
-                addToBackStack(null)
-                commit()
-            }
-        } else {
-            supportFragmentManager.beginTransaction().apply {
+            if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
                 detach(detailFragment)
                 attach(detailFragment)
-                commit()
             }
+            else {
+                replace(R.id.list, detailFragment)
+                addToBackStack(null)
+            }
+
+            commit()
         }
+
+
+
 
     }
 
@@ -76,8 +78,9 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
                 repoViewModel.update(id, v.comment.text.toString())
             }
             .create().show()
-
-        onItemSelect(id)
+        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            onItemSelect(id)
+        }
     }
 
 

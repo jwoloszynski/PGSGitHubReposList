@@ -1,9 +1,7 @@
 package pgssoft.com.githubreposlist.data.api
 
-import io.reactivex.Observable
 import pgssoft.com.githubreposlist.data.db.Repository
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
