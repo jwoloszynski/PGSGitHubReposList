@@ -23,7 +23,6 @@ class RepoRepository : KoinComponent {
 
     fun fetchAll():RepoDownloadStatus {
 
-
         if (canRefreshList()) {
 
             try {
@@ -46,6 +45,7 @@ class RepoRepository : KoinComponent {
             } catch (e: Exception) {
                 return RepoDownloadStatus.ErrorMessage(e.message.toString())
             }
+
 
         } else {
            return RepoDownloadStatus.DataOk
@@ -71,7 +71,7 @@ class RepoRepository : KoinComponent {
     private fun getItemListCount() = db.repoDao().getListCount()
     private fun getCommentByRepoId(repoId: Int) = db.repoDao().getCommentByRepoId(repoId)
 
-    private fun canRefreshList(): Boolean {
+    fun canRefreshList(): Boolean {
 
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed

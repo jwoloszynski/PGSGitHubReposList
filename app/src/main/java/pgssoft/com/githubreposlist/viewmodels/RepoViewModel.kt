@@ -34,6 +34,7 @@ class RepoViewModel : ScopedViewModel(), KoinComponent {
     var cm = PGSRepoApp.app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
+    
     var repository: LiveData<Repository>
 
     init {
@@ -97,11 +98,7 @@ class RepoViewModel : ScopedViewModel(), KoinComponent {
 
     private fun setState(state: RepoDownloadStatus) {
 
-        val event = if (state is RepoDownloadStatus.Forbidden) {
-            Event(RepoDownloadStatus.ErrorMessage(PGSRepoApp.app.getString(R.string.rate_limit_exceeded)))
-        } else {
-            Event(state)
-        }
+        val event = Event(state)
         _refreshState.postValue(event)
     }
 

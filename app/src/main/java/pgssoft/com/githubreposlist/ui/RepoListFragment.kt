@@ -65,8 +65,11 @@ class RepoListFragment : Fragment() {
                 }
                 is RepoDownloadStatus.ErrorMessage -> {
                     showError(it.message)
-
                 }
+                is RepoDownloadStatus.Forbidden -> {
+                    showError(this.getString(R.string.rate_limit_exceeded))
+                }
+
             }
             swipeToRefresh.isRefreshing = false
 
