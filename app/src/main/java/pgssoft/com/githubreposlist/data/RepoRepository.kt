@@ -15,7 +15,7 @@ class RepoRepository(private val api: GHApi, private val db: ReposDatabase, priv
 
     fun fetchAll():RepoDownloadStatus {
 
-      //  if (canRefreshList()) {
+        if (canRefreshList()) {
 
             try {
                 val response = api.getOrganizationRepos(orgName).execute()
@@ -39,9 +39,9 @@ class RepoRepository(private val api: GHApi, private val db: ReposDatabase, priv
             }
 
 
-//        } else {
-//           return RepoDownloadStatus.DataOk
-//        }
+        } else {
+           return RepoDownloadStatus.DataOk
+        }
 
     }
 
