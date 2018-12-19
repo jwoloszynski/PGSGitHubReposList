@@ -63,8 +63,8 @@ class RepoListFragment : Fragment() {
         repoViewModel.refreshState.observe(this, EventObserver {
 
             when (it) {
-                is RepoDownloadStatus.DataOk -> {
-                }
+                is RepoDownloadStatus.NoRefreshDueToTime -> {}
+                is RepoDownloadStatus.DataOk -> {}
                 is RepoDownloadStatus.ErrorMessage -> {
                     showError(it.message)
                 }

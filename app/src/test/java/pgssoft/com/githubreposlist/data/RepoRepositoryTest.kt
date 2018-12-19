@@ -30,6 +30,7 @@ class RepoRepositoryTest {
     private val mDb = mock(ReposDatabase::class.java)
 
     private val mPrefs = mock(PrefsHelper::class.java)
+    private lateinit var repoRepository: RepoRepository
 
     @Before
     fun setUp() {
@@ -44,7 +45,7 @@ class RepoRepositoryTest {
 
             )
         )
-
+        repoRepository = RepoRepository()
         val repoList = getTestReposList()
         val mutableLiveData = MutableLiveData<List<Repository>>()
         mutableLiveData.postValue(repoList)
@@ -56,13 +57,19 @@ class RepoRepositoryTest {
     @Test
     fun fetchAllTest_DataOk() {
 
-
-
-        doReturn(System.currentTimeMillis()).`when`(mPrefs).time
-
-        val repoRepository = RepoRepository()
+        doReturn(-1L).`when`(mPrefs).time
         val testVal = repoRepository.fetchAll()
         Assert.assertTrue(testVal == RepoDownloadStatus.DataOk)
+
+    }
+
+    @Test
+    fun fetchAllTest_RequestTimeTooShort() {
+
+        doReturn(System.currentTimeMillis()).`when`(mPrefs).time
+        val testVal = repoRepository.fetchAll()
+        Assert.assertTrue(testVal == RepoDownloadStatus.NoRefreshDueToTime)
+
     }
 
     @After
