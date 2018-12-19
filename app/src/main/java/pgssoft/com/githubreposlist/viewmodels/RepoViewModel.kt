@@ -99,11 +99,7 @@ class RepoViewModel : ScopedViewModel() {
 
     private fun setState(state: RepoDownloadStatus) {
 
-        val event = if (state is RepoDownloadStatus.Forbidden) {
-            Event(RepoDownloadStatus.ErrorMessage(PGSRepoApp.app.getString(R.string.rate_limit_exceeded)))
-        } else {
-            Event(state)
-        }
+        val event = Event(state)
         _refreshState.postValue(event)
     }
 
