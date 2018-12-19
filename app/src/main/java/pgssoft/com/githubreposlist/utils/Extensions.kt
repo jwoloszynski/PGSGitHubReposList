@@ -13,7 +13,7 @@ fun String?.getFormattedDate(): String {
         simpleDateFormat = SimpleDateFormat("dd-MM-yyyy, hh:mm:ss", Locale("pl"))
         simpleDateFormat.format(tmpDate)
     } catch (e: Exception) {
-        ""
+        this
     }
 
 

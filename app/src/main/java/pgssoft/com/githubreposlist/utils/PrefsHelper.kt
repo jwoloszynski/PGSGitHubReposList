@@ -2,6 +2,7 @@ package pgssoft.com.githubreposlist.utils
 
 import android.content.Context
 import android.preference.PreferenceManager
+import javax.inject.Inject
 
 class PrefsHelper(ctx: Context) {
 

@@ -7,6 +7,7 @@ import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
+
 @Database(entities = [Repository::class], version = 2)
 abstract class ReposDatabase : RoomDatabase() {
 
@@ -22,7 +23,6 @@ abstract class ReposDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `repository` ADD COLUMN `comment` TEXT")
             }
         }
-
         fun getInstance(context: Context): ReposDatabase {
             if (instance == null) {
                 instance = Room.databaseBuilder(context, ReposDatabase::class.java, "pgs-gh-repos").addMigrations(

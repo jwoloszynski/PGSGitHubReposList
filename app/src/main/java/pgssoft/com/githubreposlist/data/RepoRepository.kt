@@ -7,15 +7,18 @@ import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
 import pgssoft.com.githubreposlist.utils.PrefsHelper
+import javax.inject.Inject
 
 
-class RepoRepository(private val api: GHApi, private val db: ReposDatabase, private val prefs: PrefsHelper) {
+class RepoRepository(private val api: GHApi, private val prefs: PrefsHelper) {
+
 
     companion object {
         private const val orgName = "PGSSoft"
 
     }
 
+    @Inject lateinit var db: ReposDatabase
     private var _refreshState = MutableLiveData<Event<RepoDownloadStatus>>()
     val refreshState: LiveData<Event<RepoDownloadStatus>>
         get() = _refreshState
