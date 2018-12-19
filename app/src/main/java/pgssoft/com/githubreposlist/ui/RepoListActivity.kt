@@ -17,25 +17,19 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
     private val detailFragment = RepoDetailFragment()
     private val listFragment = RepoListFragment()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repolist)
 
 
         supportFragmentManager.beginTransaction().apply {
-
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                add(R.id.detail, detailFragment)
+            }
             add(R.id.list, listFragment)
             commit()
         }
 
-        if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-
-            supportFragmentManager.beginTransaction().apply {
-                add(R.id.detail, detailFragment)
-                commit()
-            }
-        }
 
 
     }
@@ -48,21 +42,16 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
 
         supportFragmentManager.beginTransaction().apply {
 
-            if(resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
+                replace(R.id.list, detailFragment)
+                addToBackStack(null)
+
+            } else {
                 detach(detailFragment)
                 attach(detailFragment)
             }
-            else {
-                replace(R.id.list, detailFragment)
-                addToBackStack(null)
-            }
-
             commit()
         }
-
-
-
-
     }
 
 

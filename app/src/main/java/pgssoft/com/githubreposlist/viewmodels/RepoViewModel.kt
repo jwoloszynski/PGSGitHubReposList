@@ -1,6 +1,7 @@
 package pgssoft.com.githubreposlist.viewmodels
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
 import android.content.Context
 import android.net.ConnectivityManager
@@ -25,7 +26,11 @@ class RepoViewModel : ScopedViewModel(), KoinComponent {
     private var repoListLiveData: LiveData<List<Repository>>
     private var repoListCount: LiveData<Int>
     private var repoListCountText: LiveData<String>
-    var statusLiveData: LiveData<Event<RepoDownloadStatus>>
+
+    private var _refreshState = MutableLiveData<Event<RepoDownloadStatus>>()
+    val refreshState: LiveData<Event<RepoDownloadStatus>>
+        get() = _refreshState
+
     var cm = PGSRepoApp.app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
@@ -36,7 +41,6 @@ class RepoViewModel : ScopedViewModel(), KoinComponent {
         repoListLiveData = repoRepository.getRepoList()
         repoListCount = repoRepository.getCount()
         repoListCountText = getRepoCountText()
-        statusLiveData = repoRepository.refreshState
         repository = repoRepository.getRepoById(0)
 
     }
@@ -53,9 +57,14 @@ class RepoViewModel : ScopedViewModel(), KoinComponent {
     }
 
     fun onRefresh() {
-        repoRepository.isInternetConnection = cm.activeNetworkInfo != null
-        scope.launch { repoRepository.fetchAll() }
-
+        if (cm.activeNetworkInfo != null) {
+            scope.launch {
+                val state = repoRepository.fetchAll()
+                setState(state)
+            }
+        } else {
+            setState(RepoDownloadStatus.ErrorMessage(PGSRepoApp.app.getString(R.string.no_internet_connection)))
+        }
     }
 
     fun clearRepoList() {
@@ -84,6 +93,16 @@ class RepoViewModel : ScopedViewModel(), KoinComponent {
 
     fun update(id: Int, comment: String) {
         scope.launch { repoRepository.updateRepo(id, comment) }
+    }
+
+    private fun setState(state: RepoDownloadStatus) {
+
+        val event = if (state is RepoDownloadStatus.Forbidden) {
+            Event(RepoDownloadStatus.ErrorMessage(PGSRepoApp.app.getString(R.string.rate_limit_exceeded)))
+        } else {
+            Event(state)
+        }
+        _refreshState.postValue(event)
     }
 
 

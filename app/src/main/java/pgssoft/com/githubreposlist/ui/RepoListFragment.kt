@@ -55,13 +55,15 @@ class RepoListFragment : Fragment() {
     }
 
     private fun onRefresh() {
+
+        swipeToRefresh.isRefreshing = true
         repoViewModel.onRefresh()
-        repoViewModel.statusLiveData.observe(this, EventObserver {
+        repoViewModel.refreshState.observe(this, EventObserver {
 
             when (it) {
                 is RepoDownloadStatus.DataOk -> {
                 }
-                is RepoDownloadStatus.Error -> {
+                is RepoDownloadStatus.ErrorMessage -> {
                     showError(it.message)
 
                 }

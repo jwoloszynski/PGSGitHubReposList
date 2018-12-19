@@ -1,15 +1,12 @@
 package pgssoft.com.githubreposlist.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import org.koin.standalone.KoinComponent
-import org.koin.standalone.get
-import org.koin.standalone.inject
-import pgssoft.com.githubreposlist.PGSRepoApp
-import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
 import pgssoft.com.githubreposlist.utils.PrefsHelper
+
+import org.koin.standalone.KoinComponent
+import org.koin.standalone.inject
+
 
 
 class RepoRepository : KoinComponent {
@@ -23,45 +20,35 @@ class RepoRepository : KoinComponent {
 
     }
 
-    private var _refreshState = MutableLiveData<Event<RepoDownloadStatus>>()
-    val refreshState: LiveData<Event<RepoDownloadStatus>>
-        get() = _refreshState
 
-    var isInternetConnection: Boolean = false
+    fun fetchAll():RepoDownloadStatus {
 
-
-    fun fetchAll() {
-
-        if (!isInternetConnection) {
-            _refreshState.postValue(Event(RepoDownloadStatus.Error(PGSRepoApp.app.getString(R.string.no_internet_connection))))
-            return
-        }
 
         if (canRefreshList()) {
 
             try {
                 val response = api.getOrganizationRepos(orgName).execute()
-                if (response.body() == null) {
-                    _refreshState.postValue(Event(RepoDownloadStatus.Error(PGSRepoApp.app.getString(R.string.rate_limit_exceeded))))
+               return if (response.body() == null) {
+                     RepoDownloadStatus.Forbidden
                 } else {
 
                     val repoList = response.body()!!
 
                     if (!repoList.isNullOrEmpty()) {
                         for (repo in repoList) {
-                            var comment = getCommentByRepoId(repo.id)
+                            val comment = getCommentByRepoId(repo.id)
                             repo.comment = comment?.comment ?: ""
                         }
                     }
                     db.repoDao().insertAll(repoList)
-                    _refreshState.postValue(Event(RepoDownloadStatus.DataOk))
+                     RepoDownloadStatus.DataOk
                 }
             } catch (e: Exception) {
-                _refreshState.postValue(Event(RepoDownloadStatus.Error(e.message.toString())))
+                return RepoDownloadStatus.ErrorMessage(e.message.toString())
             }
 
         } else {
-            _refreshState.postValue(Event(RepoDownloadStatus.DataOk))
+           return RepoDownloadStatus.DataOk
         }
 
     }
