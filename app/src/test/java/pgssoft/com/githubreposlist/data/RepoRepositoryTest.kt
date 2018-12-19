@@ -2,7 +2,7 @@ package pgssoft.com.githubreposlist.data
 
 import android.arch.lifecycle.MutableLiveData
 import com.nhaarman.mockitokotlin2.whenever
-import junit.framework.Assert.assertFalse
+import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers
@@ -24,6 +24,8 @@ class RepoRepositoryTest {
     private val mApi = mock(GHApi::class.java, RETURNS_DEEP_STUBS)
     @Mock
     private val mDb = mock(ReposDatabase::class.java)
+    @Mock
+    private val mPrefs = mock(PrefsHelper::class.java)
 
     @Test
     fun fetchAllTest() {
@@ -35,16 +37,13 @@ class RepoRepositoryTest {
         whenever(mApi.getOrganizationRepos(ArgumentMatchers.anyString())).thenReturn(TestCall(repoList))
         whenever(mDb.repoDao()).thenReturn(TestDao(repoList))
 
-        val mPrefs = mock(PrefsHelper::class.java)
-        val repoRepository = RepoRepository(mApi, mDb, mPrefs)
-        repoRepository.isInternetConnection = true
-        repoRepository.fetchAll()
-        val testVal = repoRepository.refreshState
-        testVal.observeForever {
-            assertFalse(it == Event(RepoDownloadStatus.DataOk))
-        }
-    }
 
+        val repoRepository = RepoRepository(mApi, mDb, mPrefs)
+        val testVal = repoRepository.fetchAll()
+        Assert.assertTrue(testVal == RepoDownloadStatus.DataOk)
+    }
 }
+
+
 
 

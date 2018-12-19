@@ -55,15 +55,18 @@ class RepoListFragment : Fragment() {
     private fun onRefresh() {
         swipeToRefresh.isRefreshing = true
         listModel.onRefresh()
-        listModel.statusLiveData.observe(this, EventObserver {
+        listModel.refreshState.observe(this, EventObserver {
 
             when (it) {
                 is RepoDownloadStatus.DataOk -> {
                 }
-                is RepoDownloadStatus.Error -> {
+                is RepoDownloadStatus.ErrorMessage -> {
                     showError(it.message)
-
                 }
+                is RepoDownloadStatus.Forbidden -> {
+                    showError(this.getString(R.string.rate_limit_exceeded))
+                }
+
             }
             swipeToRefresh.isRefreshing = false
 

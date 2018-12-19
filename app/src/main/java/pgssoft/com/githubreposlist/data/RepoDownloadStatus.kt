@@ -2,7 +2,8 @@ package pgssoft.com.githubreposlist.data
 
 sealed class RepoDownloadStatus {
 
-    class Error (val message: String): RepoDownloadStatus()
+    class ErrorMessage (val message: String = ""): RepoDownloadStatus()
+    object Forbidden: RepoDownloadStatus()
     object DataOk : RepoDownloadStatus()
 
 }
