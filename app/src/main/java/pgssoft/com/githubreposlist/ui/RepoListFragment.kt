@@ -20,7 +20,7 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 
 class RepoListFragment : Fragment() {
 
-    private lateinit var listModel: RepoViewModel
+    private lateinit var repoViewModel: RepoViewModel
 
     private var repoListAdapter: RepoListAdapter = RepoListAdapter(listOf())
 
@@ -42,11 +42,11 @@ class RepoListFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
-        deleteButton.setOnClickListener { listModel.clearRepoList() }
+        deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
 
         recyclerView.adapter = repoListAdapter
-        listModel = ViewModelProviders.of(activity!!).get(RepoViewModel::class.java)
-        listModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
+        repoViewModel = ViewModelProviders.of(activity!!).get(RepoViewModel::class.java)
+        repoViewModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
         )
 
         refreshAdapter()
@@ -54,16 +54,19 @@ class RepoListFragment : Fragment() {
 
     private fun onRefresh() {
         swipeToRefresh.isRefreshing = true
-        listModel.onRefresh()
-        listModel.refreshState.observe(this, EventObserver {
+        repoViewModel.onRefresh()
+        repoViewModel.refreshState.observe(this, EventObserver {
 
             when (it) {
                 is RepoDownloadStatus.DataOk -> {
                 }
                 is RepoDownloadStatus.ErrorMessage -> {
                     showError(it.message)
-
                 }
+                is RepoDownloadStatus.Forbidden -> {
+                    showError(this.getString(R.string.rate_limit_exceeded))
+                }
+
             }
             swipeToRefresh.isRefreshing = false
 
@@ -73,7 +76,7 @@ class RepoListFragment : Fragment() {
 
 
     private fun refreshAdapter() {
-        listModel.getRepoList().observe(this, Observer {
+        repoViewModel.getRepoList().observe(this, Observer {
 
             repoListAdapter.setData(it!!)
 
