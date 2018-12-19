@@ -49,7 +49,7 @@ class RepoRepository(private val api: GHApi, private val prefs: PrefsHelper) {
             }
 
         } else {
-           return RepoDownloadStatus.DataOk
+           return RepoDownloadStatus.NoRefreshDueToTime
         }
 
     }
