@@ -1,14 +1,12 @@
 package pgssoft.com.githubreposlist.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 import javax.inject.Inject
 
 
-class RepoRepository(private val api: GHApi, private val prefs: PrefsHelper) {
+class RepoRepository {
 
 
     companion object {
@@ -16,21 +14,23 @@ class RepoRepository(private val api: GHApi, private val prefs: PrefsHelper) {
 
     }
 
-    @Inject lateinit var db: ReposDatabase
-    private var _refreshState = MutableLiveData<Event<RepoDownloadStatus>>()
-    val refreshState: LiveData<Event<RepoDownloadStatus>>
-        get() = _refreshState
+    @Inject
+    lateinit var db: ReposDatabase
+    @Inject
+    lateinit var api: GHApi
+    @Inject
+    lateinit var prefs: PrefsHelper
 
 
-    fun fetchAll():RepoDownloadStatus {
+    fun fetchAll(): RepoDownloadStatus {
 
 
         if (canRefreshList()) {
 
             try {
                 val response = api.getOrganizationRepos(orgName).execute()
-               return if (response.body() == null) {
-                     RepoDownloadStatus.Forbidden
+                return if (response.body() == null) {
+                    RepoDownloadStatus.Forbidden
                 } else {
 
                     val repoList = response.body()!!
@@ -42,14 +42,14 @@ class RepoRepository(private val api: GHApi, private val prefs: PrefsHelper) {
                         }
                     }
                     db.repoDao().insertAll(repoList)
-                     RepoDownloadStatus.DataOk
+                    RepoDownloadStatus.DataOk
                 }
             } catch (e: Exception) {
                 return RepoDownloadStatus.ErrorMessage(e.message.toString())
             }
 
         } else {
-           return RepoDownloadStatus.NoRefreshDueToTime
+            return RepoDownloadStatus.NoRefreshDueToTime
         }
 
     }

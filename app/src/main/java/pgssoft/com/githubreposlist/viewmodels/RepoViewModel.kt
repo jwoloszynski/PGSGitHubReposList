@@ -17,10 +17,7 @@ import pgssoft.com.githubreposlist.utils.PrefsHelper
 
 class RepoViewModel : ScopedViewModel() {
 
-    private val prefs = PrefsHelper(PGSRepoApp.app)
-    private val api = GHApiProvider.getApi()
-
-    private val repoRepository = RepoRepository(api, prefs)
+    private val repoRepository = RepoRepository()
 
     private var repoListLiveData: LiveData<List<Repository>>
     private var repoListCount: LiveData<Int>

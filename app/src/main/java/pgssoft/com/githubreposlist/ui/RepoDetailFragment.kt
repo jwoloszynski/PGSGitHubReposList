@@ -13,16 +13,17 @@ import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
+import javax.inject.Inject
 
 
 class RepoDetailFragment : Fragment() {
-
-    lateinit var repoViewModel: RepoViewModel
+    @Inject
     lateinit var prefs: PrefsHelper
+    lateinit var repoViewModel: RepoViewModel
     private var repoId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        prefs = PrefsHelper(PGSRepoApp.app)
+        PGSRepoApp.app.appComponent.inject(this)
         super.onCreate(savedInstanceState)
         if (savedInstanceState == null) {
             // Get back arguments
