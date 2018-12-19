@@ -20,20 +20,20 @@ class RepoRepository(private val api: GHApi, private val db: ReposDatabase, priv
 
             try {
                 val response = api.getOrganizationRepos(orgName).execute()
-                if (response.body() == null) {
-                    return return RepoDownloadStatus.Forbidden
+               return if (response.body() == null) {
+                     RepoDownloadStatus.Forbidden
                 } else {
 
                     val repoList = response.body()!!
 
                     if (!repoList.isNullOrEmpty()) {
                         for (repo in repoList) {
-                            var comment = getCommentByRepoId(repo.id)
+                            val comment = getCommentByRepoId(repo.id)
                             repo.comment = comment?.comment ?: ""
                         }
                     }
                     db.repoDao().insertAll(repoList)
-                    return RepoDownloadStatus.DataOk
+                     RepoDownloadStatus.DataOk
                 }
             } catch (e: Exception) {
                 return RepoDownloadStatus.ErrorMessage(e.message.toString())
