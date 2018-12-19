@@ -40,7 +40,7 @@ class RepoRepository(private val api: GHApi, private val db: ReposDatabase, priv
             }
 
         } else {
-           return RepoDownloadStatus.DataOk
+           return RepoDownloadStatus.NoRefreshDueToTime
         }
 
     }
