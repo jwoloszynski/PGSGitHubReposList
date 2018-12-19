@@ -25,6 +25,7 @@ class RepoListFragment : Fragment() {
     }
 
 
+
     private var repoListAdapter: RepoListAdapter = RepoListAdapter(listOf())
 
 
@@ -48,6 +49,7 @@ class RepoListFragment : Fragment() {
         deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
 
         recyclerView.adapter = repoListAdapter
+
         repoViewModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
         )
 

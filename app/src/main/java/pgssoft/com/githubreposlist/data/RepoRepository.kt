@@ -48,7 +48,7 @@ class RepoRepository : KoinComponent {
 
 
         } else {
-           return RepoDownloadStatus.DataOk
+           return RepoDownloadStatus.NoRefreshDueToTime
         }
 
     }
