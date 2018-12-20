@@ -4,7 +4,7 @@ import android.content.Context
 import android.preference.PreferenceManager
 import javax.inject.Inject
 
-class PrefsHelper(ctx: Context) {
+open class PrefsHelper(ctx: Context) {
 
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(ctx)

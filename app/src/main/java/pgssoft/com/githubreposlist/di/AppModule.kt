@@ -31,7 +31,7 @@ class AppModule(private val app: PGSRepoApp) {
     @Singleton
     fun provideDb(): ReposDatabase {
 
-        return ReposDatabase.getInstance(context = PGSRepoApp.app)
+        return ReposDatabase.getInstance(context =app)
     }
 
 }

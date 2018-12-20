@@ -14,6 +14,7 @@ class RepoRepository {
     init {
         val repoComponent = DaggerRepoComponent.builder().appModule(AppModule(PGSRepoApp.app)).build()
         repoComponent.inject(this)
+
     }
 
     companion object {
@@ -30,7 +31,6 @@ class RepoRepository {
 
 
     fun fetchAll(): RepoDownloadStatus {
-
 
         if (canRefreshList()) {
 
@@ -54,6 +54,7 @@ class RepoRepository {
             } catch (e: Exception) {
                 return RepoDownloadStatus.ErrorMessage(e.message.toString())
             }
+
 
         } else {
             return RepoDownloadStatus.NoRefreshDueToTime

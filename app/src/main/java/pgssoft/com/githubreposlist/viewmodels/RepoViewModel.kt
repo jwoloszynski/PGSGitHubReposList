@@ -28,6 +28,7 @@ class RepoViewModel : ScopedViewModel() {
     var cm = PGSRepoApp.app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
+    
     var repository: LiveData<Repository>
 
     init {
@@ -36,7 +37,6 @@ class RepoViewModel : ScopedViewModel() {
         repoListCount = repoRepository.getCount()
         repoListCountText = getRepoCountText()
         repository = repoRepository.getRepoById(0)
-
 
     }
 
