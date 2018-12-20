@@ -11,9 +11,7 @@ import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.Event
 import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.data.RepoRepository
-import pgssoft.com.githubreposlist.data.api.GHApiProvider
 import pgssoft.com.githubreposlist.data.db.Repository
-import pgssoft.com.githubreposlist.utils.PrefsHelper
 
 class RepoViewModel : ScopedViewModel() {
 

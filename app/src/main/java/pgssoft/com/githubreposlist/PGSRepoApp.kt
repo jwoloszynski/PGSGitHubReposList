@@ -3,7 +3,7 @@ package pgssoft.com.githubreposlist
 import android.app.Application
 import pgssoft.com.githubreposlist.di.DaggerPGSRepoAppComponent
 import pgssoft.com.githubreposlist.di.PGSRepoAppComponent
-import pgssoft.com.githubreposlist.di.PGSRepoModule
+import pgssoft.com.githubreposlist.di.AppModule
 
 
 class PGSRepoApp : Application() {
@@ -21,7 +21,7 @@ class PGSRepoApp : Application() {
     }
 
     private fun initDagger(app:PGSRepoApp): PGSRepoAppComponent =
-            DaggerPGSRepoAppComponent.builder().pGSRepoModule(PGSRepoModule(app)).build()
+            DaggerPGSRepoAppComponent.builder().appModule(AppModule(app)).build()
 
 
 }

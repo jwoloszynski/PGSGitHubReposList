@@ -10,7 +10,7 @@ import pgssoft.com.githubreposlist.utils.PrefsHelper
 import javax.inject.Singleton
 
 @Module
-class PGSRepoModule(private val app: PGSRepoApp) {
+class AppModule(private val app: PGSRepoApp) {
 
 
     @Provides

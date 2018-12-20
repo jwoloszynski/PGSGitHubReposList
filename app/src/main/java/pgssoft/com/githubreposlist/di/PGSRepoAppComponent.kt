@@ -5,7 +5,7 @@ import pgssoft.com.githubreposlist.ui.RepoDetailFragment
 import javax.inject.Singleton
 
 @Singleton
-@Component(modules = [PGSRepoModule::class])
+@Component(modules = [AppModule::class])
 interface PGSRepoAppComponent {
 
 fun inject(detailFragment: RepoDetailFragment)
