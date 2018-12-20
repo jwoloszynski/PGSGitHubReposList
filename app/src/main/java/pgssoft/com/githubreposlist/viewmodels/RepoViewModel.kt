@@ -52,6 +52,7 @@ class RepoViewModel : ScopedViewModel() {
     }
 
     fun onRefresh() {
+
         if (cm.activeNetworkInfo != null) {
             scope.launch {
                 val state = repoRepository.fetchAll()

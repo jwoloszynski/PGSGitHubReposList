@@ -1,13 +1,20 @@
 package pgssoft.com.githubreposlist.data
 
+import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
+import pgssoft.com.githubreposlist.di.AppModule
+import pgssoft.com.githubreposlist.di.DaggerRepoComponent
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 import javax.inject.Inject
 
 
 class RepoRepository {
 
+    init {
+        val repoComponent = DaggerRepoComponent.builder().appModule(AppModule(PGSRepoApp.app)).build()
+        repoComponent.inject(this)
+    }
 
     companion object {
         private const val orgName = "PGSSoft"
