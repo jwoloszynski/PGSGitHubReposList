@@ -3,11 +3,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+
+apply plugin: 'kotlin-kapt'
+
 androidExtensions {
     experimental = true
 }
-
-apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -50,7 +51,6 @@ dependencies {
     def rxjava_version = "2.1.0"
     def coroutines_version = "1.0.1"
     def dagger_version = "2.19"
-    def mock_webserver_version = "3.7.0"
 
 
     //Room
@@ -84,7 +84,6 @@ dependencies {
     //tests
 
     testImplementation "android.arch.persistence.room:testing:$room_version"
-    testImplementation "com.squareup.okhttp3:mockwebserver:$mock_webserver_version"
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
