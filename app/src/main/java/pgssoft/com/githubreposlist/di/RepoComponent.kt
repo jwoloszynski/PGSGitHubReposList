@@ -6,7 +6,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-@Component (modules = [AppModule::class])
+@Component (modules = [AppModule::class, RepoModule::class])
 interface RepoComponent {
     fun inject(repoRepository: RepoRepository)
 }
