@@ -12,14 +12,17 @@ object GHApiProvider {
 
         private val client: OkHttpClient =
             OkHttpClient.Builder().connectTimeout(5, TimeUnit.SECONDS).writeTimeout(20, TimeUnit.SECONDS)
-                .cache(Cache(PGSRepoApp.app.cacheDir, 10*1024*1024))
-                .readTimeout(30, TimeUnit.SECONDS).build()
+                .readTimeout(30, TimeUnit.SECONDS).cache(Cache(PGSRepoApp.app.cacheDir, 10*1024*1024))
+                .build()
+
 
         fun getApi(): GHApi {
             return Retrofit.Builder().baseUrl("https://api.github.com").client(client)
                 .addConverterFactory(GsonConverterFactory.create()).build()
                 .create(GHApi::class.java)
         }
+
+
 
 
 }

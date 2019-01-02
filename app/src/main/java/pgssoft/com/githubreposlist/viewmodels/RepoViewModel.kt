@@ -11,18 +11,11 @@ import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.Event
 import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.data.RepoRepository
-import pgssoft.com.githubreposlist.data.api.GHApiProvider
-import pgssoft.com.githubreposlist.data.db.ReposDatabase
 import pgssoft.com.githubreposlist.data.db.Repository
-import pgssoft.com.githubreposlist.utils.PrefsHelper
 
 class RepoViewModel : ScopedViewModel() {
 
-    val db = ReposDatabase.getInstance(PGSRepoApp.app)
-    private val prefs = PrefsHelper(PGSRepoApp.app)
-    private val api = GHApiProvider.getApi()
-
-    private val repoRepository = RepoRepository(api, db, prefs)
+    private val repoRepository = RepoRepository()
 
     private var repoListLiveData: LiveData<List<Repository>>
     private var repoListCount: LiveData<Int>
@@ -35,6 +28,7 @@ class RepoViewModel : ScopedViewModel() {
     var cm = PGSRepoApp.app.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
 
+    
     var repository: LiveData<Repository>
 
     init {
@@ -43,7 +37,6 @@ class RepoViewModel : ScopedViewModel() {
         repoListCount = repoRepository.getCount()
         repoListCountText = getRepoCountText()
         repository = repoRepository.getRepoById(0)
-
 
     }
 
@@ -59,6 +52,7 @@ class RepoViewModel : ScopedViewModel() {
     }
 
     fun onRefresh() {
+
         if (cm.activeNetworkInfo != null) {
             scope.launch {
                 val state = repoRepository.fetchAll()

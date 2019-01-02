@@ -21,8 +21,7 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 class RepoListFragment : Fragment() {
 
     private lateinit var repoViewModel: RepoViewModel
-
-    private var repoListAdapter: RepoListAdapter = RepoListAdapter(listOf())
+    private lateinit var repoListAdapter: RepoListAdapter
 
 
     override fun onAttach(context: Context?) {

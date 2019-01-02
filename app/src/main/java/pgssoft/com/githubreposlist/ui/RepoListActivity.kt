@@ -21,7 +21,6 @@ class RepoListActivity : AppCompatActivity(), RepoActivityInterface {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_repolist)
 
-
         supportFragmentManager.beginTransaction().apply {
             if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 add(R.id.detail, detailFragment)
