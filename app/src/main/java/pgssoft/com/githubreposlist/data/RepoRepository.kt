@@ -12,9 +12,7 @@ import javax.inject.Inject
 class RepoRepository {
 
     init {
-        val repoComponent = DaggerRepoComponent.builder().appModule(AppModule(PGSRepoApp.app)).build()
-        repoComponent.inject(this)
-
+        DaggerRepoComponent.builder().appModule(AppModule(PGSRepoApp.app)).build().inject(this)
     }
 
     companion object {
@@ -49,6 +47,7 @@ class RepoRepository {
                         }
                     }
                     db.repoDao().insertAll(repoList)
+
                     RepoDownloadStatus.DataOk
                 }
             } catch (e: Exception) {
