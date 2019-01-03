@@ -10,12 +10,15 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.dialog_note.view.*
 import kotlinx.android.synthetic.main.fragment_repo_list.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.EventObserver
 import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
+import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
+import javax.inject.Inject
 
 
 class RepoListFragment : Fragment() {
@@ -23,10 +26,12 @@ class RepoListFragment : Fragment() {
     private lateinit var repoViewModel: RepoViewModel
     private lateinit var repoListAdapter: RepoListAdapter
 
+    @Inject
+    lateinit var repoVMFactory: RepoViewModelFactory
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        repoListAdapter = RepoListAdapter(listOf(), activity as RepoListActivity)
+        repoListAdapter = RepoListAdapter(listOf(), this)
 
 
     }
@@ -38,14 +43,23 @@ class RepoListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        PGSRepoApp.app.appComponent.inject(this)
+        repoViewModel = ViewModelProviders.of(activity!!, repoVMFactory).get(RepoViewModel::class.java)
 
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
         deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
 
         recyclerView.adapter = repoListAdapter
-        repoViewModel = ViewModelProviders.of(activity!!).get(RepoViewModel::class.java)
-        repoViewModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
+        repoViewModel.getRepoCount().observe(this, Observer {
+
+
+            textRepoCount.text =
+                    when {
+                        ((it ?: 0) > 0) -> it.toString()
+                        else -> getString(R.string.pull_to_refresh)
+                    }
+        }
         )
 
         refreshAdapter()
@@ -62,8 +76,11 @@ class RepoListFragment : Fragment() {
                 is RepoDownloadStatus.ErrorMessage -> {
                     showError(it.message)
                 }
+                is RepoDownloadStatus.ErrorNoConnection -> {
+                    showError(getString(R.string.no_internet_connection))
+                }
                 is RepoDownloadStatus.Forbidden -> {
-                    showError(this.getString(R.string.rate_limit_exceeded))
+                    showError(getString(R.string.rate_limit_exceeded))
                 }
 
             }
@@ -91,6 +108,35 @@ class RepoListFragment : Fragment() {
                 d.dismiss()
             }
             .create().show()
+    }
+
+
+    fun onItemSelect(id: Int) {
+        repoViewModel.setSelected(id)
+        (activity as RepoListActivity).showDetail()
+
+    }
+
+
+    fun showNoteDialog(id: Int, comment: String) {
+        val v = View.inflate(
+            (activity as RepoListActivity),
+            R.layout.dialog_note, null
+        )
+            .also {
+                it.comment.setText(comment)
+            }
+
+        val title =
+            if (comment.isEmpty()) getString(R.string.add_note) else this.getString(R.string.edit_note)
+
+        AlertDialog.Builder(activity as RepoListActivity).setTitle(title).setView(v)
+            .setPositiveButton(getText(R.string.ok))
+            { _, _ ->
+                repoViewModel.update(id, v.comment.text.toString())
+            }
+            .create().show()
+
     }
 
 }

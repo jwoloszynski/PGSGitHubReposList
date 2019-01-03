@@ -13,18 +13,19 @@ import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.RepoListDiffCallback
 import pgssoft.com.githubreposlist.utils.getFormattedDate
 
-class RepoListAdapter(private var repoList: List<Repository>, private var repoListActivity: RepoActivityInterface?) : RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
+class RepoListAdapter(private var repoList: List<Repository>, private var fragment: RepoListFragment) :
+    RecyclerView.Adapter<RepoListAdapter.RepoViewHolder>() {
 
 
     class RepoViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView), LayoutContainer {
 
-        fun bind(listRow: Repository, repoListActivity: RepoActivityInterface?) {
+        fun bind(listRow: Repository, fragment: RepoListFragment) {
             repoName?.text = listRow.name
             id?.text = listRow.id.toString()
             repoDescription?.text = listRow.description
-            repoUpdatedAt?.text = PGSRepoApp.app.getString(R.string.last_updated, listRow.updated_at.getFormattedDate() )
+            repoUpdatedAt?.text = PGSRepoApp.app.getString(R.string.last_updated, listRow.updated_at.getFormattedDate())
 
-            repoPushedAt?.text = PGSRepoApp.app.getString(R.string.last_pushed, listRow.pushed_at.getFormattedDate() )
+            repoPushedAt?.text = PGSRepoApp.app.getString(R.string.last_pushed, listRow.pushed_at.getFormattedDate())
             repoLanguage?.text = listRow.language
 
             noteButton.text = if (listRow.comment.isNullOrEmpty()) {
@@ -37,12 +38,12 @@ class RepoListAdapter(private var repoList: List<Repository>, private var repoLi
             }
 
             detailsButton.setOnClickListener {
-                repoListActivity?.onItemSelect(listRow.id)
+                fragment.onItemSelect(listRow.id)
 
             }
 
             noteButton.setOnClickListener {
-                repoListActivity?.showNoteDialog(listRow.id, listRow.comment ?: " ")
+                fragment.showNoteDialog(listRow.id, listRow.comment ?: " ")
             }
 
         }
@@ -50,7 +51,7 @@ class RepoListAdapter(private var repoList: List<Repository>, private var repoLi
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, element: Int): RepoViewHolder {
-        val v: View = LayoutInflater.from(PGSRepoApp.app).inflate(R.layout.repo_item_view,viewGroup, false)
+        val v: View = LayoutInflater.from(PGSRepoApp.app).inflate(R.layout.repo_item_view, viewGroup, false)
 
         return RepoViewHolder(v)
     }
@@ -62,7 +63,7 @@ class RepoListAdapter(private var repoList: List<Repository>, private var repoLi
 
     override fun onBindViewHolder(viewHolder: RepoViewHolder, index: Int) {
 
-        viewHolder.bind(repoList[index], repoListActivity)
+        viewHolder.bind(repoList[index], fragment)
 
     }
 
@@ -71,7 +72,7 @@ class RepoListAdapter(private var repoList: List<Repository>, private var repoLi
 
         val diffResult = DiffUtil.calculateDiff(RepoListDiffCallback(list, repoList))
         repoList = list
-        repoList = repoList.sortedWith(compareByDescending{it.pushed_at })
+        repoList = repoList.sortedWith(compareByDescending { it.pushed_at })
         diffResult.dispatchUpdatesTo(this)
 
     }

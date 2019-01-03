@@ -2,6 +2,9 @@ package pgssoft.com.githubreposlist.di
 
 import dagger.Component
 import pgssoft.com.githubreposlist.ui.RepoDetailFragment
+import pgssoft.com.githubreposlist.ui.RepoListActivity
+import pgssoft.com.githubreposlist.ui.RepoListFragment
+import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import javax.inject.Singleton
 
 @Singleton
@@ -9,5 +12,7 @@ import javax.inject.Singleton
 interface PGSRepoAppComponent {
 
 fun inject(detailFragment: RepoDetailFragment)
+fun inject(listFragment: RepoListFragment)
+fun inject (activity: RepoListActivity)
 
 }

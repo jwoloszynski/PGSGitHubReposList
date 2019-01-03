@@ -1,32 +1,23 @@
 package pgssoft.com.githubreposlist.data
 
-import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
-import pgssoft.com.githubreposlist.di.AppModule
-import pgssoft.com.githubreposlist.di.DaggerRepoComponent
-import pgssoft.com.githubreposlist.di.RepoModule
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
+class RepoRepository @Inject constructor(
+    private val api: GHApi,
+    private val db: ReposDatabase,
+    private val prefs: PrefsHelper
+) {
 
-class RepoRepository {
-
-    init {
-        DaggerRepoComponent.builder().appModule(AppModule(PGSRepoApp.app)).repoModule(RepoModule(PGSRepoApp.app)).build().inject(this)
-    }
 
     companion object {
         private const val orgName = "PGSSoft"
 
     }
-
-    @Inject
-    lateinit var db: ReposDatabase
-    @Inject
-    lateinit var api: GHApi
-    @Inject
-    lateinit var prefs: PrefsHelper
 
 
     fun fetchAll(): RepoDownloadStatus {

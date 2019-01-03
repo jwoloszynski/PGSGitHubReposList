@@ -11,30 +11,22 @@ import kotlinx.android.synthetic.main.fragment_repo_detail.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
-import pgssoft.com.githubreposlist.utils.PrefsHelper
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
+import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Inject
 
 
 class RepoDetailFragment : Fragment() {
     @Inject
-    lateinit var prefs: PrefsHelper
+    lateinit var repoVMFactory: RepoViewModelFactory
+
+
     lateinit var repoViewModel: RepoViewModel
-    private var repoId = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         PGSRepoApp.app.appComponent.inject(this)
         super.onCreate(savedInstanceState)
-        if (savedInstanceState == null) {
-            // Get back arguments
-            repoId = if (arguments != null) {
-                arguments!!.getInt("id", prefs.repoId)
 
-            } else {
-                prefs.repoId
-            }
-            prefs.repoId = repoId
-        }
 
     }
 
@@ -44,16 +36,15 @@ class RepoDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        repoViewModel = ViewModelProviders.of(activity!!).get(RepoViewModel::class.java)
-        if (repoId == 0) {
-            repoId = prefs.repoId
-        }
+        repoViewModel = ViewModelProviders.of(activity!!, repoVMFactory)
+            .get(RepoViewModel::class.java)
+
         noteButton.visibility = View.INVISIBLE
         commentString.visibility = View.INVISIBLE
 
-        repoViewModel.repository.observe(this, Observer {
+        repoViewModel.selected.observe(this, Observer {
 
-            if(it != null) {
+            if (it != null) {
                 updateView(it)
             }
         })
@@ -75,7 +66,8 @@ class RepoDetailFragment : Fragment() {
 
         noteButton.visibility = View.VISIBLE
         noteButton.setOnClickListener {
-            (activity as RepoListActivity).showNoteDialog(repo.id, repo.comment?: "")
+
+            RepoListFragment().showNoteDialog(repo.id, repo.comment ?: "")
         }
 
     }

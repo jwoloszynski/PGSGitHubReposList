@@ -7,7 +7,6 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import org.mockito.Mockito.mock
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
@@ -18,13 +17,18 @@ import pgssoft.com.githubreposlist.utils.PrefsHelper
 class RepoRepositoryTest {
 
 
-    private val mApi = mock(GHApi::class.java, RETURNS_DEEP_STUBS)
-    private val mDb = mock(ReposDatabase::class.java)
-    private val mPrefs = mock(PrefsHelper::class.java)
+    private lateinit var mApi: GHApi
+    private lateinit var mDb: ReposDatabase
+    private lateinit var mPrefs: PrefsHelper
     private lateinit var repoRepository: RepoRepository
 
     @Before
     fun setUp() {
+        mApi = mock(GHApi::class.java)
+        mDb = mock(ReposDatabase::class.java)
+        mPrefs = mock(PrefsHelper::class.java)
+
+
         val repoList = getTestReposList()
         val mutableLiveData = MutableLiveData<List<Repository>>()
         mutableLiveData.postValue(repoList)
@@ -37,8 +41,8 @@ class RepoRepositoryTest {
     fun fetchAllTest_DataOk() {
 
         doReturn(-1L).whenever(mPrefs).time
-        repoRepository = RepoRepository()
 
+        repoRepository = RepoRepository(mApi, mDb, mPrefs)
         val testVal = repoRepository.fetchAll()
         Assert.assertTrue(testVal == RepoDownloadStatus.DataOk)
     }
@@ -47,8 +51,8 @@ class RepoRepositoryTest {
     fun fetchAllTest_RequestTimeTooShort() {
 
         doReturn(System.currentTimeMillis()).whenever(mPrefs).time
-        repoRepository = RepoRepository()
 
+        repoRepository = RepoRepository(mApi, mDb, mPrefs)
         val testVal = repoRepository.fetchAll()
         Assert.assertTrue(testVal == RepoDownloadStatus.NoRefreshDueToTime)
     }

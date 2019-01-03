@@ -6,6 +6,7 @@ sealed class RepoDownloadStatus {
     object Forbidden: RepoDownloadStatus()
     object DataOk : RepoDownloadStatus()
     object NoRefreshDueToTime : RepoDownloadStatus()
+    object ErrorNoConnection : RepoDownloadStatus()
 
 }
 
