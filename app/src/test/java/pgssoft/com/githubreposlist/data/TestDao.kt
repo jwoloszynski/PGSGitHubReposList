@@ -9,9 +9,9 @@ import pgssoft.com.githubreposlist.data.db.RepositoryComment
 class TestDao(private val list: List<Repository>) : RepoDao {
 
     override fun getAll(): LiveData<List<Repository>> {
-        var livedata: LiveData<List<Repository>>
+        val livedata: LiveData<List<Repository>>
 
-        var mutableLiveData = MutableLiveData<List<Repository>>()
+        val mutableLiveData = MutableLiveData<List<Repository>>()
         mutableLiveData.postValue(list)
         livedata = mutableLiveData
 
@@ -19,9 +19,9 @@ class TestDao(private val list: List<Repository>) : RepoDao {
     }
 
     override fun get(id: Int): LiveData<Repository> {
-        var livedata: LiveData<Repository>
+        val livedata: LiveData<Repository>
 
-        var mutableLiveData = MutableLiveData<Repository>()
+        val mutableLiveData = MutableLiveData<Repository>()
         mutableLiveData.postValue(list[id])
         livedata = mutableLiveData
 
@@ -41,9 +41,9 @@ class TestDao(private val list: List<Repository>) : RepoDao {
     }
 
     override fun getCount(): LiveData<Int> {
-        var livedata: LiveData<Int>
+        val livedata: LiveData<Int>
 
-        var mutableLiveData = MutableLiveData<Int>()
+        val mutableLiveData = MutableLiveData<Int>()
         mutableLiveData.postValue(list.size)
         livedata = mutableLiveData
 
@@ -60,8 +60,7 @@ class TestDao(private val list: List<Repository>) : RepoDao {
 
     override fun getCommentByRepoId(repoId: Int): RepositoryComment? {
 
-        val rc = RepositoryComment(repoId, repoId.toString())
-        return rc
+        return RepositoryComment(repoId, repoId.toString())
 
     }
 

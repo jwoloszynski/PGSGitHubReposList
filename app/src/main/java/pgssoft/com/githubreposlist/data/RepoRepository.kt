@@ -63,7 +63,7 @@ class RepoRepository @Inject constructor(
         prefs.clearAll()
     }
 
-    fun updateRepo(id: Int, comment: String) {
+    fun updateRepoComment(id: Int, comment: String) {
         db.repoDao().updateRepoComment(id, comment)
 
     }

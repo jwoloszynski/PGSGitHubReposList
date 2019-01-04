@@ -35,6 +35,8 @@ class RepoRepositoryTest {
 
         doReturn(TestCall(repoList)).whenever(mApi).getOrganizationRepos(ArgumentMatchers.anyString())
         doReturn(TestDao(repoList)).whenever(mDb).repoDao()
+        repoRepository = RepoRepository(mApi, mDb, mPrefs)
+
     }
 
     @Test
@@ -42,7 +44,6 @@ class RepoRepositoryTest {
 
         doReturn(-1L).whenever(mPrefs).time
 
-        repoRepository = RepoRepository(mApi, mDb, mPrefs)
         val testVal = repoRepository.fetchAll()
         Assert.assertTrue(testVal == RepoDownloadStatus.DataOk)
     }
@@ -52,7 +53,6 @@ class RepoRepositoryTest {
 
         doReturn(System.currentTimeMillis()).whenever(mPrefs).time
 
-        repoRepository = RepoRepository(mApi, mDb, mPrefs)
         val testVal = repoRepository.fetchAll()
         Assert.assertTrue(testVal == RepoDownloadStatus.NoRefreshDueToTime)
     }

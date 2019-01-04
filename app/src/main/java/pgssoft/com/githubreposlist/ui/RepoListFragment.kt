@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.dialog_note.view.*
 import kotlinx.android.synthetic.main.fragment_repo_list.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
@@ -44,7 +43,10 @@ class RepoListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         PGSRepoApp.app.appComponent.inject(this)
-        repoViewModel = ViewModelProviders.of(activity!!, repoVMFactory).get(RepoViewModel::class.java)
+        repoViewModel = activity!!.run {
+            ViewModelProviders.of(this, repoVMFactory)
+                .get(RepoViewModel::class.java)
+        }
 
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
@@ -113,31 +115,9 @@ class RepoListFragment : Fragment() {
 
     fun onItemSelect(id: Int) {
         repoViewModel.setSelected(id)
-        (activity as RepoListActivity).showDetail()
 
     }
 
-
-    fun showNoteDialog(id: Int, comment: String) {
-        val v = View.inflate(
-            (activity as RepoListActivity),
-            R.layout.dialog_note, null
-        )
-            .also {
-                it.comment.setText(comment)
-            }
-
-        val title =
-            if (comment.isEmpty()) getString(R.string.add_note) else this.getString(R.string.edit_note)
-
-        AlertDialog.Builder(activity as RepoListActivity).setTitle(title).setView(v)
-            .setPositiveButton(getText(R.string.ok))
-            { _, _ ->
-                repoViewModel.update(id, v.comment.text.toString())
-            }
-            .create().show()
-
-    }
 
 }
 

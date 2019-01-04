@@ -26,8 +26,23 @@ class RepoDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         PGSRepoApp.app.appComponent.inject(this)
         super.onCreate(savedInstanceState)
+        repoViewModel = activity!!.run {
+            ViewModelProviders.of(this, repoVMFactory)
+                .get(RepoViewModel::class.java)
+        }
 
 
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        repoViewModel.selected.observe(this, Observer {
+
+            if (it != null) {
+                updateView(it)
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -36,18 +51,10 @@ class RepoDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        repoViewModel = ViewModelProviders.of(activity!!, repoVMFactory)
-            .get(RepoViewModel::class.java)
+
 
         noteButton.visibility = View.INVISIBLE
         commentString.visibility = View.INVISIBLE
-
-        repoViewModel.selected.observe(this, Observer {
-
-            if (it != null) {
-                updateView(it)
-            }
-        })
 
 
     }
@@ -67,7 +74,7 @@ class RepoDetailFragment : Fragment() {
         noteButton.visibility = View.VISIBLE
         noteButton.setOnClickListener {
 
-            RepoListFragment().showNoteDialog(repo.id, repo.comment ?: "")
+            (activity as RepoListActivity).showNoteDialog(repo.id, repo.comment ?: "")
         }
 
     }

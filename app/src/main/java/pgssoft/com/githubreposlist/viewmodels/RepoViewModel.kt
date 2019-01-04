@@ -23,7 +23,7 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
 
     var repository = getRepoById(0)
 
-    var selected = getRepoById(0)
+    var selected: LiveData<Repository>  = getRepoById(0)
 
     fun getRepoList() = repoListLiveData
 
@@ -38,10 +38,11 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
         if (cm.activeNetworkInfo != null) {
             scope.launch {
                 val state = repoRepository.fetchAll()
-                setState(state)
+               _refreshState.postValue(Event(state))
             }
         } else {
-            setState(RepoDownloadStatus.ErrorNoConnection)
+
+            _refreshState.postValue(Event(RepoDownloadStatus.ErrorNoConnection))
         }
     }
 
@@ -51,21 +52,14 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
 
     }
 
-    fun getRepoById(id: Int): LiveData<Repository> {
+    private fun getRepoById(id: Int): LiveData<Repository> {
         repository = repoRepository.getRepoById(id)
         return repository
 
     }
 
     fun update(id: Int, comment: String) {
-        scope.launch { repoRepository.updateRepo(id, comment) }
+        scope.launch { repoRepository.updateRepoComment(id, comment) }
     }
-
-    private fun setState(state: RepoDownloadStatus) {
-
-        val event = Event(state)
-        _refreshState.postValue(event)
-    }
-
 
 }

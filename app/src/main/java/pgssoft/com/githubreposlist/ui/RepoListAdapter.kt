@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.repo_item_view.*
-import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.RepoListDiffCallback
@@ -23,18 +22,20 @@ class RepoListAdapter(private var repoList: List<Repository>, private var fragme
             repoName?.text = listRow.name
             id?.text = listRow.id.toString()
             repoDescription?.text = listRow.description
-            repoUpdatedAt?.text = PGSRepoApp.app.getString(R.string.last_updated, listRow.updated_at.getFormattedDate())
+            repoUpdatedAt?.text =
+                    fragment.resources.getString(R.string.last_updated, listRow.updated_at.getFormattedDate())
 
-            repoPushedAt?.text = PGSRepoApp.app.getString(R.string.last_pushed, listRow.pushed_at.getFormattedDate())
+            repoPushedAt?.text =
+                    fragment.resources.getString(R.string.last_pushed, listRow.pushed_at.getFormattedDate())
             repoLanguage?.text = listRow.language
 
             noteButton.text = if (listRow.comment.isNullOrEmpty()) {
 
-                PGSRepoApp.app.getString(R.string.add_note)
+                fragment.resources.getString(R.string.add_note)
 
             } else {
 
-                PGSRepoApp.app.getString(R.string.edit_note)
+                fragment.resources.getString(R.string.edit_note)
             }
 
             detailsButton.setOnClickListener {
@@ -43,7 +44,7 @@ class RepoListAdapter(private var repoList: List<Repository>, private var fragme
             }
 
             noteButton.setOnClickListener {
-                fragment.showNoteDialog(listRow.id, listRow.comment ?: " ")
+                (fragment.activity as RepoListActivity).showNoteDialog(listRow.id, listRow.comment ?: " ")
             }
 
         }
@@ -51,7 +52,7 @@ class RepoListAdapter(private var repoList: List<Repository>, private var fragme
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, element: Int): RepoViewHolder {
-        val v: View = LayoutInflater.from(PGSRepoApp.app).inflate(R.layout.repo_item_view, viewGroup, false)
+        val v: View = LayoutInflater.from(fragment.context).inflate(R.layout.repo_item_view, viewGroup, false)
 
         return RepoViewHolder(v)
     }
