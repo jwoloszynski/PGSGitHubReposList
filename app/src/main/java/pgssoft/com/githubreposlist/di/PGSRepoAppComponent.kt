@@ -4,7 +4,6 @@ import dagger.Component
 import pgssoft.com.githubreposlist.ui.RepoDetailFragment
 import pgssoft.com.githubreposlist.ui.RepoListActivity
 import pgssoft.com.githubreposlist.ui.RepoListFragment
-import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import javax.inject.Singleton
 
 @Singleton

@@ -7,9 +7,7 @@ class RepoListDiffCallback(var newList: List<Repository>, var oldList: List<Repo
 
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-
         return oldList[oldItemPosition].id == (newList[newItemPosition].id)
-
     }
 
     override fun getOldListSize(): Int {
@@ -20,10 +18,8 @@ class RepoListDiffCallback(var newList: List<Repository>, var oldList: List<Repo
         return newList.size
     }
 
-
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-
         return oldList[oldItemPosition] == newList[newItemPosition]
-
     }
+    
 }

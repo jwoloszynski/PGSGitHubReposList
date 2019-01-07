@@ -9,9 +9,6 @@ class RepoViewModelFactory(private val cm: ConnectivityManager, private val repo
     ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-
         return RepoViewModel(cm, repoRepository) as T
-
-
     }
 }

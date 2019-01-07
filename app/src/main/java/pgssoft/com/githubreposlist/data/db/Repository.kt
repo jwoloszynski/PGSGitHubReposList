@@ -7,7 +7,6 @@ import android.arch.persistence.room.PrimaryKey
 @Entity
 data class Repository(
     @PrimaryKey(autoGenerate = true) var id: Int,
-
     @ColumnInfo(name = "name") var name: String?,
     @ColumnInfo(name = "description") var description: String?,
     @ColumnInfo(name = "language") var language: String?,

@@ -2,7 +2,6 @@ package pgssoft.com.githubreposlist.data.db
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
-import io.reactivex.Flowable
 
 @Dao
 interface RepoDao {

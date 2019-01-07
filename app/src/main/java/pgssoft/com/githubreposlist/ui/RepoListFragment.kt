@@ -22,17 +22,15 @@ import javax.inject.Inject
 
 class RepoListFragment : Fragment() {
 
-    private lateinit var repoViewModel: RepoViewModel
-    private lateinit var repoListAdapter: RepoListAdapter
-
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
+
+    private lateinit var repoViewModel: RepoViewModel
+    private lateinit var repoListAdapter: RepoListAdapter
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         repoListAdapter = RepoListAdapter(listOf(), this)
-
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -47,14 +45,12 @@ class RepoListFragment : Fragment() {
             ViewModelProviders.of(this, repoVMFactory)
                 .get(RepoViewModel::class.java)
         }
-
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
         deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
 
         recyclerView.adapter = repoListAdapter
         repoViewModel.getRepoCount().observe(this, Observer {
-
 
             textRepoCount.text =
                     when {
@@ -63,7 +59,6 @@ class RepoListFragment : Fragment() {
                     }
         }
         )
-
         refreshAdapter()
     }
 
@@ -95,15 +90,11 @@ class RepoListFragment : Fragment() {
 
     private fun refreshAdapter() {
         repoViewModel.getRepoList().observe(this, Observer {
-
             repoListAdapter.setData(it!!)
-
         })
-
     }
 
     private fun showError(message: String) {
-
         AlertDialog.Builder(activity!!).setTitle(R.string.error).setMessage(message)
             .setPositiveButton(R.string.ok)
             { d, _ ->
@@ -115,7 +106,7 @@ class RepoListFragment : Fragment() {
 
     fun onItemSelect(id: Int) {
         repoViewModel.setSelected(id)
-
+        (activity as RepoListActivity).showDetail()
     }
 
 

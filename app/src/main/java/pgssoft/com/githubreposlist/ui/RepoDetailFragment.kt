@@ -19,24 +19,20 @@ import javax.inject.Inject
 class RepoDetailFragment : Fragment() {
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
-
-
     lateinit var repoViewModel: RepoViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         PGSRepoApp.app.appComponent.inject(this)
         super.onCreate(savedInstanceState)
-        repoViewModel = activity!!.run {
-            ViewModelProviders.of(this, repoVMFactory)
-                .get(RepoViewModel::class.java)
-        }
-
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        repoViewModel = activity!!.run {
+            ViewModelProviders.of(this, repoVMFactory)
+                .get(RepoViewModel::class.java)
+        }
         repoViewModel.selected.observe(this, Observer {
 
             if (it != null) {
@@ -51,12 +47,8 @@ class RepoDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
         noteButton.visibility = View.INVISIBLE
         commentString.visibility = View.INVISIBLE
-
-
     }
 
     private fun updateView(repo: Repository) {
@@ -70,10 +62,8 @@ class RepoDetailFragment : Fragment() {
             commentString.visibility = View.VISIBLE
             noteButton.text = this.getText(R.string.edit_note)
         }
-
         noteButton.visibility = View.VISIBLE
         noteButton.setOnClickListener {
-
             (activity as RepoListActivity).showNoteDialog(repo.id, repo.comment ?: "")
         }
 

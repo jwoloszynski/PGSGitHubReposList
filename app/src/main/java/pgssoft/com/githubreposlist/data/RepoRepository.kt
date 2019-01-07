@@ -13,25 +13,20 @@ class RepoRepository @Inject constructor(
     private val prefs: PrefsHelper
 ) {
 
-
     companion object {
         private const val orgName = "PGSSoft"
 
     }
 
-
     fun fetchAll(): RepoDownloadStatus {
 
         if (canRefreshList()) {
-
             try {
                 val response = api.getOrganizationRepos(orgName).execute()
                 return if (response.body() == null) {
                     RepoDownloadStatus.Forbidden
                 } else {
-
                     val repoList = response.body()!!
-
                     if (!repoList.isNullOrEmpty()) {
                         for (repo in repoList) {
                             val comment = getCommentByRepoId(repo.id)
@@ -39,13 +34,11 @@ class RepoRepository @Inject constructor(
                         }
                     }
                     db.repoDao().insertAll(repoList)
-
                     RepoDownloadStatus.DataOk
                 }
             } catch (e: Exception) {
                 return RepoDownloadStatus.ErrorMessage(e.message.toString())
             }
-
 
         } else {
             return RepoDownloadStatus.NoRefreshDueToTime
@@ -72,18 +65,13 @@ class RepoRepository @Inject constructor(
     private fun getCommentByRepoId(repoId: Int) = db.repoDao().getCommentByRepoId(repoId)
 
     private fun canRefreshList(): Boolean {
-
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed
-
         if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (getItemListCount() == 0)) {
             prefs.time = System.currentTimeMillis()
-
             return true
         }
         return false
-
-
     }
 
 }

@@ -1,6 +1,5 @@
 package pgssoft.com.githubreposlist.ui
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.Configuration
 import android.os.Bundle
@@ -18,7 +17,6 @@ class RepoListActivity : AppCompatActivity() {
 
     private val detailFragment = RepoDetailFragment()
     private val listFragment = RepoListFragment()
-
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
     lateinit var repoViewModel: RepoViewModel
@@ -26,43 +24,27 @@ class RepoListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PGSRepoApp.app.appComponent.inject(this)
-
         repoViewModel = ViewModelProviders.of(this, repoVMFactory).get(RepoViewModel::class.java)
-
-
         setContentView(R.layout.activity_repolist)
-            supportFragmentManager.beginTransaction().apply {
-
-                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    replace(R.id.detail, detailFragment)
-                }
-                replace(R.id.list, listFragment)
-                commit()
-            }
-
-        repoViewModel.selected.observe( this, Observer {
-
-            showDetail()
-        })
-
-
-    }
-
-    private fun showDetail() {
-
         supportFragmentManager.beginTransaction().apply {
-            if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
 
-                replace(R.id.list, detailFragment)
-                addToBackStack(null)
-
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                replace(R.id.detail, detailFragment)
             }
-
+            replace(R.id.list, listFragment)
             commit()
-
         }
     }
 
+    fun showDetail() {
+        supportFragmentManager.beginTransaction().apply {
+            if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
+                replace(R.id.list, detailFragment)
+                addToBackStack(null)
+            }
+            commit()
+        }
+    }
 
     fun showNoteDialog(id: Int, comment: String) {
         val v = View.inflate(
@@ -84,7 +66,6 @@ class RepoListActivity : AppCompatActivity() {
             .create().show()
 
     }
-
 
 
 }

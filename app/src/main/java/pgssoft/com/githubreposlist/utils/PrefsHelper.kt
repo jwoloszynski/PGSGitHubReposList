@@ -2,7 +2,6 @@ package pgssoft.com.githubreposlist.utils
 
 import android.content.Context
 import android.preference.PreferenceManager
-import javax.inject.Inject
 
 open class PrefsHelper(ctx: Context) {
 
@@ -11,8 +10,6 @@ open class PrefsHelper(ctx: Context) {
     private val editor = preferences.edit()
     var time = preferences.getLong("time", -1L)
         set(time) {
-            editor.remove("time")
-            editor.commit()
             editor.putLong("time", time)
             editor.commit()
         }
@@ -24,7 +21,7 @@ open class PrefsHelper(ctx: Context) {
         }
 
 
-    fun clearAll(){
+    fun clearAll() {
         time = 0
         repoId = 0
     }
