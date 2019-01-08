@@ -53,6 +53,7 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
     private fun getRepoById(id: Int): LiveData<Repository> {
         repository = repoRepository.getRepoById(id)
         return repository
+
     }
 
     fun update(id: Int, comment: String) {

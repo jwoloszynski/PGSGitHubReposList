@@ -2,7 +2,6 @@ package pgssoft.com.githubreposlist.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -28,23 +27,23 @@ class RepoListFragment : Fragment() {
     private lateinit var repoViewModel: RepoViewModel
     private lateinit var repoListAdapter: RepoListAdapter
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        repoListAdapter = RepoListAdapter(listOf(), this)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        PGSRepoApp.app.appComponent.inject(this)
+        repoViewModel = activity!!.run {
+            ViewModelProviders.of(this, repoVMFactory)
+                .get(RepoViewModel::class.java)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_repo_list, container, false)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        PGSRepoApp.app.appComponent.inject(this)
-        repoViewModel = activity!!.run {
-            ViewModelProviders.of(this, repoVMFactory)
-                .get(RepoViewModel::class.java)
-        }
+        repoListAdapter = RepoListAdapter(listOf(), this)
+
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
         deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
@@ -59,11 +58,18 @@ class RepoListFragment : Fragment() {
                     }
         }
         )
+        repoViewModel.selected.observe(this, Observer {
+            textRepoCount.text = it?.id.toString()
+        })
         refreshAdapter()
     }
 
+
+    fun onItemSelect(id: Int) {
+        (activity as RepoListActivity).showDetail(id)
+    }
+
     private fun onRefresh() {
-        swipeToRefresh.isRefreshing = true
         repoViewModel.onRefresh()
         repoViewModel.refreshState.observe(this, EventObserver {
 
@@ -82,17 +88,15 @@ class RepoListFragment : Fragment() {
 
             }
             swipeToRefresh.isRefreshing = false
-
         })
-
     }
-
 
     private fun refreshAdapter() {
         repoViewModel.getRepoList().observe(this, Observer {
             repoListAdapter.setData(it!!)
         })
     }
+
 
     private fun showError(message: String) {
         AlertDialog.Builder(activity!!).setTitle(R.string.error).setMessage(message)
@@ -102,13 +106,6 @@ class RepoListFragment : Fragment() {
             }
             .create().show()
     }
-
-
-    fun onItemSelect(id: Int) {
-        repoViewModel.setSelected(id)
-        (activity as RepoListActivity).showDetail()
-    }
-
 
 }
 

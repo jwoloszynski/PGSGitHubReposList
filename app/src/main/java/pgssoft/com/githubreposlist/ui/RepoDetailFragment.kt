@@ -24,11 +24,6 @@ class RepoDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         PGSRepoApp.app.appComponent.inject(this)
         super.onCreate(savedInstanceState)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
         repoViewModel = activity!!.run {
             ViewModelProviders.of(this, repoVMFactory)
                 .get(RepoViewModel::class.java)
@@ -68,8 +63,4 @@ class RepoDetailFragment : Fragment() {
         }
 
     }
-
-
 }
-
-

@@ -26,17 +26,23 @@ class RepoListActivity : AppCompatActivity() {
         PGSRepoApp.app.appComponent.inject(this)
         repoViewModel = ViewModelProviders.of(this, repoVMFactory).get(RepoViewModel::class.java)
         setContentView(R.layout.activity_repolist)
-        supportFragmentManager.beginTransaction().apply {
 
-            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                replace(R.id.detail, detailFragment)
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction().apply {
+
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    replace(R.id.detail, detailFragment)
+                }
+                replace(R.id.list, listFragment)
+                commit()
             }
-            replace(R.id.list, listFragment)
-            commit()
         }
     }
 
-    fun showDetail() {
+    fun showDetail(id: Int) {
+
+        repoViewModel.setSelected(id)
+
         supportFragmentManager.beginTransaction().apply {
             if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
                 replace(R.id.list, detailFragment)
@@ -66,6 +72,5 @@ class RepoListActivity : AppCompatActivity() {
             .create().show()
 
     }
-
 
 }
