@@ -15,8 +15,6 @@ import javax.inject.Inject
 
 class RepoListActivity : AppCompatActivity() {
 
-    private val detailFragment = RepoDetailFragment()
-    private val listFragment = RepoListFragment()
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
     lateinit var repoViewModel: RepoViewModel
@@ -31,22 +29,23 @@ class RepoListActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction().apply {
 
                 if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                    replace(R.id.detail, detailFragment)
+                    replace(R.id.detail, RepoDetailFragment())
                 }
-                replace(R.id.list, listFragment)
+                replace(R.id.list, RepoListFragment())
                 commit()
             }
         }
+
     }
 
-    fun showDetail(id: Int) {
-
-        repoViewModel.setSelected(id)
+    fun showDetail() {
 
         supportFragmentManager.beginTransaction().apply {
             if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
-                replace(R.id.list, detailFragment)
+                replace(R.id.list, RepoDetailFragment())
                 addToBackStack(null)
+            } else {
+                replace(R.id.detail, RepoDetailFragment())
             }
             commit()
         }

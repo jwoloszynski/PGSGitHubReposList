@@ -30,10 +30,10 @@ class RepoListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PGSRepoApp.app.appComponent.inject(this)
-        repoViewModel = activity!!.run {
-            ViewModelProviders.of(this, repoVMFactory)
-                .get(RepoViewModel::class.java)
-        }
+        repoViewModel =
+                ViewModelProviders.of(requireActivity(), repoVMFactory)
+                    .get(RepoViewModel::class.java)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,17 +56,14 @@ class RepoListFragment : Fragment() {
                         ((it ?: 0) > 0) -> it.toString()
                         else -> getString(R.string.pull_to_refresh)
                     }
-        }
-        )
-        repoViewModel.selected.observe(this, Observer {
-            textRepoCount.text = it?.id.toString()
         })
         refreshAdapter()
     }
 
 
     fun onItemSelect(id: Int) {
-        (activity as RepoListActivity).showDetail(id)
+        repoViewModel.setSelected(id)
+        (activity as RepoListActivity).showDetail()
     }
 
     private fun onRefresh() {

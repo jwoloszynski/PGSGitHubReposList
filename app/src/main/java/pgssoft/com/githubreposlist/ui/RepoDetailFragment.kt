@@ -17,6 +17,8 @@ import javax.inject.Inject
 
 
 class RepoDetailFragment : Fragment() {
+
+
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
     lateinit var repoViewModel: RepoViewModel
@@ -24,10 +26,10 @@ class RepoDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         PGSRepoApp.app.appComponent.inject(this)
         super.onCreate(savedInstanceState)
-        repoViewModel = activity!!.run {
-            ViewModelProviders.of(this, repoVMFactory)
+        repoViewModel =
+            ViewModelProviders.of(requireActivity(), repoVMFactory)
                 .get(RepoViewModel::class.java)
-        }
+
         repoViewModel.selected.observe(this, Observer {
 
             if (it != null) {
