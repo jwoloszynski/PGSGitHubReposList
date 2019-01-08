@@ -5,9 +5,12 @@ import pgssoft.com.githubreposlist.data.db.Repository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 
-class TestCall(private val list: List<Repository>) : Call<List<Repository>> {
+class TestCall(private val list: List<Repository>?, private val isException: Boolean = false) : Call<List<Repository>> {
     override fun execute(): Response<List<Repository>> {
+        if (isException)
+            throw IOException("testException")
         return retrofit2.Response.success(list)
     }
 
