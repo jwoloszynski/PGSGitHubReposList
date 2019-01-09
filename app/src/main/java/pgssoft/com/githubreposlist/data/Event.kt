@@ -13,6 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ *
+ * source: https://github.com/google/iosched/blob/2696fc7e06826ba2db72de243f0d63f83f4a29b5/shared/src/main/java/com/google/samples/apps/iosched/shared/result/Event.kt
+ */
 
 package pgssoft.com.githubreposlist.data
 

@@ -15,7 +15,9 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Inject
 
-
+/**
+ * A fragment showing details of chosen repository
+ */
 class RepoDetailFragment : Fragment() {
 
 
@@ -60,7 +62,7 @@ class RepoDetailFragment : Fragment() {
         }
         noteButton.visibility = View.VISIBLE
         noteButton.setOnClickListener {
-            (activity as RepoListActivity).showNoteDialog(repo.id, repo.comment ?: "")
+            (activity as ReposActivity).showNoteDialog(repo.id, repo.comment ?: "")
         }
     }
 }

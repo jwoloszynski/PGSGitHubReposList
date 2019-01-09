@@ -13,11 +13,15 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Inject
 
-class RepoListActivity : AppCompatActivity() {
+/**
+ * An activity containing and managing displayed fragments
+ */
+
+class ReposActivity : AppCompatActivity() {
 
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
-    lateinit var repoViewModel: RepoViewModel
+    private lateinit var repoViewModel: RepoViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

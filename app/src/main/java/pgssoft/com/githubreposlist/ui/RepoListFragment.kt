@@ -18,7 +18,9 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Inject
 
-
+/**
+ * Displays a list of company GitHub repositories
+ */
 class RepoListFragment : Fragment() {
 
     @Inject
@@ -61,7 +63,7 @@ class RepoListFragment : Fragment() {
 
     fun onItemSelect(id: Int) {
         repoViewModel.setSelected(id)
-        (activity as RepoListActivity).showDetail()
+        (activity as ReposActivity).showDetail()
     }
 
     private fun onRefresh() {

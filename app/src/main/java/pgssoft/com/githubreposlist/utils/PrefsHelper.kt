@@ -3,6 +3,10 @@ package pgssoft.com.githubreposlist.utils
 import android.content.Context
 import android.preference.PreferenceManager
 
+
+/**
+ * Helps to manage sharedpreferences
+ */
 class PrefsHelper(ctx: Context) {
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(ctx)
