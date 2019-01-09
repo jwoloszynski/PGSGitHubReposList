@@ -35,7 +35,6 @@ class RepoListFragment : Fragment() {
         repoViewModel =
                 ViewModelProviders.of(requireActivity(), repoVMFactory)
                     .get(RepoViewModel::class.java)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -49,11 +48,11 @@ class RepoListFragment : Fragment() {
         swipeToRefresh.setOnRefreshListener { onRefresh() }
         deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
         recyclerView.adapter = repoListAdapter
-        repoViewModel.getRepoCount().observe(this, Observer {
-
+        repoViewModel.getRepoList().observe(this, Observer {
+            val count = it?.count() ?: 0
             textRepoCount.text =
                     when {
-                        ((it ?: 0) > 0) -> it.toString()
+                        ((count) > 0) -> count.toString()
                         else -> getString(R.string.pull_to_refresh)
                     }
         })
@@ -93,7 +92,6 @@ class RepoListFragment : Fragment() {
             }
         })
     }
-
 
     private fun showError(message: String) {
         AlertDialog.Builder(requireActivity()).setTitle(R.string.error).setMessage(message)

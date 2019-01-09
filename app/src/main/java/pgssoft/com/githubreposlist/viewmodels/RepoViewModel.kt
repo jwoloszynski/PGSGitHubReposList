@@ -23,15 +23,11 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
     val refreshState: LiveData<Event<RepoDownloadStatus>>
         get() = _refreshState
 
-    var repoListCount = repoRepository.getCount()
-
     var repository = getRepoById(0)
 
     var selected: LiveData<Repository> = getRepoById(0)
 
     fun getRepoList() = repoListLiveData
-
-    fun getRepoCount(): LiveData<Int> = repoListCount
 
     fun setSelected(id: Int) {
         selected = getRepoById(id)

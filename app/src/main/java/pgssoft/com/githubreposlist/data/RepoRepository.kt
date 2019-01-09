@@ -50,8 +50,6 @@ class RepoRepository @Inject constructor(
 
     fun getRepoById(id: Int) = db.repoDao().get(id)
 
-    fun getCount() = db.repoDao().getCount()
-
     fun clearRepoList() {
         db.repoDao().deleteAll()
         prefs.clearAll()
