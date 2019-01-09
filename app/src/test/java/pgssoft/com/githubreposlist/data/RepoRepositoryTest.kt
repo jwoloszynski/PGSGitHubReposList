@@ -31,7 +31,7 @@ class RepoRepositoryTest {
         val mutableLiveData = MutableLiveData<List<Repository>>()
         mutableLiveData.postValue(repoList)
 
-        doReturn(TestDao(repoList)).whenever(mDb).repoDao()
+        whenever(mDb.repoDao()).thenReturn(TestDao(repoList))
 
         repoRepository = RepoRepository(mApi, mDb, mPrefs)
 
