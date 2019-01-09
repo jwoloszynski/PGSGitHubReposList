@@ -10,6 +10,10 @@ import pgssoft.com.githubreposlist.data.RepoRepository
 
 import pgssoft.com.githubreposlist.data.db.Repository
 
+/**
+ * ViewModel for repos, used in ReposActivity and its Fragments
+ */
+
 class RepoViewModel(private val cm: ConnectivityManager, private val repoRepository: RepoRepository) :
     ScopedViewModel() {
 

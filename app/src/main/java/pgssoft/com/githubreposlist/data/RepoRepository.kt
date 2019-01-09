@@ -25,14 +25,16 @@ class RepoRepository @Inject constructor(
                 return if (response.body() == null) {
                     RepoDownloadStatus.Forbidden
                 } else {
-                    val repoList = response.body()!!
+                    val repoList = response.body()
                     if (!repoList.isNullOrEmpty()) {
                         for (repo in repoList) {
                             val comment = getCommentByRepoId(repo.id)
                             repo.comment = comment?.comment ?: ""
                         }
                     }
-                    db.repoDao().insertAll(repoList)
+                    if (repoList != null ) {
+                        db.repoDao().insertAll(repoList)
+                    }
                     RepoDownloadStatus.DataOk
                 }
             } catch (e: Exception) {

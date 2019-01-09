@@ -88,13 +88,15 @@ class RepoListFragment : Fragment() {
 
     private fun refreshAdapter() {
         repoViewModel.getRepoList().observe(this, Observer {
-            repoListAdapter.setData(it!!)
+            if (it != null) {
+                repoListAdapter.setData(it)
+            }
         })
     }
 
 
     private fun showError(message: String) {
-        AlertDialog.Builder(activity!!).setTitle(R.string.error).setMessage(message)
+        AlertDialog.Builder(requireActivity()).setTitle(R.string.error).setMessage(message)
             .setPositiveButton(R.string.ok)
             { d, _ ->
                 d.dismiss()
