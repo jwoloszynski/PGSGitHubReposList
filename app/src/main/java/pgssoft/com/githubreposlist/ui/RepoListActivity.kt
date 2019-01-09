@@ -1,71 +1,75 @@
 package pgssoft.com.githubreposlist.ui
 
-import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.activity_repo_list.*
+import android.view.View
+import kotlinx.android.synthetic.main.dialog_note.view.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
-import pgssoft.com.githubreposlist.viewmodels.RepoListViewModel
-
+import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
+import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
+import javax.inject.Inject
 
 class RepoListActivity : AppCompatActivity() {
 
-    lateinit var listModel: RepoListViewModel
+    @Inject
+    lateinit var repoVMFactory: RepoViewModelFactory
+    lateinit var repoViewModel: RepoViewModel
 
-    private val repoListAdapter: RepoListAdapter = RepoListAdapter(listOf())
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_repo_list)
+        PGSRepoApp.app.appComponent.inject(this)
+        repoViewModel = ViewModelProviders.of(this, repoVMFactory).get(RepoViewModel::class.java)
+        setContentView(R.layout.activity_repolist)
 
-        recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
-        swipeToRefresh.setOnRefreshListener { onRefresh() }
-        deleteButton.setOnClickListener { swipeToRefresh.isRefreshing = false; listModel.clearRepoList() }
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction().apply {
 
-        recyclerView.adapter = repoListAdapter
-        listModel = ViewModelProviders.of(this).get(RepoListViewModel::class.java)
-        listModel.getRepoCountText().observe(this, Observer { textRepoCount.text = it }
-        )
-
-        refreshAdapter()
-        listenStatusChange()
-
-    }
-
-    private fun onRefresh() {
-        listModel.onRefresh(repoListAdapter.itemCount)
-
-    }
-
-    private fun listenStatusChange() {
-
-        listModel.repoListStatusText.observe(this, Observer {
-            if (!it.isNullOrEmpty()) {
-                AlertDialog.Builder(this).setTitle(R.string.error).setMessage(it).setPositiveButton("OK")
-                { d, i ->
-                    d.dismiss()
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    replace(R.id.detail, RepoDetailFragment())
                 }
-                    .create().show()
+                replace(R.id.list, RepoListFragment())
+                commit()
+            }
+        }
+
+    }
+
+    fun showDetail() {
+
+        supportFragmentManager.beginTransaction().apply {
+            if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
+                replace(R.id.list, RepoDetailFragment())
+                addToBackStack(null)
+            } else {
+                replace(R.id.detail, RepoDetailFragment())
+            }
+            commit()
+        }
+    }
+
+    fun showNoteDialog(id: Int, comment: String) {
+        val v = View.inflate(
+            this,
+            R.layout.dialog_note, null
+        )
+            .also {
+                it.comment.setText(comment)
             }
 
-            swipeToRefresh.isRefreshing = false
-        })
+        val title =
+            if (comment.isEmpty()) getString(R.string.add_note) else this.getString(R.string.edit_note)
+
+        AlertDialog.Builder(this).setTitle(title).setView(v)
+            .setPositiveButton(getText(R.string.ok))
+            { _, _ ->
+                repoViewModel.update(id, v.comment.text.toString())
+            }
+            .create().show()
 
     }
 
-    private fun refreshAdapter() {
-        listModel.getRepoList().observe(this, Observer {
-
-            repoListAdapter.setData(it!!)
-            recyclerView.layoutManager?.smoothScrollToPosition(recyclerView,null,0)
-
-        })
-
-    }
 }
-
-
