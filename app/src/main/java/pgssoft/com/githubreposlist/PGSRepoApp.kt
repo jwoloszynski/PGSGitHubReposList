@@ -5,14 +5,12 @@ import pgssoft.com.githubreposlist.di.AppModule
 import pgssoft.com.githubreposlist.di.DaggerPGSRepoAppComponent
 import pgssoft.com.githubreposlist.di.PGSRepoAppComponent
 
-
 class PGSRepoApp : Application() {
 
     lateinit var appComponent: PGSRepoAppComponent
 
     companion object {
         lateinit var app: PGSRepoApp
-
     }
 
     override fun onCreate() {

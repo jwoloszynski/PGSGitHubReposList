@@ -3,8 +3,7 @@ package pgssoft.com.githubreposlist.utils
 import android.content.Context
 import android.preference.PreferenceManager
 
-open class PrefsHelper(ctx: Context) {
-
+class PrefsHelper(ctx: Context) {
 
     private val preferences = PreferenceManager.getDefaultSharedPreferences(ctx)
     private val editor = preferences.edit()
@@ -19,7 +18,6 @@ open class PrefsHelper(ctx: Context) {
             editor.putInt("repoId", repoId)
             editor.commit()
         }
-
 
     fun clearAll() {
         time = 0

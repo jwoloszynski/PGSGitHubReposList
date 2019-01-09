@@ -41,7 +41,6 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
                 _refreshState.postValue(Event(state))
             }
         } else {
-
             _refreshState.postValue(Event(RepoDownloadStatus.ErrorNoConnection))
         }
     }

@@ -1,7 +1,6 @@
 package pgssoft.com.githubreposlist.data
 
 import android.arch.lifecycle.MutableLiveData
-import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Assert
@@ -34,7 +33,6 @@ class RepoRepositoryTest {
         whenever(mDb.repoDao()).thenReturn(TestDao(repoList))
 
         repoRepository = RepoRepository(mApi, mDb, mPrefs)
-
     }
 
     @Test
@@ -73,7 +71,3 @@ class RepoRepositoryTest {
         Assert.assertTrue((testVal is RepoDownloadStatus.ErrorMessage) && (testVal.message == "testException"))
     }
 }
-
-
-
-

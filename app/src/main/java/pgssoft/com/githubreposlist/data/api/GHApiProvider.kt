@@ -21,11 +21,11 @@ object GHApiProvider {
 
     fun getApi(): GHApi {
         return Retrofit.Builder()
-                .baseUrl("https://api.github.com")
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-             .create(GHApi::class.java)
+            .baseUrl("https://api.github.com")
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(GHApi::class.java)
     }
 
 

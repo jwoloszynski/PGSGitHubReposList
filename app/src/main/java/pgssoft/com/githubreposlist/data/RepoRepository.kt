@@ -15,7 +15,6 @@ class RepoRepository @Inject constructor(
 
     companion object {
         private const val orgName = "PGSSoft"
-
     }
 
     fun fetchAll(): RepoDownloadStatus {
@@ -43,12 +42,12 @@ class RepoRepository @Inject constructor(
         } else {
             return RepoDownloadStatus.NoRefreshDueToTime
         }
-
     }
 
-
     fun getRepoList() = db.repoDao().getAll()
+
     fun getRepoById(id: Int) = db.repoDao().get(id)
+
     fun getCount() = db.repoDao().getCount()
 
     fun clearRepoList() {
@@ -62,6 +61,7 @@ class RepoRepository @Inject constructor(
     }
 
     private fun getItemListCount() = db.repoDao().getListCount()
+
     private fun getCommentByRepoId(repoId: Int) = db.repoDao().getCommentByRepoId(repoId)
 
     private fun canRefreshList(): Boolean {

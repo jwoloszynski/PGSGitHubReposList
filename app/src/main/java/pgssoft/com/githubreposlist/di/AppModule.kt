@@ -33,7 +33,6 @@ class AppModule(private val app: PGSRepoApp) {
     @Provides
     @Singleton
     fun provideDb(): ReposDatabase {
-
         return ReposDatabase.getInstance(context = app)
     }
 

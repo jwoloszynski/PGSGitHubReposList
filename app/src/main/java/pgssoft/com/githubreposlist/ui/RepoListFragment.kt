@@ -43,11 +43,9 @@ class RepoListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         repoListAdapter = RepoListAdapter(listOf(), this)
-
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
         deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
-
         recyclerView.adapter = repoListAdapter
         repoViewModel.getRepoCount().observe(this, Observer {
 
@@ -69,7 +67,6 @@ class RepoListFragment : Fragment() {
     private fun onRefresh() {
         repoViewModel.onRefresh()
         repoViewModel.refreshState.observe(this, EventObserver {
-
             when (it) {
                 is RepoDownloadStatus.DataOk -> {
                 }
@@ -82,7 +79,6 @@ class RepoListFragment : Fragment() {
                 is RepoDownloadStatus.Forbidden -> {
                     showError(getString(R.string.rate_limit_exceeded))
                 }
-
             }
             swipeToRefresh.isRefreshing = false
         })
@@ -103,7 +99,6 @@ class RepoListFragment : Fragment() {
             }
             .create().show()
     }
-
 }
 
 

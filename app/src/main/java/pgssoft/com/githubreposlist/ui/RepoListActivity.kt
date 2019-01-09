@@ -35,11 +35,9 @@ class RepoListActivity : AppCompatActivity() {
                 commit()
             }
         }
-
     }
 
     fun showDetail() {
-
         supportFragmentManager.beginTransaction().apply {
             if (resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE) {
                 replace(R.id.list, RepoDetailFragment())
@@ -69,7 +67,5 @@ class RepoListActivity : AppCompatActivity() {
                 repoViewModel.update(id, v.comment.text.toString())
             }
             .create().show()
-
     }
-
 }

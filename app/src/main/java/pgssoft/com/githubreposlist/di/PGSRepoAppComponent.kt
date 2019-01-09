@@ -10,8 +10,8 @@ import javax.inject.Singleton
 @Component(modules = [AppModule::class])
 interface PGSRepoAppComponent {
 
-fun inject(detailFragment: RepoDetailFragment)
-fun inject(listFragment: RepoListFragment)
-fun inject (activity: RepoListActivity)
+    fun inject(detailFragment: RepoDetailFragment)
+    fun inject(listFragment: RepoListFragment)
+    fun inject(activity: RepoListActivity)
 
 }

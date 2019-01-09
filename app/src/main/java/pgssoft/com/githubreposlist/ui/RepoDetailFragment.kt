@@ -27,11 +27,10 @@ class RepoDetailFragment : Fragment() {
         PGSRepoApp.app.appComponent.inject(this)
         super.onCreate(savedInstanceState)
         repoViewModel =
-            ViewModelProviders.of(requireActivity(), repoVMFactory)
-                .get(RepoViewModel::class.java)
+                ViewModelProviders.of(requireActivity(), repoVMFactory)
+                    .get(RepoViewModel::class.java)
 
         repoViewModel.selected.observe(this, Observer {
-
             if (it != null) {
                 updateView(it)
             }
@@ -63,6 +62,5 @@ class RepoDetailFragment : Fragment() {
         noteButton.setOnClickListener {
             (activity as RepoListActivity).showNoteDialog(repo.id, repo.comment ?: "")
         }
-
     }
 }

@@ -9,23 +9,23 @@ import pgssoft.com.githubreposlist.data.db.RepositoryComment
 class TestDao(private val list: List<Repository>) : RepoDao {
 
     override fun getAll(): LiveData<List<Repository>> {
-        val livedata: LiveData<List<Repository>>
+        val liveData: LiveData<List<Repository>>
 
         val mutableLiveData = MutableLiveData<List<Repository>>()
         mutableLiveData.postValue(list)
-        livedata = mutableLiveData
+        liveData = mutableLiveData
 
-        return livedata
+        return liveData
     }
 
     override fun get(id: Int): LiveData<Repository> {
-        val livedata: LiveData<Repository>
+        val liveData: LiveData<Repository>
 
         val mutableLiveData = MutableLiveData<Repository>()
         mutableLiveData.postValue(list[id])
-        livedata = mutableLiveData
+        liveData = mutableLiveData
 
-        return livedata
+        return liveData
     }
 
     override fun insertAll(repo: List<Repository>) {
@@ -41,13 +41,13 @@ class TestDao(private val list: List<Repository>) : RepoDao {
     }
 
     override fun getCount(): LiveData<Int> {
-        val livedata: LiveData<Int>
+        val liveData: LiveData<Int>
 
         val mutableLiveData = MutableLiveData<Int>()
         mutableLiveData.postValue(list.size)
-        livedata = mutableLiveData
+        liveData = mutableLiveData
 
-        return livedata
+        return liveData
     }
 
     override fun deleteAll() {
@@ -60,7 +60,7 @@ class TestDao(private val list: List<Repository>) : RepoDao {
 
     override fun getCommentByRepoId(repoId: Int): RepositoryComment? {
 
-        return RepositoryComment(repoId, repoId.toString())
+        return RepositoryComment(repoId, "random comment just for testing $repoId")
 
     }
 

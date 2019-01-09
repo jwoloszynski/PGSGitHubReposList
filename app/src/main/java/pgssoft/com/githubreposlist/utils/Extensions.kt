@@ -15,6 +15,4 @@ fun String?.getFormattedDate(): String {
     } catch (e: Exception) {
         this
     }
-
-
 }
