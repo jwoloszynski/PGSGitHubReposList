@@ -4,6 +4,9 @@ import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 import io.reactivex.Single
 
+/**
+ * DAO for repositories from DB
+ */
 @Dao
 interface RepoDao {
 

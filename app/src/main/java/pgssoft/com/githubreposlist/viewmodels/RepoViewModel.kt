@@ -13,6 +13,10 @@ import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.data.RepoRepository
 import pgssoft.com.githubreposlist.data.db.Repository
 
+/**
+ * ViewModel for repos, used in ReposActivity and its Fragments
+ */
+
 class RepoViewModel(private val cm: ConnectivityManager, private val repoRepository: RepoRepository) :
     ViewModel() {
 
@@ -22,16 +26,12 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
     val refreshState: LiveData<Event<RepoDownloadStatus>>
         get() = _refreshState
 
-    var repoListCount = repoRepository.getCount()
-
     var repository = getRepoById(0)
 
     var selected: LiveData<Repository> = getRepoById(0)
 
     var compositeDisposable = CompositeDisposable()
     fun getRepoList() = repoListLiveData
-
-    fun getRepoCount(): LiveData<Int> = repoListCount
 
     fun setSelected(id: Int) {
         selected = getRepoById(id)
@@ -69,10 +69,12 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
                 .subscribeOn(Schedulers.io()).subscribe())
     }
 
+
     override fun onCleared() {
 
-        if (compositeDisposable != null) {
+
             compositeDisposable.dispose()
-        }
+
     }
+
 }

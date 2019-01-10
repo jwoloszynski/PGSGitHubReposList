@@ -4,6 +4,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+/**
+ * An extension function to format date from string provided by api
+ */
 fun String?.getFormattedDate(): String {
     if (this == null) return ""
 
@@ -15,6 +18,4 @@ fun String?.getFormattedDate(): String {
     } catch (e: Exception) {
         this
     }
-
-
 }

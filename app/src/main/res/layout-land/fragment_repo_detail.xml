@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.RepoListActivity"
+        tools:context=".ui.ReposActivity"
         android:elevation="40dp"
         android:orientation="vertical"
         android:paddingTop="30dp">

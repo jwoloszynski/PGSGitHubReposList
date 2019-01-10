@@ -1,7 +1,6 @@
 package pgssoft.com.githubreposlist.data
 
 import android.arch.lifecycle.MutableLiveData
-import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import io.reactivex.Single
@@ -35,11 +34,10 @@ class RepoRepositoryTest {
         val mutableLiveData = MutableLiveData<List<Repository>>()
         mutableLiveData.postValue(repoList)
 
-        doReturn(TestDao(repoList)).whenever(mDb).repoDao()
-        response = retrofit2.Response.success(repoList)
+
+        whenever(mDb.repoDao()).thenReturn(TestDao(repoList))
 
         repoRepository = RepoRepository(mApi, mDb, mPrefs)
-
     }
 
     @Test
@@ -97,7 +95,3 @@ class RepoRepositoryTest {
     }
 
 }
-
-
-
-

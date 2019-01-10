@@ -34,14 +34,11 @@ class RepoListAdapter(private var repoList: List<Repository>, private var fragme
             }
             detailsButton.setOnClickListener {
                 fragment.onItemSelect(listRow.id)
-
             }
             noteButton.setOnClickListener {
-                (fragment.activity as RepoListActivity).showNoteDialog(listRow.id, listRow.comment ?: " ")
+                (fragment.activity as ReposActivity).showNoteDialog(listRow.id, listRow.comment ?: " ")
             }
-
         }
-
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, element: Int): RepoViewHolder {

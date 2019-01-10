@@ -25,15 +25,11 @@ abstract class ReposDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): ReposDatabase {
             if (instance == null) {
-                instance = Room.databaseBuilder(context, ReposDatabase::class.java, "pgs-gh-repos").addMigrations(
-                    MIGRATION_1_2
-                )
-                    .build()
+                instance = Room.databaseBuilder(context, ReposDatabase::class.java, "pgs-gh-repos")
+                    .addMigrations(MIGRATION_1_2).build()
             }
             return instance!!
         }
-
     }
-
 
 }

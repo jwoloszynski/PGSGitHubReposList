@@ -44,8 +44,8 @@ class RepoRepository @Inject constructor(
     }
 
     fun getRepoList() = db.repoDao().getAll()
+
     fun getRepoById(id: Int) = db.repoDao().get(id)
-    fun getCount() = db.repoDao().getCount()
 
     fun clearRepoList() {
         db.repoDao().deleteAll()
@@ -71,6 +71,7 @@ class RepoRepository @Inject constructor(
         }
         return false
     }
+
 
     private fun insertRepos(repoList: List<Repository>) {
 

@@ -18,7 +18,9 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Inject
 
-
+/**
+ * Displays a list of company GitHub repositories
+ */
 class RepoListFragment : Fragment() {
 
     @Inject
@@ -33,7 +35,6 @@ class RepoListFragment : Fragment() {
         repoViewModel =
                 ViewModelProviders.of(requireActivity(), repoVMFactory)
                     .get(RepoViewModel::class.java)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -43,17 +44,15 @@ class RepoListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         repoListAdapter = RepoListAdapter(listOf(), this)
-
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
         deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
-
         recyclerView.adapter = repoListAdapter
-        repoViewModel.getRepoCount().observe(this, Observer {
-
+        repoViewModel.getRepoList().observe(this, Observer {
+            val count = it?.count() ?: 0
             textRepoCount.text =
                     when {
-                        ((it ?: 0) > 0) -> it.toString()
+                        ((count) > 0) -> count.toString()
                         else -> getString(R.string.pull_to_refresh)
                     }
         })
@@ -63,13 +62,12 @@ class RepoListFragment : Fragment() {
 
     fun onItemSelect(id: Int) {
         repoViewModel.setSelected(id)
-        (activity as RepoListActivity).showDetail()
+        (activity as ReposActivity).showDetail()
     }
 
     private fun onRefresh() {
         repoViewModel.onRefresh()
         repoViewModel.refreshState.observe(this, EventObserver {
-
             when (it) {
                 is RepoDownloadStatus.DataOk -> {
                 }
@@ -82,7 +80,6 @@ class RepoListFragment : Fragment() {
                 is RepoDownloadStatus.Forbidden -> {
                     showError(getString(R.string.rate_limit_exceeded))
                 }
-
             }
             swipeToRefresh.isRefreshing = false
         })
@@ -90,20 +87,20 @@ class RepoListFragment : Fragment() {
 
     private fun refreshAdapter() {
         repoViewModel.getRepoList().observe(this, Observer {
-            repoListAdapter.setData(it!!)
+            if (it != null) {
+                repoListAdapter.setData(it)
+            }
         })
     }
 
-
     private fun showError(message: String) {
-        AlertDialog.Builder(activity!!).setTitle(R.string.error).setMessage(message)
+        AlertDialog.Builder(requireActivity()).setTitle(R.string.error).setMessage(message)
             .setPositiveButton(R.string.ok)
             { d, _ ->
                 d.dismiss()
             }
             .create().show()
     }
-
 }
 
 
