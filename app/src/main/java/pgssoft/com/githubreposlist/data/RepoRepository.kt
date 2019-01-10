@@ -1,12 +1,12 @@
 package pgssoft.com.githubreposlist.data
 
-import android.util.Log
-import io.reactivex.Flowable
+import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
+import pgssoft.com.githubreposlist.data.db.Repository
 import pgssoft.com.githubreposlist.utils.PrefsHelper
-import java.lang.Exception
+import java.net.HttpURLConnection
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,66 +22,22 @@ class RepoRepository @Inject constructor(
     }
 
 
-    fun fetchAll(): Flowable<RepoDownloadStatus> {
+    fun fetchAll(): Single<RepoDownloadStatus> {
+        if (canRefreshList()) {
+            return api.getOrganizationRepos(orgName).map { response ->
+                when (response.code()) {
+                    HttpURLConnection.HTTP_OK -> {
+                        insertRepos(response.body()!!)
+                        RepoDownloadStatus.DataOk
 
-        try {
-            val d = api.getOrganizationRepos(orgName)
-                .doOnNext {
-
-                    if (!it.list.isNullOrEmpty()) {
-                        db.repoDao().insertAll(it.list)
                     }
-                }.map {
-                    it.status
+                    HttpURLConnection.HTTP_FORBIDDEN -> RepoDownloadStatus.Forbidden
+                    else -> RepoDownloadStatus.ErrorMessage(response.errorBody().toString())
                 }
-                .doOnError {
-                    if (it!=null) {
-                        it.message.toString()
-                        throw it
-                    }
-                    else {
-
-                    }
-                }
-
-
-                .subscribeOn(Schedulers.io())
-
-
-
-            return d
-        } catch (e: Exception) {
+            }
         }
-        return Flowable.empty()
+        return Single.just(RepoDownloadStatus.DataOk)
     }
-
-
-//
-//        if (canRefreshList()) {
-//            try {
-//                val response = api.getOrganizationRepos(orgName).execute()
-//                return if (response.body() == null) {
-//                    RepoDownloadStatus.Forbidden
-//                } else {
-//                    val repoList = response.body()!!
-//                    if (!repoList.isNullOrEmpty()) {
-//                        for (repo in repoList) {
-//                            val comment = getCommentByRepoId(repo.id)
-//                            repo.comment = comment?.comment ?: ""
-//                        }
-//                    }
-//                    db.repoDao().insertAll(repoList)
-//                    RepoDownloadStatus.DataOk
-//                }
-//            } catch (e: Exception) {
-//                return RepoDownloadStatus.ErrorMessage(e.message.toString())
-//            }
-//
-//        } else {
-//            return RepoDownloadStatus.NoRefreshDueToTime
-//        }
-//
-
 
     fun getRepoList() = db.repoDao().getAll()
     fun getRepoById(id: Int) = db.repoDao().get(id)
@@ -97,17 +53,30 @@ class RepoRepository @Inject constructor(
 
     }
 
-    private fun getItemListCount() = db.repoDao().getListCount()
-    private fun getCommentByRepoId(repoId: Int) = db.repoDao().getCommentByRepoId(repoId)
+    private fun getItemListCount() = db.repoDao().getListCount().subscribeOn(Schedulers.io()).blockingGet()
+    private fun getCommentByRepoId(repoId: Int) =
+        db.repoDao().getCommentByRepoId(repoId).subscribeOn(Schedulers.io()).blockingGet()
 
     private fun canRefreshList(): Boolean {
         val timeRefreshed = prefs.time
         val timeBetween = System.currentTimeMillis() - timeRefreshed
-        if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (getItemListCount() == 0)) {
+
+        if ((timeRefreshed == -1L) or (timeBetween > (1 * 60 * 1000)) or (getItemListCount() <= 0)) {
             prefs.time = System.currentTimeMillis()
             return true
         }
         return false
+    }
+
+    private fun insertRepos(repoList: List<Repository>) {
+
+        if (!repoList.isNullOrEmpty()) {
+            for (repo in repoList) {
+                val comment = getCommentByRepoId(repo.id)
+                repo.comment = comment?.comment ?: ""
+            }
+        }
+        db.repoDao().insertAll(repoList)
     }
 
 }

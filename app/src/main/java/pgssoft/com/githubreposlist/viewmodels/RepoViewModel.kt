@@ -2,19 +2,19 @@ package pgssoft.com.githubreposlist.viewmodels
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.ViewModel
 import android.net.ConnectivityManager
-import android.util.Log
-import io.reactivex.Flowable
+import io.reactivex.Completable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.launch
 import pgssoft.com.githubreposlist.data.Event
 import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.data.RepoRepository
 import pgssoft.com.githubreposlist.data.db.Repository
 
 class RepoViewModel(private val cm: ConnectivityManager, private val repoRepository: RepoRepository) :
-    ScopedViewModel() {
+    ViewModel() {
 
     private var repoListLiveData: LiveData<List<Repository>> = repoRepository.getRepoList()
 
@@ -40,27 +40,21 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
     fun onRefresh() {
 
         if (cm.activeNetworkInfo != null) {
-            scope.launch {
-                try {
-
-
-                    val state: Flowable<RepoDownloadStatus> = repoRepository.fetchAll()
-                    state.observeOn(Schedulers.io()).subscribe {
-                        _refreshState.postValue(Event(it))
-                    }
-                }
-                catch (e: Exception) {
-                    Log.d("VIEWMODEL", "VM catched the exception")
-                }
-            }
+            compositeDisposable.add(
+                repoRepository.fetchAll()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .doOnEvent { status, _ -> _refreshState.postValue(Event(status)) }
+                    .subscribe())
         } else {
-
             _refreshState.postValue(Event(RepoDownloadStatus.ErrorNoConnection))
         }
     }
 
     fun clearRepoList() {
-        scope.launch { repoRepository.clearRepoList() }
+        compositeDisposable.add(
+            Completable.fromAction { repoRepository.clearRepoList() }.subscribeOn(Schedulers.io()).subscribe()
+        )
     }
 
     private fun getRepoById(id: Int): LiveData<Repository> {
@@ -70,12 +64,14 @@ class RepoViewModel(private val cm: ConnectivityManager, private val repoReposit
     }
 
     fun update(id: Int, comment: String) {
-        scope.launch { repoRepository.updateRepoComment(id, comment) }
+        compositeDisposable.add(
+            Completable.fromAction { repoRepository.updateRepoComment(id, comment) }
+                .subscribeOn(Schedulers.io()).subscribe())
     }
 
     override fun onCleared() {
 
-        if(compositeDisposable != null) {
+        if (compositeDisposable != null) {
             compositeDisposable.dispose()
         }
     }
