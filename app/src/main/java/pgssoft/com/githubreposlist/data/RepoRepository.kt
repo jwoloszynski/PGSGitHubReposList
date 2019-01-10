@@ -23,23 +23,20 @@ class RepoRepository @Inject constructor(
 
 
     fun fetchAll(): Single<RepoDownloadStatus> {
-        if (canRefreshList()) {
-            return api.getOrganizationRepos(orgName).map { response ->
-                when (response.code()) {
+        return if (canRefreshList()) {
+            api.getOrganizationRepos(orgName).map { response ->
 
-                    HttpURLConnection.HTTP_OK -> {
+                when {
+                    response.isSuccessful -> {
                         insertRepos(response.body()!!)
                         RepoDownloadStatus.DataOk
                     }
-
-                    HttpURLConnection.HTTP_FORBIDDEN -> RepoDownloadStatus.Forbidden
-
+                    response.code() == HttpURLConnection.HTTP_FORBIDDEN -> RepoDownloadStatus.Forbidden
                     else -> RepoDownloadStatus.ErrorMessage(response.errorBody().toString())
                 }
             }
-        }
-        else {
-            return Single.just(RepoDownloadStatus.NoRefreshDueToTime)
+        } else {
+            Single.just(RepoDownloadStatus.NoRefreshDueToTime)
         }
     }
 
@@ -76,10 +73,10 @@ class RepoRepository @Inject constructor(
     private fun insertRepos(repoList: List<Repository>) {
 
         if (!repoList.isNullOrEmpty()) {
-            for (repo in repoList) {
-                val comment = getCommentByRepoId(repo.id)
-                repo.comment = comment?.comment ?: ""
-            }
+                for (repo in repoList) {
+                    val comment = getCommentByRepoId(repo.id)
+                    repo.comment = comment?.comment ?: ""
+                }
         }
         db.repoDao().insertAll(repoList)
     }

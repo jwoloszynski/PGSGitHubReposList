@@ -10,6 +10,7 @@ import pgssoft.com.githubreposlist.data.RepoRepository
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.api.GHApiProvider
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
+import pgssoft.com.githubreposlist.utils.NetworkUtils
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Singleton
@@ -45,19 +46,33 @@ class AppModule(private val app: PGSRepoApp) {
 
     @Provides
     @Singleton
+    fun provideNetworkUtils(cm: ConnectivityManager): NetworkUtils {
+        return NetworkUtils(cm)
+    }
+
+    @Provides
+    @Singleton
     fun provideResources(): Resources {
         return app.resources
     }
 
     @Provides
     @Singleton
-    fun provideRepoViewModelFactory(
-        cm: ConnectivityManager,
-        db: ReposDatabase,
+    fun provideRepository(
         api: GHApi,
+        db: ReposDatabase,
         prefs: PrefsHelper
+    ): RepoRepository {
+        return RepoRepository(api, db, prefs)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRepoViewModelFactory(
+        utils: NetworkUtils,
+        repository: RepoRepository
     ): RepoViewModelFactory {
-        return RepoViewModelFactory(cm, RepoRepository(api, db, prefs))
+        return RepoViewModelFactory(utils, repository)
     }
 
 
