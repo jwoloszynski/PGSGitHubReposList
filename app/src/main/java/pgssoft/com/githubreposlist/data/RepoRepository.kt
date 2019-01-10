@@ -26,17 +26,21 @@ class RepoRepository @Inject constructor(
         if (canRefreshList()) {
             return api.getOrganizationRepos(orgName).map { response ->
                 when (response.code()) {
+
                     HttpURLConnection.HTTP_OK -> {
                         insertRepos(response.body()!!)
                         RepoDownloadStatus.DataOk
-
                     }
+
                     HttpURLConnection.HTTP_FORBIDDEN -> RepoDownloadStatus.Forbidden
+
                     else -> RepoDownloadStatus.ErrorMessage(response.errorBody().toString())
                 }
             }
         }
-        return Single.just(RepoDownloadStatus.DataOk)
+        else {
+            return Single.just(RepoDownloadStatus.NoRefreshDueToTime)
+        }
     }
 
     fun getRepoList() = db.repoDao().getAll()
