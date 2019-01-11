@@ -1,8 +1,11 @@
 package pgssoft.com.githubreposlist.utils
 
 import android.net.ConnectivityManager
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class NetworkUtils(private val cm: ConnectivityManager) {
+@Singleton
+class NetworkUtils @Inject constructor(private val cm: ConnectivityManager) {
 
 
     fun isConnection(): Boolean {
