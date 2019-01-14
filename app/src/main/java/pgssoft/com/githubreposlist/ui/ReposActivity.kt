@@ -29,13 +29,22 @@ class ReposActivity : AppCompatActivity() {
         repoViewModel = ViewModelProviders.of(this, repoVMFactory).get(RepoViewModel::class.java)
         setContentView(R.layout.activity_repolist)
 
-        supportFragmentManager.beginTransaction().apply {
-
-            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE && savedInstanceState == null) {
-                replace(R.id.detail, RepoDetailFragment())
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction().apply {
+                if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    replace(R.id.detail, RepoDetailFragment())
+                }
+                replace(R.id.list, RepoListFragment())
+                commit()
             }
-            replace(R.id.list, RepoListFragment())
-            commit()
+        } else {
+            if (supportFragmentManager.findFragmentById(R.id.list) is RepoDetailFragment) {
+                supportFragmentManager.beginTransaction().apply {
+                    replace(R.id.list, RepoListFragment())
+                    replace(R.id.detail, RepoDetailFragment())
+                    commit()
+                }
+            }
         }
     }
 
