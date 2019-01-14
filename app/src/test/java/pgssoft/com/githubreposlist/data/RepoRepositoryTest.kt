@@ -34,10 +34,9 @@ class RepoRepositoryTest {
         val mutableLiveData = MutableLiveData<List<Repository>>()
         mutableLiveData.postValue(repoList)
 
-
         whenever(mDb.repoDao()).thenReturn(TestDao(repoList))
-
         repoRepository = RepoRepository(mApi, mDb, mPrefs)
+        response = retrofit2.Response.success(200, repoList )
     }
 
     @Test
