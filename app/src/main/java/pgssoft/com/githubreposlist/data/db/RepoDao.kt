@@ -2,6 +2,7 @@ package pgssoft.com.githubreposlist.data.db
 
 import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
+import io.reactivex.Maybe
 import io.reactivex.Single
 
 /**
@@ -36,7 +37,7 @@ interface RepoDao {
 
 
     @Query("SELECT id,comment FROM repository WHERE id = :repoId")
-    fun getCommentByRepoId(repoId: Int): Single<RepositoryComment?>
+    fun getCommentByRepoId(repoId: Int): Maybe<RepositoryComment?>
 
     @Query("SELECT count(*) FROM repository")
     fun getListCount(): Single<Int>

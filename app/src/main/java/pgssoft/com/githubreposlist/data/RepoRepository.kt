@@ -73,11 +73,13 @@ class RepoRepository @Inject constructor(
     private fun insertRepos(repoList: List<Repository>) {
 
         if (!repoList.isNullOrEmpty()) {
-                for (repo in repoList) {
-                    val comment = getCommentByRepoId(repo.id)
-                    repo.comment = comment?.comment ?: ""
-                }
+            for (repo in repoList) {
+                val comment = getCommentByRepoId(repo.id)
+                repo.comment = comment?.comment ?: ""
+            }
+
         }
+
         db.repoDao().insertAll(repoList)
     }
 
