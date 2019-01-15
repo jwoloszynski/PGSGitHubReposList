@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".ui.ReposActivity">
+    <item
+            android:id="@+id/action_settings"
+            android:orderInCategory="100"
+            app:showAsAction="ifRoom|withText"
+            android:title="Option1"/>
+    <item
+            android:id="@+id/action_settings34"
+            android:orderInCategory="101"
+            app:showAsAction="ifRoom|withText"
+            android:title="Option2"/>
+    <item
+            android:id="@+id/action_settings3"
+            android:orderInCategory="102"
+            app:showAsAction="ifRoom|withText"
+            android:title="Option3"/>
+
+</menu>

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_repo_detail.*
+import kotlinx.android.synthetic.main.tool_bar.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
@@ -35,6 +36,7 @@ class RepoDetailFragment : Fragment() {
         repoViewModel.selected.observe(this, Observer {
             if (it != null) {
                 updateView(it)
+                requireActivity().toolbar_title.text = it.name.toString()
             }
         })
     }
@@ -50,7 +52,7 @@ class RepoDetailFragment : Fragment() {
     }
 
     private fun updateView(repo: Repository) {
-        repoName.text = repo.name
+        repoName.visibility = View.GONE
         repoDescription.text = repo.description
         repoComment.text = repo.comment
         if (repo.comment.isNullOrBlank()) {

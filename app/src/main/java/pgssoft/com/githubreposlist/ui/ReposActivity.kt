@@ -23,8 +23,10 @@ class ReposActivity : AppCompatActivity() {
     lateinit var repoVMFactory: RepoViewModelFactory
     private lateinit var repoViewModel: RepoViewModel
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setSupportActionBar(findViewById(R.id.tool_bar))
         PGSRepoApp.app.appComponent.inject(this)
         repoViewModel = ViewModelProviders.of(this, repoVMFactory).get(RepoViewModel::class.java)
         setContentView(R.layout.activity_repolist)

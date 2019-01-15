@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import io.reactivex.Single
 import pgssoft.com.githubreposlist.data.db.RepoDao
 import pgssoft.com.githubreposlist.data.db.Repository
-import pgssoft.com.githubreposlist.data.db.RepositoryComment
+import pgssoft.com.githubreposlist.data.db.RepositoryLocalDetails
 
 class TestDao(private val list: List<Repository>) : RepoDao {
 
@@ -59,10 +59,10 @@ class TestDao(private val list: List<Repository>) : RepoDao {
         return
     }
 
-    override fun getCommentByRepoId(repoId: Int): Single<RepositoryComment?> {
+    override fun getCommentByRepoId(repoId: Int): Single<RepositoryLocalDetails?> {
 
 
-        return Single.just(RepositoryComment(repoId, repoId.toString()))
+        return Single.just(RepositoryLocalDetails(repoId, repoId.toString()))
 
 
     }

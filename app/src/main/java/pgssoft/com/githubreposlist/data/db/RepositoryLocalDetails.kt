@@ -1,6 +1,6 @@
 package pgssoft.com.githubreposlist.data.db
 
-data class RepositoryComment(
+data class RepositoryLocalDetails(
 
     val id: Int?,
     val comment: String?

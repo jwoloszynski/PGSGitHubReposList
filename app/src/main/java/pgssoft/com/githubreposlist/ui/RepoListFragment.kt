@@ -2,14 +2,14 @@ package pgssoft.com.githubreposlist.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import kotlinx.android.synthetic.main.fragment_repo_list.*
+import kotlinx.android.synthetic.main.tool_bar.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.EventObserver
@@ -17,6 +17,7 @@ import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Inject
+
 
 /**
  * Displays a list of company GitHub repositories
@@ -41,22 +42,20 @@ class RepoListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_repo_list, container, false)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        setHasOptionsMenu(true)
+        super.onActivityCreated(savedInstanceState)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         repoListAdapter = RepoListAdapter(listOf(), this)
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
-        deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
+        deleteButton.setOnClickListener { clearRepoList() }
         recyclerView.adapter = repoListAdapter
-        repoViewModel.getRepoList().observe(this, Observer {
-            val count = it?.count() ?: 0
-            textRepoCount.text =
-                    when {
-                        ((count) > 0) -> count.toString()
-                        else -> getString(R.string.pull_to_refresh)
-                    }
-        })
-        refreshAdapter()
+        requireActivity().toolbar_title.text = "PGS GitHub"
+        refreshRepoList()
     }
 
 
@@ -85,11 +84,17 @@ class RepoListFragment : Fragment() {
         })
     }
 
-    private fun refreshAdapter() {
+    private fun refreshRepoList() {
         repoViewModel.getRepoList().observe(this, Observer {
             if (it != null) {
                 repoListAdapter.setData(it)
             }
+            val count = it?.count() ?: 0
+            textRepoCount.text =
+                    when {
+                        ((count) > 0) -> count.toString()
+                        else -> getString(R.string.pull_to_refresh)
+                    }
         })
     }
 
@@ -101,6 +106,27 @@ class RepoListFragment : Fragment() {
             }
             .create().show()
     }
+
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu?.clear()
+        inflater?.inflate(R.menu.menu_repolist, menu)
+
+    }
+
+    private fun clearRepoList() {
+
+        AlertDialog.Builder(requireContext()).setTitle("Are you sure?").setMessage("You will lose all your comments")
+            .setPositiveButton("Yes") {
+                    _, _ -> repoViewModel.clearRepoList()
+            }
+            .setNeutralButton("No") {
+                    dialog: DialogInterface, _ -> dialog.cancel()
+            }
+            .create().show()
+    }
+
 }
 
 
