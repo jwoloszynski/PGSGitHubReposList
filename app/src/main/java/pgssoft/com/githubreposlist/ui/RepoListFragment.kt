@@ -2,7 +2,6 @@ package pgssoft.com.githubreposlist.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -47,7 +46,6 @@ class RepoListFragment : Fragment() {
         repoListAdapter = RepoListAdapter(listOf(), this)
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
-        deleteButton.setOnClickListener { clearRepoList() }
         recyclerView.adapter = repoListAdapter
         requireActivity().tool_bar.title = "PGS GitHub"
         refreshRepoList()
@@ -124,5 +122,3 @@ class RepoListFragment : Fragment() {
 
 
 }
-
-

@@ -13,6 +13,7 @@
     <string name="clear">Wyczyść</string>
     <string name="show_details">Pokaż szczegóły</string>
     <string name="pull_to_refresh">Pociągnij, aby odświeżyć</string>
+    <string name="refresh">Odśwież</string>
 
 
 </resources>
