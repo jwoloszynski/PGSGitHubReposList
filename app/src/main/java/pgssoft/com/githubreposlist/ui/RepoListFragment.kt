@@ -2,6 +2,7 @@ package pgssoft.com.githubreposlist.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -26,7 +27,6 @@ class RepoListFragment : Fragment() {
 
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
-
     private lateinit var repoViewModel: RepoViewModel
     private lateinit var repoListAdapter: RepoListAdapter
 
@@ -42,11 +42,6 @@ class RepoListFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_repo_list, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        setHasOptionsMenu(true)
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         repoListAdapter = RepoListAdapter(listOf(), this)
@@ -54,17 +49,17 @@ class RepoListFragment : Fragment() {
         swipeToRefresh.setOnRefreshListener { onRefresh() }
         deleteButton.setOnClickListener { clearRepoList() }
         recyclerView.adapter = repoListAdapter
-        requireActivity().toolbar_title.text = "PGS GitHub"
+        requireActivity().tool_bar.title = "PGS GitHub"
         refreshRepoList()
     }
-
 
     fun onItemSelect(id: Int) {
         repoViewModel.setSelected(id)
         (activity as ReposActivity).showDetail()
     }
 
-    private fun onRefresh() {
+    fun onRefresh() {
+        swipeToRefresh.isRefreshing = true
         repoViewModel.onRefresh()
         repoViewModel.refreshState.observe(this, EventObserver {
             when (it) {
@@ -115,17 +110,18 @@ class RepoListFragment : Fragment() {
 
     }
 
-    private fun clearRepoList() {
+    fun clearRepoList() {
 
         AlertDialog.Builder(requireContext()).setTitle("Are you sure?").setMessage("You will lose all your comments")
-            .setPositiveButton("Yes") {
-                    _, _ -> repoViewModel.clearRepoList()
+            .setPositiveButton("Yes") { _, _ ->
+                repoViewModel.clearRepoList()
             }
-            .setNeutralButton("No") {
-                    dialog: DialogInterface, _ -> dialog.cancel()
+            .setNeutralButton("No") { dialog: DialogInterface, _ ->
+                dialog.cancel()
             }
             .create().show()
     }
+
 
 }
 

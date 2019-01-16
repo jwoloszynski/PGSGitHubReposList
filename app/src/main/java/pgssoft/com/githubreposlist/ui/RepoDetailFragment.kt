@@ -2,9 +2,11 @@ package pgssoft.com.githubreposlist.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_repo_detail.*
@@ -36,9 +38,10 @@ class RepoDetailFragment : Fragment() {
         repoViewModel.selected.observe(this, Observer {
             if (it != null) {
                 updateView(it)
-                requireActivity().toolbar_title.text = it.name.toString()
+                requireActivity().tool_bar.title = it.name.toString()
             }
         })
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -66,5 +69,13 @@ class RepoDetailFragment : Fragment() {
         noteButton.setOnClickListener {
             (activity as ReposActivity).showNoteDialog(repo.id, repo.comment ?: "")
         }
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        if (requireActivity().resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE && this.isVisible) {
+            menu?.findItem(R.id.action_refresh)?.isVisible = false
+            menu?.findItem(R.id.action_clearList)?.isVisible = false
+        }
+        super.onPrepareOptionsMenu(menu)
     }
 }

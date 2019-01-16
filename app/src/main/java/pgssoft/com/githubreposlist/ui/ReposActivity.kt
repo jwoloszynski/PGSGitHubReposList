@@ -5,7 +5,10 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.dialog_note.view.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
@@ -26,10 +29,10 @@ class ReposActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_repolist)
         setSupportActionBar(findViewById(R.id.tool_bar))
         PGSRepoApp.app.appComponent.inject(this)
         repoViewModel = ViewModelProviders.of(this, repoVMFactory).get(RepoViewModel::class.java)
-        setContentView(R.layout.activity_repolist)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().apply {
@@ -80,5 +83,35 @@ class ReposActivity : AppCompatActivity() {
                 repoViewModel.update(id, v.comment.text.toString())
             }
             .create().show()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_repolist, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val f = supportFragmentManager.findFragmentById(R.id.list)
+
+        return when (item?.itemId) {
+
+            R.id.action_settings -> {
+                Toast.makeText(this, "option1", Toast.LENGTH_SHORT).show()
+                true
+            }
+            R.id.action_refresh -> {
+                (f as RepoListFragment).onRefresh()
+                true
+            }
+            R.id.action_clearList -> {
+
+                (f as RepoListFragment).clearRepoList()
+
+                false
+            }
+
+
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

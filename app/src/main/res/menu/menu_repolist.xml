@@ -7,17 +7,17 @@
     <item
             android:id="@+id/action_settings"
             android:orderInCategory="100"
-            app:showAsAction="ifRoom|withText"
-            android:title="Option1"/>
+            app:showAsAction="never"
+            android:title="Show test toast"/>
     <item
-            android:id="@+id/action_settings34"
+            android:id="@+id/action_refresh"
             android:orderInCategory="101"
-            app:showAsAction="ifRoom|withText"
-            android:title="Option2"/>
+            app:showAsAction="never"
+            android:title="Refresh"/>
     <item
-            android:id="@+id/action_settings3"
+            android:id="@+id/action_clearList"
             android:orderInCategory="102"
-            app:showAsAction="ifRoom|withText"
-            android:title="Option3"/>
+            app:showAsAction="never"
+            android:title="Clear list"/>
 
 </menu>
