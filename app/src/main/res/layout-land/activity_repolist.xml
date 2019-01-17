@@ -14,8 +14,8 @@
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
             android:id="@+id/tool_bar"
-            app:titleTextColor="@color/colorItemBg"
-            app:subtitleTextColor="@color/colorItemBg"
+            app:titleTextColor="@color/colorAccent"
+            app:subtitleTextColor="@color/colorAccent"
             app:titleTextAppearance="@style/ToolbarTextSize"
 
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"

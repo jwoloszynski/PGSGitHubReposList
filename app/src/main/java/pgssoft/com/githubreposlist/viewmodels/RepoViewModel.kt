@@ -69,28 +69,20 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
 
     }
 
-    private fun getRepoById(id: Int): LiveData<Repository> {
+    fun getRepoById(id: Int): LiveData<Repository> {
         repository = repoRepository.getRepoById(id)
         return repository
-
     }
 
-    fun update(id: Int, comment: String) {
-        val repo = getRepoById(id)
-        repo.value?.comment = comment
-
-
-
+    fun updateRepoComment(id: Int, comment: String) {
             disposable?.dispose()
             disposable =
-                    Completable.fromAction { repoRepository.updateRepo(repo.value!!) }
+                    Completable.fromAction { repoRepository.updateRepoComment(id,comment) }
                         .subscribeOn(Schedulers.io()).subscribe()
 
     }
 
     override fun onCleared() {
-
-
         disposable?.dispose()
 
     }

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.activity_repolist.*
 import kotlinx.android.synthetic.main.repo_item_view.*
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
@@ -32,7 +33,7 @@ class RepoListAdapter(private var repoList: List<Repository>, private var fragme
             } else {
                 fragment.resources.getString(R.string.edit_note)
             }
-            detailsButton.setOnClickListener {
+            containerView.setOnClickListener {
                 fragment.onItemSelect(listRow.id)
             }
             noteButton.setOnClickListener {
@@ -43,6 +44,7 @@ class RepoListAdapter(private var repoList: List<Repository>, private var fragme
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, element: Int): RepoViewHolder {
         val v: View = LayoutInflater.from(fragment.context).inflate(R.layout.repo_item_view, viewGroup, false)
+
         return RepoViewHolder(v)
     }
 

@@ -65,7 +65,7 @@ class RepoDetailFragment : Fragment() {
     }
 
     private fun updateView(repo: Repository) {
-        repoName.visibility = View.GONE
+        repoName.text = repo.name
         repoDescription.text = repo.description
         repoComment.text = repo.comment
         if (repo.comment.isNullOrBlank()) {

@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
+import kotlinx.android.synthetic.main.activity_repolist.*
 import kotlinx.android.synthetic.main.fragment_repo_list.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
@@ -53,6 +54,7 @@ class RepoListFragment : Fragment() {
     }
 
     fun onItemSelect(id: Int) {
+
         repoViewModel.setSelected(id)
         (activity as ReposActivity).showDetail()
     }
@@ -84,16 +86,17 @@ class RepoListFragment : Fragment() {
                 repoListAdapter.setData(it)
             }
             val count = it?.count() ?: 0
+            val likedcount = it?.filter { it.liked == true }?.count() ?: 0
             textRepoCount.text =
                     when {
-                        ((count) > 0) -> count.toString()
+                        ((count) > 0) -> "$count,  likes count: $likedcount"
                         else -> getString(R.string.pull_to_refresh)
                     }
         })
     }
 
     private fun showError(message: String) {
-        AlertDialog.Builder(requireActivity()).setTitle(R.string.error).setMessage(message)
+        AlertDialog.Builder(requireActivity(), R.style.PGSAppAlertDialog).setTitle(R.string.error).setMessage(message)
             .setPositiveButton(R.string.ok)
             { d, _ ->
                 d.dismiss()
@@ -112,7 +115,8 @@ class RepoListFragment : Fragment() {
 
     fun clearRepoList() {
 
-        AlertDialog.Builder(requireContext()).setTitle("Are you sure?").setMessage("You will lose all your comments")
+        AlertDialog.Builder(requireContext(), R.style.PGSAppAlertDialog).setTitle("Are you sure?")
+            .setMessage("You will lose all your comments")
             .setPositiveButton("Yes") { _, _ ->
                 repoViewModel.clearRepoList()
             }
@@ -126,6 +130,7 @@ class RepoListFragment : Fragment() {
     override fun onPrepareOptionsMenu(menu: Menu?) {
         if (requireActivity().resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
             menu?.findItem(R.id.action_like)?.isVisible = false
+            requireActivity().tool_bar.title = "GitHubRepoList"
         }
 
         super.onPrepareOptionsMenu(menu)

@@ -78,10 +78,11 @@ class ReposActivity : AppCompatActivity() {
         val title =
             if (comment.isEmpty()) getString(R.string.add_note) else this.getString(R.string.edit_note)
 
-        AlertDialog.Builder(this).setTitle(title).setView(v)
+        AlertDialog.Builder(this, R.style.PGSAppAlertDialog).setTitle(title).setView(v)
             .setPositiveButton(getText(R.string.ok))
             { _, _ ->
-                repoViewModel.update(id, v.comment.text.toString())
+                repoViewModel.getRepoById(id)
+                repoViewModel.updateRepoComment(id, v.comment.text.toString())
             }
             .create().show()
     }
@@ -121,6 +122,4 @@ class ReposActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
-
-
 }

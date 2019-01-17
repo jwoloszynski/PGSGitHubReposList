@@ -53,6 +53,10 @@ class RepoRepository @Inject constructor(
         db.repoDao().update(repo)
     }
 
+    fun updateRepoComment(id: Int, comment: String) {
+        db.repoDao().updateRepoComment(id,comment)
+    }
+
     private fun getItemListCount() = db.repoDao().getListCount().subscribeOn(Schedulers.io()).blockingGet()
     private fun getCommentByRepoId(repoId: Int) =
         db.repoDao().getCommentByRepoId(repoId).subscribeOn(Schedulers.io()).blockingGet()

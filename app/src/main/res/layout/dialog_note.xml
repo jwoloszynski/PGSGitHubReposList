@@ -9,5 +9,5 @@
 >
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/title"/>
-    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/comment"/>
+    <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/comment" android:labelFor="@+id/title" android:hint="@string/add_note"/>
 </LinearLayout>
