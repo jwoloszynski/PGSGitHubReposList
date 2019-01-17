@@ -8,7 +8,7 @@ import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
 
-@Database(entities = [Repository::class], version = 2)
+@Database(entities = [Repository::class], version =3 )
 abstract class ReposDatabase : RoomDatabase() {
 
     abstract fun repoDao(): RepoDao
@@ -22,11 +22,16 @@ abstract class ReposDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE `repository` ADD COLUMN `comment` TEXT")
             }
         }
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `repository` ADD COLUMN `liked` INTEGER")
+            }
+        }
 
         fun getInstance(context: Context): ReposDatabase {
             if (instance == null) {
                 instance = Room.databaseBuilder(context, ReposDatabase::class.java, "pgs-gh-repos")
-                    .addMigrations(MIGRATION_1_2).build()
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3).build()
             }
             return instance!!
         }

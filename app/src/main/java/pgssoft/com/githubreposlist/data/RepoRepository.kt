@@ -49,9 +49,8 @@ class RepoRepository @Inject constructor(
         prefs.clearAll()
     }
 
-    fun updateRepoComment(id: Int, comment: String) {
-        db.repoDao().updateRepoComment(id, comment)
-
+    fun updateRepo(repo: Repository) {
+        db.repoDao().update(repo)
     }
 
     private fun getItemListCount() = db.repoDao().getListCount().subscribeOn(Schedulers.io()).blockingGet()
@@ -68,7 +67,6 @@ class RepoRepository @Inject constructor(
         }
         return false
     }
-
 
     private fun insertRepos(repoList: List<Repository>) {
 

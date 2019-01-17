@@ -5,7 +5,6 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Completable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import pgssoft.com.githubreposlist.data.Event
@@ -24,7 +23,6 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
     private var repoListLiveData: LiveData<List<Repository>> = repoRepository.getRepoList()
 
     private var _refreshState = MutableLiveData<Event<RepoDownloadStatus>>()
-    private var compositeDisposable = CompositeDisposable()
     private var disposable: Disposable? = null
 
     val refreshState: LiveData<Event<RepoDownloadStatus>>
@@ -32,11 +30,13 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
 
     var repository = getRepoById(0)
 
-    var selected: LiveData<Repository> = getRepoById(0)
+    var selected = getRepoById(0)
+    var isSelected = false
     fun getRepoList() = repoListLiveData
 
     fun setSelected(id: Int) {
         selected = getRepoById(id)
+        isSelected = true
     }
 
     fun onRefresh() {
@@ -63,9 +63,10 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
     }
 
     fun clearRepoList() {
-        compositeDisposable.add(
-            Completable.fromAction { repoRepository.clearRepoList() }.subscribeOn(Schedulers.io()).subscribe()
-        )
+        selected = MutableLiveData<Repository>()
+        disposable?.dispose()
+        disposable = Completable.fromAction { repoRepository.clearRepoList() }.subscribeOn(Schedulers.io()).subscribe()
+
     }
 
     private fun getRepoById(id: Int): LiveData<Repository> {
@@ -75,18 +76,34 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
     }
 
     fun update(id: Int, comment: String) {
-        compositeDisposable.add(
-            Completable.fromAction { repoRepository.updateRepoComment(id, comment) }
-                .subscribeOn(Schedulers.io()).subscribe())
-    }
+        val repo = getRepoById(id)
+        repo.value?.comment = comment
 
+
+
+            disposable?.dispose()
+            disposable =
+                    Completable.fromAction { repoRepository.updateRepo(repo.value!!) }
+                        .subscribeOn(Schedulers.io()).subscribe()
+
+    }
 
     override fun onCleared() {
 
 
         disposable?.dispose()
-        compositeDisposable.clear()
 
+    }
+
+    fun changeSelectedLike() {
+        val id = selected.value?.id ?: 0
+        selected.value?.liked = !(selected.value?.liked ?: false)
+        if (id > 0) {
+            disposable?.dispose()
+            disposable =
+                    Completable.fromAction { repoRepository.updateRepo(selected.value!!) }
+                        .subscribeOn(Schedulers.io()).subscribe()
+        }
     }
 
 }

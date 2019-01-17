@@ -16,6 +16,7 @@
             android:id="@+id/tool_bar"
             app:titleTextColor="@color/colorItemBg"
             app:subtitleTextColor="@color/colorItemBg"
+            app:titleTextAppearance="@style/ToolbarTextSize"
 
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>

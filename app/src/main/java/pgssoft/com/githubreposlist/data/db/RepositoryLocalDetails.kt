@@ -2,7 +2,8 @@ package pgssoft.com.githubreposlist.data.db
 
 data class RepositoryLocalDetails(
 
-    val id: Int?,
-    val comment: String?
+    var id: Int?,
+    var comment: String?,
+    var liked: Boolean?
 
 )

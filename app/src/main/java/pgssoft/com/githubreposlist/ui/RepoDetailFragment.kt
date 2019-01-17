@@ -9,8 +9,8 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.activity_repolist.*
 import kotlinx.android.synthetic.main.fragment_repo_detail.*
-import kotlinx.android.synthetic.main.tool_bar.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.db.Repository
@@ -27,10 +27,16 @@ class RepoDetailFragment : Fragment() {
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
     lateinit var repoViewModel: RepoViewModel
+    private var menu: Menu? = null
+    private var toolbarTitle: String = ""
+    private var localRepo: Repository? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         PGSRepoApp.app.appComponent.inject(this)
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+
         repoViewModel =
                 ViewModelProviders.of(requireActivity(), repoVMFactory)
                     .get(RepoViewModel::class.java)
@@ -38,10 +44,12 @@ class RepoDetailFragment : Fragment() {
         repoViewModel.selected.observe(this, Observer {
             if (it != null) {
                 updateView(it)
-                requireActivity().tool_bar.title = it.name.toString()
+                localRepo = it
+                toolbarTitle = it.name.toString()
+                menu?.findItem(R.id.action_like)?.title = if(it.liked == true) "Unlike" else "Like"
+                requireActivity().tool_bar.title = toolbarTitle
             }
         })
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -52,6 +60,8 @@ class RepoDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         noteButton.visibility = View.INVISIBLE
         commentString.visibility = View.INVISIBLE
+        menu?.findItem(R.id.action_like)?.isVisible = false
+
     }
 
     private fun updateView(repo: Repository) {
@@ -72,10 +82,13 @@ class RepoDetailFragment : Fragment() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?) {
-        if (requireActivity().resources.configuration.orientation != Configuration.ORIENTATION_LANDSCAPE && this.isVisible) {
-            menu?.findItem(R.id.action_refresh)?.isVisible = false
-            menu?.findItem(R.id.action_clearList)?.isVisible = false
+        this.menu = menu!!
+        menu.findItem(R.id.action_like)?.isVisible = (repoViewModel.isSelected)
+
+        if (this.isVisible && resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            menu.findItem(R.id.action_refresh)?.isVisible = false
+            menu.findItem(R.id.action_clearList)?.isVisible = false
         }
-        super.onPrepareOptionsMenu(menu)
+
     }
 }

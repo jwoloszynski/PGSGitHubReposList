@@ -39,6 +39,7 @@ class ReposActivity : AppCompatActivity() {
                 if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     replace(R.id.detail, RepoDetailFragment())
                 }
+
                 replace(R.id.list, RepoListFragment())
                 commit()
             }
@@ -91,7 +92,9 @@ class ReposActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        val f = supportFragmentManager.findFragmentById(R.id.list)
+
+        val frag = supportFragmentManager.findFragmentById(R.id.list)
+        val listFragment = if (frag is RepoListFragment) frag else null
 
         return when (item?.itemId) {
 
@@ -100,18 +103,24 @@ class ReposActivity : AppCompatActivity() {
                 true
             }
             R.id.action_refresh -> {
-                (f as RepoListFragment).onRefresh()
+                listFragment?.onRefresh()
                 true
             }
             R.id.action_clearList -> {
 
-                (f as RepoListFragment).clearRepoList()
+                listFragment?.clearRepoList()
 
                 false
             }
+            R.id.action_like -> {
 
+                repoViewModel.changeSelectedLike()
+                false
+            }
 
             else -> super.onOptionsItemSelected(item)
         }
     }
+
+
 }

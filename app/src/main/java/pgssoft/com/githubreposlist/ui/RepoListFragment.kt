@@ -3,13 +3,13 @@ package pgssoft.com.githubreposlist.ui
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.DialogInterface
+import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.*
 import kotlinx.android.synthetic.main.fragment_repo_list.*
-import kotlinx.android.synthetic.main.tool_bar.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.EventObserver
@@ -35,6 +35,8 @@ class RepoListFragment : Fragment() {
         repoViewModel =
                 ViewModelProviders.of(requireActivity(), repoVMFactory)
                     .get(RepoViewModel::class.java)
+
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -47,7 +49,6 @@ class RepoListFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
         recyclerView.adapter = repoListAdapter
-        requireActivity().tool_bar.title = "PGS GitHub"
         refreshRepoList()
     }
 
@@ -105,6 +106,7 @@ class RepoListFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
         menu?.clear()
         inflater?.inflate(R.menu.menu_repolist, menu)
+        menu?.findItem(R.id.action_like)?.isVisible = false
 
     }
 
@@ -121,4 +123,11 @@ class RepoListFragment : Fragment() {
     }
 
 
+    override fun onPrepareOptionsMenu(menu: Menu?) {
+        if (requireActivity().resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            menu?.findItem(R.id.action_like)?.isVisible = false
+        }
+
+        super.onPrepareOptionsMenu(menu)
+    }
 }
