@@ -74,7 +74,7 @@ class RepoDetailFragment : Fragment() {
             noteButton.text = this.getText(R.string.add_note)
         } else {
             commentString.visibility = View.VISIBLE
-            comment.visibility = View.VISIBLE
+            repoComment.visibility = View.VISIBLE
             noteButton.text = this.getText(R.string.edit_note)
         }
         noteButton.visibility = View.VISIBLE
