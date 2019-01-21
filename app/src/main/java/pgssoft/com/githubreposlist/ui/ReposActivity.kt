@@ -115,7 +115,11 @@ class ReposActivity : AppCompatActivity() {
             }
             R.id.action_like -> {
 
-                repoViewModel.changeSelectedLike()
+               item.icon =
+                       if (repoViewModel.changeSelectedLike())
+                           this.getDrawable(android.R.drawable.ic_input_add)
+                       else
+                           this.getDrawable(android.R.drawable.ic_input_delete)
                 false
             }
 

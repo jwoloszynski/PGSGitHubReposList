@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.activity_repolist.*
+import kotlinx.android.synthetic.main.dialog_note.*
 import kotlinx.android.synthetic.main.fragment_repo_detail.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
@@ -69,10 +70,11 @@ class RepoDetailFragment : Fragment() {
         repoDescription.text = repo.description
         repoComment.text = repo.comment
         if (repo.comment.isNullOrBlank()) {
-            commentString.visibility = View.INVISIBLE
+            commentString.visibility = View.GONE
             noteButton.text = this.getText(R.string.add_note)
         } else {
             commentString.visibility = View.VISIBLE
+            comment.visibility = View.VISIBLE
             noteButton.text = this.getText(R.string.edit_note)
         }
         noteButton.visibility = View.VISIBLE

@@ -87,7 +87,7 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
 
     }
 
-    fun changeSelectedLike() {
+    fun changeSelectedLike():Boolean {
         val id = selected.value?.id ?: 0
         selected.value?.liked = !(selected.value?.liked ?: false)
         if (id > 0) {
@@ -96,6 +96,8 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
                     Completable.fromAction { repoRepository.updateRepo(selected.value!!) }
                         .subscribeOn(Schedulers.io()).subscribe()
         }
+
+        return selected.value?.liked ?: false
     }
 
 }

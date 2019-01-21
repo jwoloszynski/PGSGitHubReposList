@@ -86,10 +86,10 @@ class RepoListFragment : Fragment() {
                 repoListAdapter.setData(it)
             }
             val count = it?.count() ?: 0
-            val likedcount = it?.filter { it.liked == true }?.count() ?: 0
+            val likedCount = it?.filter { it.liked == true }?.count() ?: 0
             textRepoCount.text =
                     when {
-                        ((count) > 0) -> "$count,  likes count: $likedcount"
+                        ((count) > 0) -> "$count,  likes count: $likedCount"
                         else -> getString(R.string.pull_to_refresh)
                     }
         })
