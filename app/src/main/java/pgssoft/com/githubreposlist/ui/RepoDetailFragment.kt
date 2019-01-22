@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.activity_repolist.*
-import kotlinx.android.synthetic.main.dialog_note.*
 import kotlinx.android.synthetic.main.fragment_repo_detail.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
@@ -47,7 +46,7 @@ class RepoDetailFragment : Fragment() {
                 updateView(it)
                 localRepo = it
                 toolbarTitle = it.name.toString()
-                menu?.findItem(R.id.action_like)?.title = if(it.liked == true) "Unlike" else "Like"
+                menu?.findItem(R.id.action_like)?.icon = if (it.liked == true) requireActivity().getDrawable(android.R.drawable.ic_input_delete)  else requireActivity().getDrawable(android.R.drawable.ic_input_add)
                 requireActivity().tool_bar.title = toolbarTitle
             }
         })
@@ -91,6 +90,7 @@ class RepoDetailFragment : Fragment() {
             menu.findItem(R.id.action_refresh)?.isVisible = false
             menu.findItem(R.id.action_clearList)?.isVisible = false
         }
-
     }
+
 }
+
