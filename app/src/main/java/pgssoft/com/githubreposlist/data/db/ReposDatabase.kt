@@ -8,7 +8,7 @@ import android.arch.persistence.room.migration.Migration
 import android.content.Context
 
 
-@Database(entities = [Repository::class], version =3 )
+@Database(entities = [Repository::class], version =3, exportSchema = false )
 abstract class ReposDatabase : RoomDatabase() {
 
     abstract fun repoDao(): RepoDao

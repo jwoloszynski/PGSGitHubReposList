@@ -38,8 +38,8 @@ interface RepoDao {
     @Query("UPDATE repository SET liked = :like WHERE id = :id")
     fun updateRepoLike(id: Int, like: Boolean)
 
-    @Query("SELECT id,comment FROM repository WHERE id = :repoId")
-    fun getCommentByRepoId(repoId: Int): Maybe<RepositoryLocalDetails?>
+    @Query("SELECT id, comment, liked FROM repository WHERE id = :repoId")
+    fun getLocalDetailsById(repoId: Int): Maybe<RepositoryLocalDetails?>
 
     @Query("SELECT count(*) FROM repository")
     fun getListCount(): Single<Int>

@@ -2,6 +2,7 @@ package pgssoft.com.githubreposlist.data
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import io.reactivex.Maybe
 import io.reactivex.Single
 import pgssoft.com.githubreposlist.data.db.RepoDao
 import pgssoft.com.githubreposlist.data.db.Repository
@@ -59,15 +60,21 @@ class TestDao(private val list: List<Repository>) : RepoDao {
         return
     }
 
-    override fun getCommentByRepoId(repoId: Int): Single<RepositoryLocalDetails?> {
+    override fun getLocalDetailsById(repoId: Int): Maybe<RepositoryLocalDetails?> {
 
 
-        return Single.just(RepositoryLocalDetails(repoId, repoId.toString()))
+        return Maybe.just(RepositoryLocalDetails(repoId, repoId.toString(), true))
 
 
     }
 
     override fun getListCount(): Single<Int> {
         return Single.just(list.size)
+    }
+
+    override fun updateRepoLike(id: Int, like: Boolean) {
+    }
+
+    override fun update(repo: Repository) {
     }
 }

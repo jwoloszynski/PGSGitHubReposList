@@ -58,8 +58,8 @@ class RepoRepository @Inject constructor(
     }
 
     private fun getItemListCount() = db.repoDao().getListCount().subscribeOn(Schedulers.io()).blockingGet()
-    private fun getCommentByRepoId(repoId: Int) =
-        db.repoDao().getCommentByRepoId(repoId).subscribeOn(Schedulers.io()).blockingGet()
+    private fun getLocalDetails(repoId: Int) =
+        db.repoDao().getLocalDetailsById(repoId).subscribeOn(Schedulers.io()).blockingGet()
 
     private fun canRefreshList(): Boolean {
         val timeRefreshed = prefs.time
@@ -76,8 +76,9 @@ class RepoRepository @Inject constructor(
 
         if (!repoList.isNullOrEmpty()) {
             for (repo in repoList) {
-                val comment = getCommentByRepoId(repo.id)
-                repo.comment = comment?.comment ?: ""
+                val details = getLocalDetails(repo.id)
+                repo.comment = details?.comment ?: ""
+                repo.liked = details?.liked
             }
 
         }
