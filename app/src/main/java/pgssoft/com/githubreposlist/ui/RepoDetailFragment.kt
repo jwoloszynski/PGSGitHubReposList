@@ -2,11 +2,9 @@ package pgssoft.com.githubreposlist.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.activity_repolist.*
@@ -26,30 +24,15 @@ class RepoDetailFragment : Fragment() {
 
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
-    lateinit var repoViewModel: RepoViewModel
-    private var menu: Menu? = null
-    private var toolbarTitle: String = ""
-    private var localRepo: Repository? = null
+    private lateinit var repoViewModel: RepoViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         PGSRepoApp.app.appComponent.inject(this)
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-
         repoViewModel =
                 ViewModelProviders.of(requireActivity(), repoVMFactory)
                     .get(RepoViewModel::class.java)
-
-        repoViewModel.selected.observe(this, Observer {
-            if (it != null) {
-                updateView(it)
-                localRepo = it
-                toolbarTitle = it.name.toString()
-                menu?.findItem(R.id.action_like)?.icon = if (it.liked == true) requireActivity().getDrawable(android.R.drawable.ic_input_delete)  else requireActivity().getDrawable(android.R.drawable.ic_input_add)
-                requireActivity().tool_bar.title = toolbarTitle
-            }
-        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,7 +43,19 @@ class RepoDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         noteButton.visibility = View.INVISIBLE
         commentString.visibility = View.INVISIBLE
-        menu?.findItem(R.id.action_like)?.isVisible = false
+
+        repoViewModel.selected.observe(this, Observer {
+            if (it != null) {
+                updateView(it)
+
+                with(requireActivity() as ReposActivity) {
+                    menu?.findItem(R.id.action_like)?.icon =
+                            if (it.liked == true) getDrawable(android.R.drawable.ic_input_delete)
+                            else getDrawable(android.R.drawable.ic_input_add)
+                    tool_bar.title = it.name.toString()
+                }
+            }
+        })
 
     }
 
@@ -81,16 +76,5 @@ class RepoDetailFragment : Fragment() {
             (activity as ReposActivity).showNoteDialog(repo.id, repo.comment ?: "")
         }
     }
-
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        this.menu = menu!!
-        menu.findItem(R.id.action_like)?.isVisible = (repoViewModel.isSelected)
-
-        if (this.isVisible && resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            menu.findItem(R.id.action_refresh)?.isVisible = false
-            menu.findItem(R.id.action_clearList)?.isVisible = false
-        }
-    }
-
 }
 

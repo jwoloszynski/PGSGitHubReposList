@@ -9,6 +9,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_repolist.*
 import kotlinx.android.synthetic.main.dialog_note.view.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
@@ -25,6 +26,7 @@ class ReposActivity : AppCompatActivity() {
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
     private lateinit var repoViewModel: RepoViewModel
+    var menu: Menu? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,6 +91,36 @@ class ReposActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_repolist, menu)
+        if (menu != null) {
+            this.menu = menu
+
+            when (supportFragmentManager.findFragmentById(R.id.list)) {
+                is RepoDetailFragment -> {
+                    menu.findItem(R.id.action_like).isVisible = true
+                    menu.findItem(R.id.action_refresh).isVisible = false
+                    menu.findItem(R.id.action_clearList).isVisible = false
+                }
+                is RepoListFragment -> {
+
+                    menu.findItem(R.id.action_like).isVisible = false
+                    menu.findItem(R.id.action_refresh).isVisible = true
+                    menu.findItem(R.id.action_clearList).isVisible = true
+                }
+            }
+
+            when (supportFragmentManager.findFragmentById(R.id.detail)) {
+                is RepoDetailFragment -> {
+                    if (repoViewModel.isSelected) {
+                        menu.findItem(R.id.action_like).isVisible = true
+
+                    } else {
+                        tool_bar.title = "GitHubRepoList"
+                    }
+                }
+
+            }
+        }
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -115,11 +147,11 @@ class ReposActivity : AppCompatActivity() {
             }
             R.id.action_like -> {
 
-               item.icon =
-                       if (repoViewModel.changeSelectedLike())
-                           this.getDrawable(android.R.drawable.ic_input_add)
-                       else
-                           this.getDrawable(android.R.drawable.ic_input_delete)
+                item.icon =
+                        if (repoViewModel.changeSelectedLike())
+                            this.getDrawable(android.R.drawable.ic_input_add)
+                        else
+                            this.getDrawable(android.R.drawable.ic_input_delete)
                 false
             }
 

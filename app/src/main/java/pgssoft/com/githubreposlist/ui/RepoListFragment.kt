@@ -3,13 +3,13 @@ package pgssoft.com.githubreposlist.ui
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.DialogInterface
-import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
-import android.view.*
-import kotlinx.android.synthetic.main.activity_repolist.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_repo_list.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
@@ -37,7 +37,6 @@ class RepoListFragment : Fragment() {
                 ViewModelProviders.of(requireActivity(), repoVMFactory)
                     .get(RepoViewModel::class.java)
 
-        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -104,17 +103,7 @@ class RepoListFragment : Fragment() {
             .create().show()
     }
 
-
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        super.onCreateOptionsMenu(menu, inflater)
-        menu?.clear()
-        inflater?.inflate(R.menu.menu_repolist, menu)
-        menu?.findItem(R.id.action_like)?.isVisible = false
-
-    }
-
     fun clearRepoList() {
-
         AlertDialog.Builder(requireContext(), R.style.PGSAppAlertDialog).setTitle("Are you sure?")
             .setMessage("You will lose all your comments")
             .setPositiveButton("Yes") { _, _ ->
@@ -124,15 +113,5 @@ class RepoListFragment : Fragment() {
                 dialog.cancel()
             }
             .create().show()
-    }
-
-
-    override fun onPrepareOptionsMenu(menu: Menu?) {
-        if (requireActivity().resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            menu?.findItem(R.id.action_like)?.isVisible = false
-            requireActivity().tool_bar.title = "GitHubRepoList"
-        }
-
-        super.onPrepareOptionsMenu(menu)
     }
 }
