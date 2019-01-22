@@ -52,7 +52,7 @@ class RepoDetailFragment : Fragment() {
                     menu?.findItem(R.id.action_like)?.icon =
                             if (it.liked == true) getDrawable(android.R.drawable.ic_input_delete)
                             else getDrawable(android.R.drawable.ic_input_add)
-                    tool_bar.title = it.name.toString()
+                    menu?.findItem(R.id.action_like)?.isVisible = true
                 }
             }
         })

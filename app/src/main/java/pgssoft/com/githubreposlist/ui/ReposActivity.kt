@@ -1,5 +1,6 @@
 package pgssoft.com.githubreposlist.ui
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.res.Configuration
 import android.os.Bundle
@@ -47,9 +48,17 @@ class ReposActivity : AppCompatActivity() {
             }
         } else {
             if (supportFragmentManager.findFragmentById(R.id.list) is RepoDetailFragment) {
+                val frag = supportFragmentManager.findFragmentById(R.id.detail)
                 supportFragmentManager.beginTransaction().apply {
+
                     replace(R.id.list, RepoListFragment())
-                    replace(R.id.detail, RepoDetailFragment())
+                    if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+                        replace(R.id.detail, RepoDetailFragment())
+                    } else if (frag != null) {
+                        remove(frag)
+                    }
+
                     commit()
                 }
             }
@@ -90,7 +99,13 @@ class ReposActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
         menuInflater.inflate(R.menu.menu_repolist, menu)
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (menu != null) {
             this.menu = menu
 
@@ -102,26 +117,35 @@ class ReposActivity : AppCompatActivity() {
                 }
                 is RepoListFragment -> {
 
-                    menu.findItem(R.id.action_like).isVisible = false
+                    if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                        menu.findItem(R.id.action_like).isVisible = false
+
+                    }
                     menu.findItem(R.id.action_refresh).isVisible = true
                     menu.findItem(R.id.action_clearList).isVisible = true
                 }
             }
-
-            when (supportFragmentManager.findFragmentById(R.id.detail)) {
+            val frag = supportFragmentManager.findFragmentById(R.id.detail)
+            when (frag) {
                 is RepoDetailFragment -> {
-                    if (repoViewModel.isSelected) {
-                        menu.findItem(R.id.action_like).isVisible = true
+                    if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE || frag.isVisible) {
+                        if (repoViewModel.isSelected) {
 
-                    } else {
-                        tool_bar.title = "GitHubRepoList"
+                            with(menu.findItem(R.id.action_like)) {
+                                isVisible = true
+                                repoViewModel.selected.observe(this@ReposActivity, Observer {
+                                    icon =
+                                            if (it?.liked == true) getDrawable(android.R.drawable.ic_input_delete) else getDrawable(
+                                                android.R.drawable.ic_input_add
+                                            )
+                                })
+                            }
+                        }
                     }
                 }
-
             }
         }
-
-        return super.onCreateOptionsMenu(menu)
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -157,5 +181,11 @@ class ReposActivity : AppCompatActivity() {
 
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    override fun onBackPressed() {
+        invalidateOptionsMenu()
+
+        super.onBackPressed()
     }
 }
