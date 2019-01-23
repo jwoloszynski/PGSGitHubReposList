@@ -11,4 +11,5 @@
     <string name="clear">Clear</string>
     <string name="show_details">show details</string>
     <string name="pull_to_refresh">Pull to refresh</string>
+    <string name="refresh">Refresh</string>
 </resources>

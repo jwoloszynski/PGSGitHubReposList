@@ -7,34 +7,35 @@
         tools:context=".ui.ReposActivity"
         android:elevation="40dp"
         android:orientation="vertical"
-        android:paddingTop="30dp">
-
-    <TextView android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textSize="30dp"
-              android:id="@+id/repoName"/>
-
-    <TextView android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textSize="20dp"
-              android:id="@+id/repoDescription"/>
-
-    <TextView android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textSize="20dp"
-              android:layout_marginTop="20dp"
-              android:id="@+id/commentString"
-              android:text="@string/note"/>
-
-    <TextView android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:textSize="20dp"
-              android:id="@+id/repoComment"/>
+        android:paddingTop="15dp">
 
 
-    <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/noteButton"
-    />
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:textSize="30dp"
+                      android:id="@+id/repoName"/>
 
-</LinearLayout>
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:textSize="20dp"
+                      android:id="@+id/repoDescription"/>
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:textSize="20dp"
+                      android:layout_marginTop="20dp"
+                      android:id="@+id/commentString"
+                      android:text="@string/note"/>
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:textSize="20dp"
+                      android:id="@+id/repoComment"
+            android:visibility="gone"/>
+
+
+            <Button android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/noteButton"
+                    android:theme="@style/PrimaryFlatButton"/>
+        </LinearLayout>

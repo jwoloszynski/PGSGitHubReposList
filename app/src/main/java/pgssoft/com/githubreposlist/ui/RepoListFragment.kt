@@ -2,7 +2,9 @@ package pgssoft.com.githubreposlist.ui
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.DialogInterface
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat.invalidateOptionsMenu
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -18,6 +20,7 @@ import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Inject
 
+
 /**
  * Displays a list of company GitHub repositories
  */
@@ -25,7 +28,6 @@ class RepoListFragment : Fragment() {
 
     @Inject
     lateinit var repoVMFactory: RepoViewModelFactory
-
     private lateinit var repoViewModel: RepoViewModel
     private lateinit var repoListAdapter: RepoListAdapter
 
@@ -35,6 +37,9 @@ class RepoListFragment : Fragment() {
         repoViewModel =
                 ViewModelProviders.of(requireActivity(), repoVMFactory)
                     .get(RepoViewModel::class.java)
+
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,26 +51,18 @@ class RepoListFragment : Fragment() {
         repoListAdapter = RepoListAdapter(listOf(), this)
         recyclerView.layoutManager = LinearLayoutManager(PGSRepoApp.app)
         swipeToRefresh.setOnRefreshListener { onRefresh() }
-        deleteButton.setOnClickListener { repoViewModel.clearRepoList() }
         recyclerView.adapter = repoListAdapter
-        repoViewModel.getRepoList().observe(this, Observer {
-            val count = it?.count() ?: 0
-            textRepoCount.text =
-                    when {
-                        ((count) > 0) -> count.toString()
-                        else -> getString(R.string.pull_to_refresh)
-                    }
-        })
-        refreshAdapter()
+        refreshRepoList()
     }
 
-
     fun onItemSelect(id: Int) {
+
         repoViewModel.setSelected(id)
         (activity as ReposActivity).showDetail()
     }
 
-    private fun onRefresh() {
+    fun onRefresh() {
+        swipeToRefresh.isRefreshing = true
         repoViewModel.onRefresh()
         repoViewModel.refreshState.observe(this, EventObserver {
             when (it) {
@@ -85,22 +82,39 @@ class RepoListFragment : Fragment() {
         })
     }
 
-    private fun refreshAdapter() {
+    private fun refreshRepoList() {
         repoViewModel.getRepoList().observe(this, Observer {
             if (it != null) {
                 repoListAdapter.setData(it)
             }
+            val count = it?.count() ?: 0
+            val likedCount = it?.filter { it.liked == true }?.count() ?: 0
+            textRepoCount.text =
+                    when {
+                        ((count) > 0) -> "$count,  likes count: $likedCount"
+                        else -> getString(R.string.pull_to_refresh)
+                    }
         })
     }
 
     private fun showError(message: String) {
-        AlertDialog.Builder(requireActivity()).setTitle(R.string.error).setMessage(message)
+        AlertDialog.Builder(requireActivity(), R.style.PGSAppAlertDialog).setTitle(R.string.error).setMessage(message)
             .setPositiveButton(R.string.ok)
             { d, _ ->
                 d.dismiss()
             }
             .create().show()
     }
+
+    fun clearRepoList() {
+        AlertDialog.Builder(requireContext(), R.style.PGSAppAlertDialog).setTitle("Are you sure?")
+            .setMessage("You will lose all your comments")
+            .setPositiveButton("Yes") { _, _ ->
+                repoViewModel.clearRepoList()
+            }
+            .setNeutralButton("No") { dialog: DialogInterface, _ ->
+                dialog.cancel()
+            }
+            .create().show()
+    }
 }
-
-

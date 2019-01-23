@@ -4,6 +4,7 @@ import okhttp3.Cache
 import okhttp3.OkHttpClient
 import pgssoft.com.githubreposlist.PGSRepoApp
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
@@ -21,11 +22,12 @@ object GHApiProvider {
 
     fun getApi(): GHApi {
         return Retrofit.Builder()
-            .baseUrl("https://api.github.com")
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(GHApi::class.java)
+                .baseUrl("https://api.github.com")
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build()
+             .create(GHApi::class.java)
     }
 
 
