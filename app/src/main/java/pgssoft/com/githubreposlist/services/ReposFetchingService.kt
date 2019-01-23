@@ -27,7 +27,6 @@ class ReposFetchingService : IntentService("fetchrepos") {
     companion object {
         var statusEvent = MutableLiveData<Event<RepoDownloadStatus>>()
     }
-
     @Inject
     lateinit var repoRepository: RepoRepository
     @Inject
@@ -41,6 +40,25 @@ class ReposFetchingService : IntentService("fetchrepos") {
 
     override fun onHandleIntent(intent: Intent?) {
         Log.d("INTENTSERVICE", "service onHandleIntent")
+
+        startForeground(1, createNotification())
+        try {
+            if (networkUtils.isConnection()) {
+                val status = repoRepository.fetchAll()
+
+                status.subscribe { _status ->
+                    statusEvent.postValue(Event(_status))}.dispose()
+            } else {
+                statusEvent.postValue(Event(RepoDownloadStatus.ErrorNoConnection))
+            }
+
+        } finally {
+            Log.d("INTENTSERVICE", "finished")
+            stopForeground(true)
+        }
+    }
+
+    private fun createNotification(): Notification {
 
         val channelId = "channelId"
         android.os.Debug.waitForDebugger()
@@ -58,31 +76,6 @@ class ReposFetchingService : IntentService("fetchrepos") {
             .setContentText("downloading repos") // use something from something from
             .setProgress(0, 0, true) // display indeterminate progress
 
-        startForeground(1, builder.build())
-        try {
-            if (networkUtils.isConnection()) {
-                val status = repoRepository.fetchAll()
-
-                status.subscribe { _status ->
-                    statusEvent.postValue(Event(_status))
-                    when (_status) {
-                        is RepoDownloadStatus.DataOk -> {
-
-                            Log.d("INTENTSERVICE", "Dataok")
-                        }
-                        is RepoDownloadStatus.ErrorMessage ->
-                            Log.d("INTENTSERVICE", _status.message)
-                        is RepoDownloadStatus.Forbidden ->
-                            Log.d("INTENTSERVICE", "Forbidden")
-                    }
-                }.dispose()
-            } else {
-                statusEvent.postValue(Event(RepoDownloadStatus.ErrorNoConnection))
-            }
-
-        } finally {
-            Log.d("INTENTSERVICE", "finished")
-            stopForeground(true)
-        }
+        return builder.build()
     }
 }
