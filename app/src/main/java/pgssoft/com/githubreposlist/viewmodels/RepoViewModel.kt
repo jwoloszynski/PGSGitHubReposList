@@ -41,8 +41,6 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
 
     fun onRefresh() {
 
-
-
         if (networkUtils.isConnection()) {
             disposable?.dispose()
 
