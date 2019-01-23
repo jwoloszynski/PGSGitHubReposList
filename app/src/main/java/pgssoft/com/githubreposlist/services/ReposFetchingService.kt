@@ -4,16 +4,19 @@ import android.app.IntentService
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import pgssoft.com.githubreposlist.data.Event
 import pgssoft.com.githubreposlist.data.RepoDownloadStatus
 import pgssoft.com.githubreposlist.data.RepoRepository
 import pgssoft.com.githubreposlist.di.DaggerServiceComponent
 import pgssoft.com.githubreposlist.di.ServiceModule
+import pgssoft.com.githubreposlist.utils.NetworkUtils
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,14 +24,17 @@ import javax.inject.Singleton
 @Singleton
 class ReposFetchingService : IntentService("fetchrepos") {
 
+    companion object {
+        var statusEvent = MutableLiveData<Event<RepoDownloadStatus>>()
+    }
 
     @Inject
     lateinit var repoRepository: RepoRepository
+    @Inject
+    lateinit var networkUtils: NetworkUtils
 
     override fun onCreate() {
-
         DaggerServiceComponent.builder().serviceModule(ServiceModule(applicationContext)).build().inject(this)
-
         Log.d("INTENTSERVICE", "service onCreate")
         super.onCreate()
     }
@@ -38,7 +44,6 @@ class ReposFetchingService : IntentService("fetchrepos") {
 
         val channelId = "channelId"
         android.os.Debug.waitForDebugger()
-        var builder: NotificationCompat.Builder
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channelName = "fetchingService"
             val chan = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_NONE)
@@ -47,7 +52,7 @@ class ReposFetchingService : IntentService("fetchrepos") {
             val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(chan)
         }
-        builder = NotificationCompat.Builder(baseContext, channelId)
+        val builder = NotificationCompat.Builder(baseContext, channelId)
             .setSmallIcon(android.R.drawable.ic_menu_rotate)
             .setContentTitle("PGS") // use something from something from
             .setContentText("downloading repos") // use something from something from
@@ -55,29 +60,29 @@ class ReposFetchingService : IntentService("fetchrepos") {
 
         startForeground(1, builder.build())
         try {
+            if (networkUtils.isConnection()) {
+                val status = repoRepository.fetchAll()
 
-            val status = repoRepository.fetchAll()
-            status.subscribe { _status ->
+                status.subscribe { _status ->
+                    statusEvent.postValue(Event(_status))
+                    when (_status) {
+                        is RepoDownloadStatus.DataOk -> {
 
-                when (_status) {
-                    is RepoDownloadStatus.DataOk -> {
-
-                        Log.d("INTENTSERVICE", "Dataok")
+                            Log.d("INTENTSERVICE", "Dataok")
+                        }
+                        is RepoDownloadStatus.ErrorMessage ->
+                            Log.d("INTENTSERVICE", _status.message)
+                        is RepoDownloadStatus.Forbidden ->
+                            Log.d("INTENTSERVICE", "Forbidden")
                     }
-                    is RepoDownloadStatus.ErrorMessage ->
-                        Log.d("INTENTSERVICE", _status.message)
-                    is RepoDownloadStatus.Forbidden ->
-                        Log.d("INTENTSERVICE", "Forbidden")
-                }
-
-            }.dispose()
+                }.dispose()
+            } else {
+                statusEvent.postValue(Event(RepoDownloadStatus.ErrorNoConnection))
+            }
 
         } finally {
             Log.d("INTENTSERVICE", "finished")
             stopForeground(true)
         }
-
     }
-
-
 }
