@@ -1,19 +1,24 @@
 package pgssoft.com.githubreposlist.ui
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.SystemClock
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import kotlinx.android.synthetic.main.activity_repolist.*
 import kotlinx.android.synthetic.main.dialog_note.view.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
+import pgssoft.com.githubreposlist.services.ReposFetchingService
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Inject
@@ -36,7 +41,6 @@ class ReposActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.tool_bar))
         PGSRepoApp.app.appComponent.inject(this)
         repoViewModel = ViewModelProviders.of(this, repoVMFactory).get(RepoViewModel::class.java)
-
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().apply {
                 if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -58,11 +62,23 @@ class ReposActivity : AppCompatActivity() {
                     } else if (frag != null) {
                         remove(frag)
                     }
-
                     commit()
                 }
             }
         }
+
+        setRepeatingFetching()
+    }
+
+    private fun setRepeatingFetching() {
+
+        val i = Intent(this, ReposFetchingService::class.java)
+        val pIntent = PendingIntent.getService(this,3434,i,PendingIntent.FLAG_UPDATE_CURRENT)
+        var alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        alarmManager.setRepeating( AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(),
+            15*1000, pIntent)
+
     }
 
     fun showDetail() {
@@ -125,6 +141,7 @@ class ReposActivity : AppCompatActivity() {
                     menu.findItem(R.id.action_clearList).isVisible = true
                 }
             }
+
             val frag = supportFragmentManager.findFragmentById(R.id.detail)
             when (frag) {
                 is RepoDetailFragment -> {

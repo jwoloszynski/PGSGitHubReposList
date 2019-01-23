@@ -41,6 +41,8 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
 
     fun onRefresh() {
 
+
+
         if (networkUtils.isConnection()) {
             disposable?.dispose()
 
@@ -75,10 +77,10 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
     }
 
     fun updateRepoComment(id: Int, comment: String) {
-            disposable?.dispose()
-            disposable =
-                    Completable.fromAction { repoRepository.updateRepoComment(id,comment) }
-                        .subscribeOn(Schedulers.io()).subscribe()
+        disposable?.dispose()
+        disposable =
+                Completable.fromAction { repoRepository.updateRepoComment(id, comment) }
+                    .subscribeOn(Schedulers.io()).subscribe()
 
     }
 
@@ -87,7 +89,7 @@ class RepoViewModel(private val networkUtils: NetworkUtils, private val repoRepo
 
     }
 
-    fun changeSelectedLike():Boolean {
+    fun changeSelectedLike(): Boolean {
         val id = selected.value?.id ?: 0
         selected.value?.liked = !(selected.value?.liked ?: false)
         if (id > 0) {
