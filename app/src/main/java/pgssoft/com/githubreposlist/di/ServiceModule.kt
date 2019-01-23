@@ -1,12 +1,14 @@
 package pgssoft.com.githubreposlist.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import dagger.Module
 import dagger.Provides
 import pgssoft.com.githubreposlist.data.RepoRepository
 import pgssoft.com.githubreposlist.data.api.GHApi
 import pgssoft.com.githubreposlist.data.api.GHApiProvider
 import pgssoft.com.githubreposlist.data.db.ReposDatabase
+import pgssoft.com.githubreposlist.utils.NetworkUtils
 import pgssoft.com.githubreposlist.utils.PrefsHelper
 import javax.inject.Singleton
 
@@ -43,4 +45,15 @@ class ServiceModule(private val context: Context) {
     }
 
 
+    @Provides
+    @Singleton
+    fun provideConnectivityManager(): ConnectivityManager {
+        return context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkUtils(cm: ConnectivityManager): NetworkUtils {
+        return NetworkUtils(cm)
+    }
 }

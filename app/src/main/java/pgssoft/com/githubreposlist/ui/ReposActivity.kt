@@ -67,19 +67,6 @@ class ReposActivity : AppCompatActivity() {
             }
         }
 
-        setRepeatingFetching()
-    }
-
-    private fun setRepeatingFetching() {
-
-        val i = Intent(this, ReposFetchingService::class.java)
-        val pIntent = PendingIntent.getService(this, 3434, i, PendingIntent.FLAG_UPDATE_CURRENT)
-        val alarmManager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-        alarmManager.setInexactRepeating(
-            AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(),
-            AlarmManager.INTERVAL_HALF_HOUR, pIntent
-        )
 
     }
 

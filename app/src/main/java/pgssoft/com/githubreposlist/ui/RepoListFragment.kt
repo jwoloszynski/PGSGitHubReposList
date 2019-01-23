@@ -1,21 +1,27 @@
 package pgssoft.com.githubreposlist.ui
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat.invalidateOptionsMenu
+import android.os.SystemClock
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import kotlinx.android.synthetic.main.fragment_repo_list.*
 import pgssoft.com.githubreposlist.PGSRepoApp
 import pgssoft.com.githubreposlist.R
 import pgssoft.com.githubreposlist.data.EventObserver
 import pgssoft.com.githubreposlist.data.RepoDownloadStatus
+import pgssoft.com.githubreposlist.services.ReposFetchingService
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModel
 import pgssoft.com.githubreposlist.viewmodels.RepoViewModelFactory
 import javax.inject.Inject
@@ -30,7 +36,7 @@ class RepoListFragment : Fragment() {
     lateinit var repoVMFactory: RepoViewModelFactory
     private lateinit var repoViewModel: RepoViewModel
     private lateinit var repoListAdapter: RepoListAdapter
-
+    private lateinit var eventObserver: EventObserver<RepoDownloadStatus>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PGSRepoApp.app.appComponent.inject(this)
@@ -38,7 +44,24 @@ class RepoListFragment : Fragment() {
                 ViewModelProviders.of(requireActivity(), repoVMFactory)
                     .get(RepoViewModel::class.java)
 
-
+        setRepeatingFetching()
+        eventObserver = EventObserver {
+            when (it) {
+                is RepoDownloadStatus.DataOk -> {
+                    Toast.makeText(requireContext(), "Data ok", Toast.LENGTH_SHORT).show()
+                }
+                is RepoDownloadStatus.ErrorMessage -> {
+                    showError(it.message)
+                }
+                is RepoDownloadStatus.ErrorNoConnection -> {
+                    showError(getString(R.string.no_internet_connection))
+                }
+                is RepoDownloadStatus.Forbidden -> {
+                    showError(getString(R.string.rate_limit_exceeded))
+                }
+            }
+        }
+        ReposFetchingService.statusEvent.observe(this, eventObserver)
 
     }
 
@@ -64,22 +87,10 @@ class RepoListFragment : Fragment() {
     fun onRefresh() {
         swipeToRefresh.isRefreshing = true
         repoViewModel.onRefresh()
-        repoViewModel.refreshState.observe(this, EventObserver {
-            when (it) {
-                is RepoDownloadStatus.DataOk -> {
-                }
-                is RepoDownloadStatus.ErrorMessage -> {
-                    showError(it.message)
-                }
-                is RepoDownloadStatus.ErrorNoConnection -> {
-                    showError(getString(R.string.no_internet_connection))
-                }
-                is RepoDownloadStatus.Forbidden -> {
-                    showError(getString(R.string.rate_limit_exceeded))
-                }
-            }
-            swipeToRefresh.isRefreshing = false
-        })
+        repoViewModel.refreshState.observe(this, eventObserver)
+
+        swipeToRefresh.isRefreshing = false
+
     }
 
     private fun refreshRepoList() {
@@ -117,4 +128,19 @@ class RepoListFragment : Fragment() {
             }
             .create().show()
     }
+
+    private fun setRepeatingFetching() {
+
+        val i = Intent(requireContext(), ReposFetchingService::class.java)
+        val pIntent = PendingIntent.getService(requireContext(), 3434, i, PendingIntent.FLAG_UPDATE_CURRENT)
+        val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        alarmManager.setInexactRepeating(
+            AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(),
+            AlarmManager.INTERVAL_FIFTEEN_MINUTES, pIntent
+        )
+
+    }
+
+
 }
