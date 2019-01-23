@@ -36,32 +36,18 @@ class RepoListFragment : Fragment() {
     lateinit var repoVMFactory: RepoViewModelFactory
     private lateinit var repoViewModel: RepoViewModel
     private lateinit var repoListAdapter: RepoListAdapter
-    private lateinit var eventObserver: EventObserver<RepoDownloadStatus>
+    private lateinit var alarmManager: AlarmManager
+    private lateinit var pIntent: PendingIntent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PGSRepoApp.app.appComponent.inject(this)
         repoViewModel =
                 ViewModelProviders.of(requireActivity(), repoVMFactory)
                     .get(RepoViewModel::class.java)
-
         setRepeatingFetching()
-        eventObserver = EventObserver {
-            when (it) {
-                is RepoDownloadStatus.DataOk -> {
-                    Toast.makeText(requireContext(), "Data ok", Toast.LENGTH_SHORT).show()
-                }
-                is RepoDownloadStatus.ErrorMessage -> {
-                    showError(it.message)
-                }
-                is RepoDownloadStatus.ErrorNoConnection -> {
-                    showError(getString(R.string.no_internet_connection))
-                }
-                is RepoDownloadStatus.Forbidden -> {
-                    showError(getString(R.string.rate_limit_exceeded))
-                }
-            }
-        }
-        ReposFetchingService.statusEvent.observe(this, eventObserver)
+
+        ReposFetchingService.statusEvent.observe(this, getObserver(true))
 
     }
 
@@ -87,7 +73,7 @@ class RepoListFragment : Fragment() {
     fun onRefresh() {
         swipeToRefresh.isRefreshing = true
         repoViewModel.onRefresh()
-        repoViewModel.refreshState.observe(this, eventObserver)
+        repoViewModel.refreshState.observe(this, getObserver())
 
         swipeToRefresh.isRefreshing = false
 
@@ -108,13 +94,18 @@ class RepoListFragment : Fragment() {
         })
     }
 
-    private fun showError(message: String) {
-        AlertDialog.Builder(requireActivity(), R.style.PGSAppAlertDialog).setTitle(R.string.error).setMessage(message)
-            .setPositiveButton(R.string.ok)
-            { d, _ ->
-                d.dismiss()
-            }
-            .create().show()
+    private fun showError(message: String, silent: Boolean = false) {
+        if (!silent) {
+            AlertDialog.Builder(requireActivity(), R.style.PGSAppAlertDialog).setTitle(R.string.error)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok)
+                { d, _ ->
+                    d.dismiss()
+                }
+                .create().show()
+        } else {
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun clearRepoList() {
@@ -132,8 +123,8 @@ class RepoListFragment : Fragment() {
     private fun setRepeatingFetching() {
 
         val i = Intent(requireContext(), ReposFetchingService::class.java)
-        val pIntent = PendingIntent.getService(requireContext(), 3434, i, PendingIntent.FLAG_UPDATE_CURRENT)
-        val alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        pIntent = PendingIntent.getService(requireContext(), 3434, i, PendingIntent.FLAG_UPDATE_CURRENT)
+        alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         alarmManager.setInexactRepeating(
             AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime(),
@@ -142,5 +133,25 @@ class RepoListFragment : Fragment() {
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        alarmManager.cancel(pIntent)
+    }
 
+    private fun getObserver(silent: Boolean = false) = EventObserver<RepoDownloadStatus> {
+        when (it) {
+            is RepoDownloadStatus.DataOk -> {
+                Toast.makeText(requireContext(), "Data ok", Toast.LENGTH_SHORT).show()
+            }
+            is RepoDownloadStatus.ErrorMessage -> {
+                showError(it.message, silent)
+            }
+            is RepoDownloadStatus.ErrorNoConnection -> {
+                showError(getString(R.string.no_internet_connection), silent)
+            }
+            is RepoDownloadStatus.Forbidden -> {
+                showError(getString(R.string.rate_limit_exceeded), silent)
+            }
+        }
+    }
 }
