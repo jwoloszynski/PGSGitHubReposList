@@ -122,8 +122,12 @@ class RepoListFragment : Fragment() {
 
     private fun setRepeatingFetching() {
 
-        val i = Intent(requireContext(), ReposFetchingService::class.java)
-        pIntent = PendingIntent.getService(requireContext(), 3434, i, PendingIntent.FLAG_UPDATE_CURRENT)
+        pIntent = PendingIntent.getService(
+            requireContext(),
+            3434,
+            Intent(requireContext(), ReposFetchingService::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT
+        )
         alarmManager = requireActivity().getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         alarmManager.setInexactRepeating(

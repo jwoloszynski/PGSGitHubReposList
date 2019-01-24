@@ -27,6 +27,7 @@ class ReposFetchingService : IntentService("fetchrepos") {
     companion object {
         var statusEvent = MutableLiveData<Event<RepoDownloadStatus>>()
     }
+
     @Inject
     lateinit var repoRepository: RepoRepository
     @Inject
@@ -46,8 +47,14 @@ class ReposFetchingService : IntentService("fetchrepos") {
             if (networkUtils.isConnection()) {
                 val status = repoRepository.fetchAll()
 
-                status.subscribe { _status ->
-                    statusEvent.postValue(Event(_status))}.dispose()
+                status.subscribe(
+                    { _status ->
+                        statusEvent.postValue(Event(_status))
+                    },
+                    { error ->
+                        statusEvent.postValue(Event(RepoDownloadStatus.ErrorMessage(error.message.toString())))
+                    }
+                ).dispose()
             } else {
                 statusEvent.postValue(Event(RepoDownloadStatus.ErrorNoConnection))
             }
